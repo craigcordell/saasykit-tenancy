@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Auth\Trait\RedirectAwareTrait;
 use App\Models\OauthLoginProvider;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +13,8 @@ use Laravel\Socialite\Facades\Socialite;
 
 class OAuthController extends RegisterController
 {
+    use RedirectAwareTrait;
+
     public function redirect(string $provider)
     {
         $providerObj = OauthLoginProvider::where('provider_name', $provider)->firstOrFail();
@@ -111,14 +114,10 @@ class OAuthController extends RegisterController
             Auth::login($user);
         });
 
-        if (Redirect::getIntendedUrl()) {
-            return redirect()->intended();
-        }
-
         if ($isRegistration) {
             return redirect()->route('registration.thank-you');
         }
 
-        return redirect()->route('home');
+        return redirect($this->getRedirectUrl(Auth::user()));
     }
 }

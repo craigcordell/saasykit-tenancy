@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Auth\Trait\RedirectAwareTrait;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\LoginService;
@@ -24,6 +25,7 @@ class LoginController extends Controller
     */
 
     use AuthenticatesUsers;
+    use RedirectAwareTrait;
 
     public function __construct(
         private LoginValidator $loginValidator,
@@ -52,20 +54,6 @@ class LoginController extends Controller
         }
 
         return redirect($this->getRedirectUrl($user));
-    }
-
-    protected function getRedirectUrl(User $user): string
-    {
-        // Change this if you want to redirect to a different page after login
-        if (Redirect::getIntendedUrl() !== null && rtrim(Redirect::getIntendedUrl(), '/') !== rtrim((route('home')), '/')) {
-            return Redirect::getIntendedUrl();
-        }
-
-        if ($user->is_admin) {
-            return route('filament.admin.pages.dashboard');
-        }
-
-        return route('dashboard');
     }
 
     protected function validateLogin(Request $request)
