@@ -23,6 +23,6 @@ trait RedirectAwareTrait
             return route('filament.admin.pages.dashboard');
         }
 
-        return route('filament.dashboard.pages.dashboard');
+        return route('dashboard');
     }
 }
