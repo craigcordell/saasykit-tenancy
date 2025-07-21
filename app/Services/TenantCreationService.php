@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Constants\SubscriptionConstants;
 use App\Constants\TenancyPermissionConstants;
 use App\Constants\TenantConstants;
+use App\Events\Tenant\TenantCreated;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -111,6 +112,8 @@ class TenantCreationService
         $tenant->users()->attach($user);
 
         $this->tenantPermissionService->assignTenantUserRole($tenant, $user, TenancyPermissionConstants::TENANT_CREATOR_ROLE);
+
+        TenantCreated::dispatch($tenant, $user);
 
         return $tenant;
     }
