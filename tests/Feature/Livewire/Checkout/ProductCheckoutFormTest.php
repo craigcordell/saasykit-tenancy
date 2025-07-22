@@ -307,4 +307,66 @@ class ProductCheckoutFormTest extends FeatureTest
         // assert order has been created
         $this->assertEquals($ordersBefore + 1, Order::count());
     }
+
+    public function test_can_checkout_quantity()
+    {
+        $slug = 'product-slug-'.str()->random(5);
+        $product = OneTimeProduct::factory()->create([
+            'slug' => $slug,
+            'is_active' => true,
+            'max_quantity' => 5,
+        ]);
+
+        OneTimeProductPrice::create([
+            'one_time_product_id' => $product->id,
+            'currency_id' => Currency::where('code', 'USD')->first()->id,
+            'price' => 100,
+        ]);
+
+        $this->addOfflinePaymentProvider();
+
+        $this->instance(SessionService::class, Mockery::mock(SessionService::class, function (MockInterface $mock) use ($product) {
+            $cartDto = new CartDto;
+            $cartItem = new CartItemDto;
+            $cartItem->quantity = 3; // Set quantity to 3
+            $cartItem->productId = $product->id;
+            $cartDto->items = [$cartItem];
+            $mock->shouldReceive('getCartDto')->andReturn($cartDto);
+
+            $mock->shouldReceive('saveCartDto');
+        }));
+
+        // get number of orders before checkout
+        $ordersBefore = Order::count();
+
+        Livewire::test(ProductCheckoutForm::class)
+            ->set('name', 'Name')
+            ->set('email', 'something5@gmail.com')
+            ->set('password', 'password')
+            ->set('paymentProvider', 'paymore-offline')
+            ->call('checkout')
+            ->assertRedirectToRoute('checkout.product.success');
+
+        // assert user has been created
+        $this->assertDatabaseHas('users', [
+            'email' => 'something5@gmail.com',
+        ]);
+
+        // assert order has been created
+        $this->assertDatabaseHas('orders', [
+            'user_id' => auth()->id(),
+            'status' => OrderStatus::PENDING->value,
+        ]);
+
+        // assert user is logged in
+        $this->assertAuthenticated();
+
+        // assert order has been created
+        $this->assertEquals($ordersBefore + 1, Order::count());
+
+        $checkoutDto = app(SessionService::class)->getCartDto();
+
+        $latestOrder = Order::find($checkoutDto->orderId);
+        $this->assertEquals(3, $latestOrder->items->first()->quantity);
+    }
 }

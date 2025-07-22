@@ -44,7 +44,7 @@ class ProductCheckoutController extends Controller
             $quantity = 1;
         }
 
-        if ($quantity > $product->max_quantity) {
+        if ($product->max_quantity != 0 && $quantity > $product->max_quantity) {
             $quantity = $product->max_quantity;
         }
 
