@@ -23,11 +23,21 @@
                     <span class="text-xs">{{ $product->description }}</span>
                 @endif
 
-                <span class="text-xs">
-                                {{ __('Quantity:') }} {{ $cartItem->quantity }}
-                            </span>
+                @if ($product->max_quantity == 1)
+                    <span class="text-xs">
+                        {{ __('Quantity:') }} {{ $cartItem->quantity }}
+                    </span>
+                @endif
 
             </div>
+        </div>
+
+        <div class="flex gap-4">
+
+            @if ($product->max_quantity == 0 || $product->max_quantity > 1)
+                <livewire:checkout.product-quantity :product="$product" />
+            @endif
+
         </div>
 
         <div class="flex gap-4">

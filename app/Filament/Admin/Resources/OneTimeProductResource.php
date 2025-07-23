@@ -51,12 +51,12 @@ class OneTimeProductResource extends Resource
                         ->disabledOn('edit'),
                     Forms\Components\Textarea::make('description')
                         ->helperText(__('One line description of the product.')),
-                    //                    Forms\Components\TextInput::make('max_quantity')  // todo: enable this later
-                    //                        ->type('number')
-                    //                        ->required()
-                    //                        ->default(1)
-                    //                        ->minValue(1)
-                    //                        ->helperText(__('The maximum quantity of this product that can be purchased at once. If set to 1, customers will not be able to edit the quantity on the checkout page.')),
+                    Forms\Components\TextInput::make('max_quantity')
+                        ->type('number')
+                        ->required()
+                        ->default(1)
+                        ->minValue(0)
+                        ->helperText(__('The maximum quantity of this product that can be purchased at once. Set to 0 for unlimited quantity. If set to 1, customers will not be able to edit the quantity on the checkout page.')),
                     Forms\Components\Toggle::make('is_active')
                         ->helperText(__('If the product is not active, your customers will not be able to purchase it.'))
                         ->default(true)

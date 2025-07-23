@@ -128,6 +128,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
         $variantId = null;
 
+        $customPrice = 0;
         foreach ($order->items()->get() as $item) {
             $product = $item->oneTimeProduct()->firstOrFail();
             $variantId = $this->oneTimeProductService->getPaymentProviderProductId($product, $paymentProvider);
@@ -143,10 +144,12 @@ class LemonSqueezyProvider implements PaymentProviderInterface
             ];
 
             $variantIds[] = $variantId;
+
+            $customPrice = $item->price_per_unit;
         }
 
         $object = [
-            'custom_price' => $order->total_amount,
+            'custom_price' => $customPrice,
             'product_options' => [
                 'redirect_url' => route('checkout.product.success'),
                 'enabled_variants' => $variantIds,

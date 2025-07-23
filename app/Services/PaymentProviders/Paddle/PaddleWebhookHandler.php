@@ -9,6 +9,7 @@ use App\Constants\SubscriptionStatus;
 use App\Constants\SubscriptionType;
 use App\Constants\TransactionStatus;
 use App\Models\Currency;
+use App\Models\Order;
 use App\Models\PaymentProvider;
 use App\Services\OrderService;
 use App\Services\SubscriptionService;
@@ -149,6 +150,8 @@ class PaddleWebhookHandler
                         'payment_provider_id' => $paymentProvider->id,
                     ]);
                 }
+
+                $this->updateOrderDetails($order, $eventData);
             }
         } elseif (
             $eventType == 'transaction.past_due' ||
@@ -278,6 +281,30 @@ class PaddleWebhookHandler
             $paddleTransactionStatus,
             $this->mapPaddleTransactionStatusToTransactionStatus($paddleTransactionStatus),
         );
+
+        $this->updateOrderDetails($order, $eventData);
+    }
+
+    private function updateOrderDetails(Order $order, array $eventData): void
+    {
+        // user can change quantity of the order items on overlay page, so we want to update the order quantity on our side to prevent abuse
+        $item = $order->items[0];
+        $newQuantity = $eventData['items'][0]['quantity'] ?? null;
+
+        if ($newQuantity !== null && $newQuantity > 0) {
+            $item->update(['quantity' => $newQuantity]);
+        }
+
+        // also update the order totals because the user can change the quantity of the order items on overlay page
+        $totals = $eventData['details']['totals'] ?? null;
+
+        if ($totals) {
+            $order->update([
+                'total_amount' => intval($totals['subtotal']),
+                'total_discount_amount' => intval($totals['discount'] ?? 0),
+                'total_amount_after_discount' => intval($totals['subtotal']) - intval($totals['discount'] ?? 0),
+            ]);
+        }
     }
 
     private function handleTransactionFailedOrPastDueForSubscription(string $subscriptionUuid): void

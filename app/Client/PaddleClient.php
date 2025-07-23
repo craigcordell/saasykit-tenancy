@@ -76,7 +76,7 @@ class PaddleClient
             ],
             'quantity' => [
                 'minimum' => 1,
-                'maximum' => $maxQuantity,
+                'maximum' => $maxQuantity == 0 ? 10000000 : $maxQuantity,
             ],
         ];
 
