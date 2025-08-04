@@ -6,6 +6,7 @@ use App\Constants\DiscountConstants;
 use App\Models\Discount;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -49,21 +50,38 @@ class DiscountResource extends Resource
                             ->required(),
                         Forms\Components\DateTimePicker::make('valid_until'),
                     ]),
-                    Forms\Components\Select::make('plans')
-                        ->multiple()
-                        ->relationship('plans', 'name', modifyQueryUsing: function (Builder $query) {
-                            return $query->select('plans.id', 'plans.name')->distinct();
-                        })
-                        ->preload()
-                        ->helperText(__('Select the plans that this discount will be applied to. If you leave empty, discount will be applied to all plans.')),
-                    Forms\Components\Select::make('oneTimeProducts')
-                        ->label(__('One-time purchase products'))
-                        ->multiple()
-                        ->relationship('oneTimeProducts', 'name', modifyQueryUsing: function (Builder $query) {
-                            return $query->select('one_time_products.id', 'one_time_products.name')->distinct();
-                        })
-                        ->preload()
-                        ->helperText(__('Select the one-time products that this discount will be applied to. If you leave empty, discount will be applied to all one-time products.')),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Toggle::make('is_enabled_for_all_plans')
+                            ->label(__('Enabled for all plans'))
+                            ->helperText(__('If enabled, this discount will be applied to all plans. If disabled, you can select specific plans.'))
+                            ->live()
+                            ->default(true),
+                        Forms\Components\Select::make('plans')
+                            ->multiple()
+                            ->disabled(function (Get $get) {
+                                return $get('is_enabled_for_all_plans') === true;
+                            })
+                            ->relationship('plans', 'name', modifyQueryUsing: function (Builder $query) {
+                                return $query->select('plans.id', 'plans.name')->distinct();
+                            })
+                            ->preload()
+                            ->helperText(__('Select the plans that this discount will be applied to.')),
+                        Forms\Components\Toggle::make('is_enabled_for_all_one_time_products')
+                            ->label(__('Enabled for all one-time products'))
+                            ->helperText(__('If enabled, this discount will be applied to all one-time products. If disabled, you can select specific one-time products.'))
+                            ->live(),
+                        Forms\Components\Select::make('oneTimeProducts')
+                            ->label(__('One-time purchase products'))
+                            ->multiple()
+                            ->relationship('oneTimeProducts', 'name', modifyQueryUsing: function (Builder $query) {
+                                return $query->select('one_time_products.id', 'one_time_products.name')->distinct();
+                            })
+                            ->disabled(function (Get $get) {
+                                return $get('is_enabled_for_all_one_time_products') === true;
+                            })
+                            ->preload()
+                            ->helperText(__('Select the one-time products that this discount will be applied to.')),
+                    ]),
                     //                    Forms\Components\Select::make('action_type')  // TODO: implement this in the future
                     //                        ->options(DiscountConstants::ACTION_TYPES)
                     //                        // change the default value to null

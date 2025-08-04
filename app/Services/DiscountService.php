@@ -25,13 +25,15 @@ class DiscountService
         }
 
         // plans check
-        if ($discountCode->discount->plans()->count() > 0) {
-            if (! $discountCode->discount->plans()->where('plan_id', $plan->id)->exists()) {
-                return false;
-            }
+        if ($discountCode->discount->is_enabled_for_all_plans) {
+            return true;
         }
 
-        return true;
+        if ($discountCode->discount->plans()->where('plan_id', $plan->id)->exists()) {
+            return true;
+        }
+
+        return false;
     }
 
     public function isCodeRedeemableForOneTimeProduct(string $code, ?User $user, OneTimeProduct $oneTimeProduct, string $actionType = DiscountConstants::ACTION_TYPE_ANY)
@@ -43,13 +45,15 @@ class DiscountService
         }
 
         // one-time products check
-        if ($discountCode->discount->oneTimeProducts()->count() > 0) {
-            if (! $discountCode->discount->oneTimeProducts()->where('one_time_product_id', $oneTimeProduct->id)->exists()) {
-                return false;
-            }
+        if ($discountCode->discount->is_enabled_for_all_one_time_products) {
+            return true;
         }
 
-        return true;
+        if ($discountCode->discount->oneTimeProducts()->where('one_time_product_id', $oneTimeProduct->id)->exists()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function isCodeRedeemable(?DiscountCode $discountCode, ?User $user, string $actionType = DiscountConstants::ACTION_TYPE_ANY)

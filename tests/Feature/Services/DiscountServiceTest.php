@@ -29,6 +29,13 @@ class DiscountServiceTest extends FeatureTest
             'redemptions' => 0,
         ]);
 
+        $plan = Plan::factory()->create([
+            'name' => 'Basic Plan',
+            'slug' => 'basic-plan-'.Str::random(10),
+        ]);
+
+        $discount->plans()->attach($plan);
+
         $code = Str::random(10);
         $discountCode = $discount->codes()->create([
             'code' => $code,
@@ -36,8 +43,40 @@ class DiscountServiceTest extends FeatureTest
 
         $user = User::factory()->create();
 
-        // find plan from database
-        $plan = Plan::take(1)->first();
+        $discountService = app()->make(DiscountService::class);
+
+        $this->assertTrue($discountService->isCodeRedeemableForPlan($code, $user, $plan));
+    }
+
+    public function test_is_code_redeemable_for_plan_when_enabled_for_all_plans()
+    {
+        // add a discount
+        $discount = Discount::create([
+            'name' => 'test',
+            'description' => 'test',
+            'type' => 'percentage',
+            'amount' => 10,
+            'is_active' => true,
+            'valid_until' => null,
+            'action_type' => null,
+            'max_redemptions' => -1,
+            'max_redemptions_per_user' => -1,
+            'is_recurring' => false,
+            'redemptions' => 0,
+            'is_enabled_for_all_plans' => true,
+        ]);
+
+        $plan = Plan::factory()->create([
+            'name' => 'Basic Plan',
+            'slug' => 'basic-plan-'.Str::random(10),
+        ]);
+
+        $code = Str::random(10);
+        $discountCode = $discount->codes()->create([
+            'code' => $code,
+        ]);
+
+        $user = User::factory()->create();
 
         $discountService = app()->make(DiscountService::class);
 
@@ -61,6 +100,10 @@ class DiscountServiceTest extends FeatureTest
             'redemptions' => 0,
         ]);
 
+        $oneTimeProduct = OneTimeProduct::factory()->create();
+
+        $discount->oneTimeProducts()->attach($oneTimeProduct);
+
         $code = Str::random(10);
         $discountCode = $discount->codes()->create([
             'code' => $code,
@@ -68,7 +111,37 @@ class DiscountServiceTest extends FeatureTest
 
         $user = User::factory()->create();
 
+        $discountService = app()->make(DiscountService::class);
+
+        $this->assertTrue($discountService->isCodeRedeemableForOneTimeProduct($code, $user, $oneTimeProduct));
+    }
+
+    public function test_is_code_redeemable_for_one_time_product_when_enabled_for_all_one_time_products()
+    {
+        // add a discount
+        $discount = Discount::create([
+            'name' => 'test',
+            'description' => 'test',
+            'type' => 'percentage',
+            'amount' => 10,
+            'is_active' => true,
+            'valid_until' => null,
+            'action_type' => null,
+            'max_redemptions' => -1,
+            'max_redemptions_per_user' => -1,
+            'is_recurring' => false,
+            'redemptions' => 0,
+            'is_enabled_for_all_one_time_products' => true,
+        ]);
+
         $oneTimeProduct = OneTimeProduct::factory()->create();
+
+        $code = Str::random(10);
+        $discountCode = $discount->codes()->create([
+            'code' => $code,
+        ]);
+
+        $user = User::factory()->create();
 
         $discountService = app()->make(DiscountService::class);
 
