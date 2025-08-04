@@ -25,6 +25,8 @@ class Discount extends Model
         'is_active',
         'duration_in_months',
         'maximum_recurring_intervals',
+        'is_enabled_for_all_plans',
+        'is_enabled_for_all_one_time_products',
     ];
 
     protected static function booted(): void
