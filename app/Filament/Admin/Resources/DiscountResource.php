@@ -54,8 +54,7 @@ class DiscountResource extends Resource
                         Forms\Components\Toggle::make('is_enabled_for_all_plans')
                             ->label(__('Enabled for all plans'))
                             ->helperText(__('If enabled, this discount will be applied to all plans. If disabled, you can select specific plans.'))
-                            ->live()
-                            ->default(true),
+                            ->live(),
                         Forms\Components\Select::make('plans')
                             ->multiple()
                             ->disabled(function (Get $get) {
