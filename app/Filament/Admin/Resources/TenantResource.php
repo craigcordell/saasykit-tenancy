@@ -28,10 +28,12 @@ class TenantResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
+                    ->label(__('Name'))
                     ->maxLength(255),
                 Forms\Components\Select::make('created_by')
                     ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(20)->pluck('name', 'id')->toArray())
                     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)
+                    ->label(__('Created By'))
                     ->default(auth()->id())
                     ->searchable(),
             ]);

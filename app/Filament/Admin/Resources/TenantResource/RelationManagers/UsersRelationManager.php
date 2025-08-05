@@ -32,8 +32,10 @@ class UsersRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name')),
                 Tables\Columns\SelectColumn::make('role')
+                    ->label(__('Role'))
                     ->getStateUsing(function (User $user, TenantPermissionService $tenantPermissionService) {
                         return $tenantPermissionService->getTenantUserRoles($this->ownerRecord, $user)[0] ?? null;
                     })

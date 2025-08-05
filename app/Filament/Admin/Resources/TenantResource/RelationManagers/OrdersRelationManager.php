@@ -29,6 +29,7 @@ class OrdersRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->label(__('Status'))
                     ->colors([
                         'success' => OrderStatus::SUCCESS->value,
                     ])
@@ -36,19 +37,27 @@ class OrdersRelationManager extends RelationManager
                         function (string $state, $record, OrderStatusMapper $mapper) {
                             return $mapper->mapForDisplay($state);
                         }),
-                Tables\Columns\TextColumn::make('total_amount')->formatStateUsing(function (string $state, $record) {
-                    return money($state, $record->currency->code);
-                }),
-                Tables\Columns\TextColumn::make('total_amount_after_discount')->formatStateUsing(function (string $state, $record) {
-                    return money($state, $record->currency->code);
-                }),
-                Tables\Columns\TextColumn::make('total_discount_amount')->formatStateUsing(function (string $state, $record) {
-                    return money($state, $record->currency->code);
-                }),
-                Tables\Columns\TextColumn::make('created_at')->label(__('Created At'))
+                Tables\Columns\TextColumn::make('total_amount')
+                    ->label(__('Total Amount'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        return money($state, $record->currency->code);
+                    }),
+                Tables\Columns\TextColumn::make('total_amount_after_discount')
+                    ->label(__('Total Amount After Discount'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        return money($state, $record->currency->code);
+                    }),
+                Tables\Columns\TextColumn::make('total_discount_amount')
+                    ->label(__('Total Discount Amount'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        return money($state, $record->currency->code);
+                    }),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')->label(__('Updated At'))
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
             ])
