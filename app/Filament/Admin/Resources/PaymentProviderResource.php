@@ -49,6 +49,7 @@ class PaymentProviderResource extends Resource
             ->reorderable('sort')
             ->columns([
                 Tables\Columns\TextColumn::make('icon')
+                    ->label(__('Icon'))
                     ->getStateUsing(function (PaymentProvider $record) {
                         return new HtmlString(
                             '<div class="flex gap-2">'.

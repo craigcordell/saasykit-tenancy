@@ -28,12 +28,15 @@ class OauthLoginProviderResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->disabled()
                             ->required()
+                            ->label(__('Name'))
                             ->maxLength(255),
                         Forms\Components\TextInput::make('provider_name')
                             ->required()
                             ->disabled()
+                            ->label(__('Provider Name'))
                             ->maxLength(255),
                         Forms\Components\Toggle::make('enabled')
+                            ->label(__('Enabled'))
                             ->required(),
                     ]),
             ]);
@@ -43,7 +46,8 @@ class OauthLoginProviderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label(__('Name'))
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->getStateUsing(function (OauthLoginProvider $record) {
                         return new HtmlString(
                             '<div class="flex gap-2">'.

@@ -28,9 +28,11 @@ class OneTimeProductResource extends Resource
             ->schema([
                 Forms\Components\Section::make([
                     Forms\Components\TextInput::make('name')
+                        ->label(__('Name'))
                         ->required()
                         ->maxLength(255),
                     Forms\Components\TextInput::make('slug')
+                        ->label(__('Slug'))
                         ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
                             if (empty($state)) {
                                 // add a random string if there is a product with the same slug
@@ -50,8 +52,10 @@ class OneTimeProductResource extends Resource
                         ->unique(ignoreRecord: true)
                         ->disabledOn('edit'),
                     Forms\Components\Textarea::make('description')
+                        ->label(__('Description'))
                         ->helperText(__('One line description of the product.')),
                     Forms\Components\TextInput::make('max_quantity')
+                        ->label(__('Max Quantity'))
                         ->type('number')
                         ->required()
                         ->default(1)
@@ -62,13 +66,15 @@ class OneTimeProductResource extends Resource
                         ->default(true)
                         ->label(__('Active')),
                     Forms\Components\KeyValue::make('metadata')
+                        ->label(__('Metadata'))
                         ->helperText(__('Add any additional data to this product. You can use this to store product features that could later be retrieved to serve your users.'))
                         ->keyLabel(__('Property name'))
                         ->valueLabel(__('Property value')),
                     Forms\Components\Repeater::make('features')
+                        ->label(__('Features'))
                         ->helperText(__('Add features that this product offers. These will be displayed on the checkout page.'))
                         ->schema([
-                            Forms\Components\TextInput::make('feature')->required(),
+                            Forms\Components\TextInput::make('feature')->required()->label(__('Feature')),
                         ]),
                 ]),
             ]);
@@ -79,9 +85,14 @@ class OneTimeProductResource extends Resource
         return $table
             ->description(__('A one-time purchase product is a non-recurring product that is purchased once for a certain price.'))
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('slug')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
+                    ->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('slug')
+                    ->label(__('Slug'))
+                    ->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format')),
             ])
             ->filters([

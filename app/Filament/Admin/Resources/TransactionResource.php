@@ -44,11 +44,14 @@ class TransactionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')->label(__('Tenant'))->searchable(),
-                Tables\Columns\TextColumn::make('amount')->formatStateUsing(function (string $state, $record) {
-                    return money($state, $record->currency->code);
-                }),
+                Tables\Columns\TextColumn::make('amount')
+                    ->label(__('Amount'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        return money($state, $record->currency->code);
+                    }),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->label(__('Status'))
                     ->color(fn (Transaction $record, TransactionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->formatStateUsing(function (string $state, $record, TransactionStatusMapper $mapper) {
                         return $mapper->mapForDisplay($state);
@@ -144,9 +147,11 @@ class TransactionResource extends Resource
                             ->icon('heroicon-s-currency-dollar')
                             ->schema([
                                 TextEntry::make('uuid')->copyable(),
-                                TextEntry::make('tenant')->getStateUsing(function (Transaction $record) {
-                                    return $record->tenant->name;
-                                })->url(fn (Transaction $record) => EditTenant::getUrl(['record' => $record->tenant])),
+                                TextEntry::make('tenant')
+                                    ->label(__('Tenant'))
+                                    ->getStateUsing(function (Transaction $record) {
+                                        return $record->tenant->name;
+                                    })->url(fn (Transaction $record) => EditTenant::getUrl(['record' => $record->tenant])),
                                 TextEntry::make('subscription_id')
                                     ->label(__('Subscription'))
                                     ->visible(fn (Transaction $record) => $record->subscription_id !== null)
@@ -155,6 +160,7 @@ class TransactionResource extends Resource
                                     })
                                     ->url(fn (Transaction $record) => $record->subscription ? ViewSubscription::getUrl(['record' => $record->subscription]) : '-')->badge()->color('info'),
                                 TextEntry::make('status')
+                                    ->label(__('Status'))
                                     ->colors([
                                         'success' => TransactionStatus::SUCCESS->value,
                                         'danger' => TransactionStatus::FAILED->value,
@@ -163,24 +169,44 @@ class TransactionResource extends Resource
                                         return $mapper->mapForDisplay($state);
                                     })
                                     ->badge(),
-                                TextEntry::make('payment_provider_transaction_id')->copyable(),
-                                TextEntry::make('error_reason')->visible(fn (Transaction $record) => $record->error_reason !== null),
-                                TextEntry::make('payment_provider_id')->label(__('Payment Provider'))->getStateUsing(fn (Transaction $record) => $record->paymentProvider->name),
-                                TextEntry::make('payment_provider_status')->badge()->color('info'),
-                                TextEntry::make('amount')->formatStateUsing(function (string $state, $record) {
-                                    return money($state, $record->currency->code);
-                                }),
-                                TextEntry::make('total_discount')->formatStateUsing(function (string $state, $record) {
-                                    return money($state, $record->currency->code);
-                                }),
-                                TextEntry::make('total_fees')->formatStateUsing(function (string $state, $record) {
-                                    return money($state, $record->currency->code);
-                                }),
-                                TextEntry::make('total_tax')->formatStateUsing(function (string $state, $record) {
-                                    return money($state, $record->currency->code);
-                                }),
-                                TextEntry::make('created_at')->dateTime(config('app.datetime_format')),
-                                TextEntry::make('updated_at')->dateTime(config('app.datetime_format')),
+                                TextEntry::make('payment_provider_transaction_id')
+                                    ->label(__('Payment Provider Transaction ID'))
+                                    ->copyable(),
+                                TextEntry::make('error_reason')
+                                    ->label(__('Error Reason'))
+                                    ->visible(fn (Transaction $record) => $record->error_reason !== null),
+                                TextEntry::make('payment_provider_id')
+                                    ->label(__('Payment Provider'))
+                                    ->getStateUsing(fn (Transaction $record) => $record->paymentProvider->name),
+                                TextEntry::make('payment_provider_status')
+                                    ->label(__('Payment Provider Status'))
+                                    ->badge()->color('info'),
+                                TextEntry::make('amount')
+                                    ->label(__('Amount'))
+                                    ->formatStateUsing(function (string $state, $record) {
+                                        return money($state, $record->currency->code);
+                                    }),
+                                TextEntry::make('total_discount')
+                                    ->label(__('Total Discount'))
+                                    ->formatStateUsing(function (string $state, $record) {
+                                        return money($state, $record->currency->code);
+                                    }),
+                                TextEntry::make('total_fees')
+                                    ->label(__('Total Fees'))
+                                    ->formatStateUsing(function (string $state, $record) {
+                                        return money($state, $record->currency->code);
+                                    }),
+                                TextEntry::make('total_tax')
+                                    ->label(__('Total Tax'))
+                                    ->formatStateUsing(function (string $state, $record) {
+                                        return money($state, $record->currency->code);
+                                    }),
+                                TextEntry::make('created_at')
+                                    ->label(__('Created At'))
+                                    ->dateTime(config('app.datetime_format')),
+                                TextEntry::make('updated_at')
+                                    ->label(__('Updated At'))
+                                    ->dateTime(config('app.datetime_format')),
 
                             ])
                             ->columns([

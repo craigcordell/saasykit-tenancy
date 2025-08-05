@@ -50,21 +50,28 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('tenant.name')->label(__('Tenant'))->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->label(__('Status'))
                     ->color(fn (Order $record, OrderStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->formatStateUsing(
                         function (string $state, $record, OrderStatusMapper $mapper) {
                             return $mapper->mapForDisplay($state);
                         })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('total_amount')->formatStateUsing(function (string $state, $record) {
-                    return money($state, $record->currency->code);
-                }),
-                Tables\Columns\TextColumn::make('total_amount_after_discount')->formatStateUsing(function (string $state, $record) {
-                    return money($state, $record->currency->code);
-                }),
-                Tables\Columns\TextColumn::make('total_discount_amount')->formatStateUsing(function (string $state, $record) {
-                    return money($state, $record->currency->code);
-                }),
+                Tables\Columns\TextColumn::make('total_amount')
+                    ->label(__('Total Amount'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        return money($state, $record->currency->code);
+                    }),
+                Tables\Columns\TextColumn::make('total_amount_after_discount')
+                    ->label(__('Total Amount After Discount'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        return money($state, $record->currency->code);
+                    }),
+                Tables\Columns\TextColumn::make('total_discount_amount')
+                    ->label(__('Total Discount Amount'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        return money($state, $record->currency->code);
+                    }),
                 Tables\Columns\TextColumn::make('payment_provider_id')
                     ->formatStateUsing(function (string $state, $record) {
                         return $record->paymentProvider->name;
@@ -76,7 +83,8 @@ class OrderResource extends Resource
                     ->toggleable()
                     ->toggledHiddenByDefault()
                     ->boolean(),
-                Tables\Columns\TextColumn::make('updated_at')->label(__('Updated At'))
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
             ])
@@ -211,17 +219,24 @@ class OrderResource extends Resource
                                                 return $record->paymentProvider->name;
                                             })
                                             ->label(__('Payment Provider')),
-                                        TextEntry::make('total_amount')->formatStateUsing(function (string $state, $record) {
-                                            return money($state, $record->currency->code);
-                                        }),
-                                        TextEntry::make('total_amount_after_discount')->formatStateUsing(function (string $state, $record) {
-                                            return money($state, $record->currency->code);
-                                        }),
-                                        TextEntry::make('total_discount_amount')->formatStateUsing(function (string $state, $record) {
-                                            return money($state, $record->currency->code);
-                                        }),
+                                        TextEntry::make('total_amount')
+                                            ->label(__('Total Amount'))
+                                            ->formatStateUsing(function (string $state, $record) {
+                                                return money($state, $record->currency->code);
+                                            }),
+                                        TextEntry::make('total_amount_after_discount')
+                                            ->label(__('Total Amount After Discount'))
+                                            ->formatStateUsing(function (string $state, $record) {
+                                                return money($state, $record->currency->code);
+                                            }),
+                                        TextEntry::make('total_discount_amount')
+                                            ->label(__('Total Discount Amount'))
+                                            ->formatStateUsing(function (string $state, $record) {
+                                                return money($state, $record->currency->code);
+                                            }),
                                         TextEntry::make('status')
                                             ->badge()
+                                            ->label(__('Status'))
                                             ->color(fn (Order $record, OrderStatusMapper $mapper): string => $mapper->mapColor($record->status))
                                             ->formatStateUsing(
                                                 function (string $state, $record, OrderStatusMapper $mapper) {
@@ -246,8 +261,8 @@ class OrderResource extends Resource
                                             ->label(__('Comments'))
                                             ->html()
                                             ->visible(fn (Order $record): bool => $record->comments !== null && $record->comments !== ''),
-                                        TextEntry::make('created_at')->dateTime(config('app.datetime_format')),
-                                        TextEntry::make('updated_at')->dateTime(config('app.datetime_format')),
+                                        TextEntry::make('created_at')->dateTime(config('app.datetime_format'))->label(__('Created At')),
+                                        TextEntry::make('updated_at')->dateTime(config('app.datetime_format'))->label(__('Updated At')),
                                     ])->columns(3),
                                 Section::make(__('Order Items'))
                                     ->description(__('View details about order items.'))

@@ -29,8 +29,10 @@ class BlogPostCategoryResource extends Resource
                 Forms\Components\Section::make([
                     Forms\Components\TextInput::make('name')
                         ->required()
+                        ->label(__('Name'))
                         ->maxLength(255),
                     Forms\Components\TextInput::make('slug')
+                        ->label(__('Slug'))
                         ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
                             if (empty($state)) {
                                 $name = $get('name');
@@ -51,8 +53,10 @@ class BlogPostCategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -44,21 +44,25 @@ class SubscriptionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('plan.name')->label(__('Plan')),
-                Tables\Columns\TextColumn::make('price')->formatStateUsing(function (string $state, $record) {
-                    $interval = $record->interval->name;
-                    if ($record->interval_count > 1) {
-                        $interval = $record->interval_count.' '.__(str()->of($record->interval->name)->plural()->toString());
-                    }
+                Tables\Columns\TextColumn::make('plan.name')
+                    ->label(__('Plan')),
+                Tables\Columns\TextColumn::make('price')
+                    ->label(__('Price'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        $interval = $record->interval->name;
+                        if ($record->interval_count > 1) {
+                            $interval = $record->interval_count.' '.__(str()->of($record->interval->name)->plural()->toString());
+                        }
 
-                    if ($record->plan->type === PlanType::SEAT_BASED->value) {
-                        $interval .= ' / '.__('seat');
-                    }
+                        if ($record->plan->type === PlanType::SEAT_BASED->value) {
+                            $interval .= ' / '.__('seat');
+                        }
 
-                    return money($state, $record->currency->code).' / '.$interval;
-                }),
+                        return money($state, $record->currency->code).' / '.$interval;
+                    }),
                 Tables\Columns\TextColumn::make('ends_at')->dateTime(config('app.datetime_format'))->label(__('Next Renewal')),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('Status'))
                     ->color(fn (Subscription $record, SubscriptionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->badge()
                     ->formatStateUsing(fn (string $state, SubscriptionStatusMapper $mapper): string => $mapper->mapForDisplay($state)),
@@ -177,29 +181,34 @@ class SubscriptionResource extends Resource
                     ->description(__('View details about your subscription.'))
                     ->schema([
                         ViewEntry::make('status')
+                            ->label(__('Status'))
                             ->visible(fn (Subscription $record): bool => $record->status === SubscriptionStatus::PAST_DUE->value)
                             ->view('filament.common.infolists.entries.warning', [
                                 'message' => __('Your subscription is past due. Please update your payment details.'),
                             ]),
-                        TextEntry::make('plan.name'),
-                        TextEntry::make('price')->formatStateUsing(function (string $state, $record) {
-                            $interval = $record->interval->name;
-                            if ($record->interval_count > 1) {
-                                $interval = $record->interval_count.' '.__(str()->of($record->interval->name)->plural()->toString());
-                            }
+                        TextEntry::make('plan.name')->label(__('Plan')),
+                        TextEntry::make('price')
+                            ->label(__('Price'))
+                            ->formatStateUsing(function (string $state, $record) {
+                                $interval = $record->interval->name;
+                                if ($record->interval_count > 1) {
+                                    $interval = $record->interval_count.' '.__(str()->of($record->interval->name)->plural()->toString());
+                                }
 
-                            if ($record->plan->type === PlanType::SEAT_BASED->value) {
-                                $interval .= ' / '.__('seat');
-                            }
+                                if ($record->plan->type === PlanType::SEAT_BASED->value) {
+                                    $interval .= ' / '.__('seat');
+                                }
 
-                            return money($state, $record->currency->code).' / '.$interval;
-                        }),
+                                return money($state, $record->currency->code).' / '.$interval;
+                            }),
                         TextEntry::make('price_per_unit')
+                            ->label(__('Price per Unit'))
                             ->visible(fn (Subscription $record): bool => $record->price_type === PlanPriceType::USAGE_BASED_PER_UNIT->value && $record->price_per_unit !== null)
                             ->formatStateUsing(function (string $state, $record) {
                                 return money($state, $record->currency->code).' / '.__($record->plan->meter->name);
                             }),
                         TextEntry::make('price_tiers')
+                            ->label(__('Price Tiers'))
                             ->visible(fn (Subscription $record): bool => in_array($record->price_type, [PlanPriceType::USAGE_BASED_TIERED_VOLUME->value, PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value]) && $record->price_tiers !== null)
                             ->getStateUsing(function (Subscription $record) {
                                 $start = 0;
@@ -222,8 +231,11 @@ class SubscriptionResource extends Resource
 
                                 return new HtmlString($output);
                             }),
-                        TextEntry::make('ends_at')->dateTime(config('app.datetime_format'))->label(__('Next Renewal'))->visible(fn (Subscription $record): bool => ! $record->is_canceled_at_end_of_cycle),
+                        TextEntry::make('ends_at')
+                            ->dateTime(config('app.datetime_format'))
+                            ->label(__('Next Renewal'))->visible(fn (Subscription $record): bool => ! $record->is_canceled_at_end_of_cycle),
                         TextEntry::make('status')
+                            ->label(__('Status'))
                             ->color(fn (Subscription $record, SubscriptionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                             ->badge()
                             ->formatStateUsing(fn (string $state, SubscriptionStatusMapper $mapper): string => $mapper->mapForDisplay($state)),
@@ -269,5 +281,10 @@ class SubscriptionResource extends Resource
     public static function isDiscovered(): bool
     {
         return app()->make(ConfigService::class)->get('app.customer_dashboard.show_subscriptions', true);
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Subscriptions');
     }
 }

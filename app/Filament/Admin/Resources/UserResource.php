@@ -32,19 +32,23 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\Section::make()->schema([
                     Forms\Components\TextInput::make('name')
+                        ->label(__('Name'))
                         ->required()
                         ->maxLength(255),
                     Forms\Components\TextInput::make('public_name')
                         ->required()
+                        ->label(__('Public Name'))
                         ->nullable()
                         ->helperText('This is the name that will be displayed publicly (for example in blog posts).')
                         ->maxLength(255),
                     Forms\Components\TextInput::make('email')
                         ->email()
+                        ->label(__('Email'))
                         ->required()
                         ->maxLength(255),
                     Forms\Components\TextInput::make('password')
                         ->password()
+                        ->label(__('Password'))
                         ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                         ->dehydrated(fn ($state) => filled($state))
                         ->required(fn (string $context): bool => $context === 'create')
@@ -52,9 +56,11 @@ class UserResource extends Resource
                         ->maxLength(255),
                     Forms\Components\RichEditor::make('notes')
                         ->nullable()
+                        ->label(__('Notes'))
                         ->helperText('Any notes you want to keep about this user.'),
                     Forms\Components\Select::make('roles')
                         ->multiple()
+                        ->label(__('Roles'))
                         ->relationship('roles', 'name', modifyQueryUsing: function ($query) {
                             return $query->where('is_tenant_role', false);
                         })
@@ -78,18 +84,25 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
+                    ->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label(__('Email'))
+                    ->searchable()->sortable(),
                 Tables\Columns\IconColumn::make('email_verified_at')
                     ->label(__('Email Verified'))
                     ->getStateUsing(fn (User $user) => $user->email_verified_at ? true : false)
                     ->boolean(),
                 Tables\Columns\TextColumn::make('last_seen_at')
+                    ->label(__('Last Seen'))
                     ->sortable()
                     ->dateTime(config('app.datetime_format')),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format')),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->sortable()
                     ->dateTime(config('app.datetime_format')),
             ])

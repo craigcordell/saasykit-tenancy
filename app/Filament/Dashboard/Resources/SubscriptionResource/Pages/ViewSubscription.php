@@ -7,6 +7,8 @@ use App\Filament\Dashboard\Resources\SubscriptionResource\ActionHandlers\Discard
 use App\Models\Subscription;
 use App\Services\PaymentProviders\PaymentService;
 use App\Services\SubscriptionService;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewSubscription extends ViewRecord
@@ -16,8 +18,8 @@ class ViewSubscription extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\ActionGroup::make([
-                \Filament\Actions\Action::make('change-plan')
+            ActionGroup::make([
+                Action::make('change-plan')
                     ->label(__('Change Plan'))
                     ->color('primary')
                     ->icon('heroicon-o-rocket-launch')
@@ -25,7 +27,7 @@ class ViewSubscription extends ViewRecord
                         return $subscriptionService->canChangeSubscriptionPlan($record);
                     })
                     ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('change-plan', ['record' => $record->uuid])),
-                \Filament\Actions\Action::make('update-payment-details')
+                Action::make('update-payment-details')
                     ->label(__('Update Payment Details'))
                     ->color('gray')
                     ->icon('heroicon-s-credit-card')
@@ -35,7 +37,7 @@ class ViewSubscription extends ViewRecord
 
                         redirect()->to($paymentProvider->getChangePaymentMethodLink($record));
                     }),
-                \Filament\Actions\Action::make('add-discount')
+                Action::make('add-discount')
                     ->label(__('Add Discount'))
                     ->color('gray')
                     ->icon('heroicon-s-tag')
@@ -43,13 +45,13 @@ class ViewSubscription extends ViewRecord
                         return $subscriptionService->canAddDiscount($record);
                     })
                     ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('add-discount', ['record' => $record->uuid])),
-                \Filament\Actions\Action::make('cancel')
+                Action::make('cancel')
                     ->color('gray')
                     ->label(__('Cancel Subscription'))
                     ->icon('heroicon-m-x-circle')
                     ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('cancel', ['record' => $record->uuid]))
                     ->visible(fn (Subscription $record, SubscriptionService $subscriptionService): bool => $subscriptionService->canCancelSubscription($record)),
-                \Filament\Actions\Action::make('discard-cancellation')
+                Action::make('discard-cancellation')
                     ->color('gray')
                     ->label(__('Discard Cancellation'))
                     ->icon('heroicon-m-x-circle')
