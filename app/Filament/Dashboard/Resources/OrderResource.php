@@ -45,6 +45,7 @@ class OrderResource extends Resource
                     return money($state, $record->currency->code);
                 })->label(__('Total Amount')),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('Status'))
                     ->color(fn (Order $record, OrderStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->badge()
                     ->formatStateUsing(
@@ -80,35 +81,42 @@ class OrderResource extends Resource
                                 Section::make(__('Order Details'))
                                     ->description(__('View details about this order.'))
                                     ->schema([
-                                        TextEntry::make('uuid')->copyable(),
-                                        TextEntry::make('total_amount')->formatStateUsing(function (string $state, $record) {
-                                            if ($record->transactions()->count() > 0) {
-                                                $transaction = $record->transactions()->first();
+                                        TextEntry::make('uuid')->label('ID')->copyable(),
+                                        TextEntry::make('total_amount')
+                                            ->label(__('Total Amount'))
+                                            ->formatStateUsing(function (string $state, $record) {
+                                                if ($record->transactions()->count() > 0) {
+                                                    $transaction = $record->transactions()->first();
 
-                                                return money($transaction->amount, $transaction->currency->code);
-                                            }
+                                                    return money($transaction->amount, $transaction->currency->code);
+                                                }
 
-                                            return money($state, $record->currency->code);
-                                        }),
-                                        TextEntry::make('total_discount_amount')->formatStateUsing(function (string $state, $record) {
-                                            if ($record->transactions()->count() > 0) {
-                                                $transaction = $record->transactions()->first();
+                                                return money($state, $record->currency->code);
+                                            }),
+                                        TextEntry::make('total_discount_amount')
+                                            ->label(__('Total Discount Amount'))
+                                            ->formatStateUsing(function (string $state, $record) {
+                                                if ($record->transactions()->count() > 0) {
+                                                    $transaction = $record->transactions()->first();
 
-                                                return money($transaction->total_discount, $transaction->currency->code);
-                                            }
+                                                    return money($transaction->total_discount, $transaction->currency->code);
+                                                }
 
-                                            return money($state, $record->currency->code);
-                                        })->visible(fn (Order $record): bool => $record->discounts()->count() > 0),
-                                        TextEntry::make('total_tax_amount')->getStateUsing(function ($record) {
-                                            if ($record->transactions()->count() > 0) {
-                                                $transaction = $record->transactions()->first();
+                                                return money($state, $record->currency->code);
+                                            })->visible(fn (Order $record): bool => $record->discounts()->count() > 0),
+                                        TextEntry::make('total_tax_amount')
+                                            ->label(__('Total Tax Amount'))
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->transactions()->count() > 0) {
+                                                    $transaction = $record->transactions()->first();
 
-                                                return money($transaction->total_tax, $transaction->currency->code);
-                                            }
+                                                    return money($transaction->total_tax, $transaction->currency->code);
+                                                }
 
-                                            return money(0, $record->currency->code);
-                                        }),
+                                                return money(0, $record->currency->code);
+                                            }),
                                         TextEntry::make('status')
+                                            ->label(__('Status'))
                                             ->color(fn (Order $record, OrderStatusMapper $mapper): string => $mapper->mapColor($record->status))
                                             ->formatStateUsing(fn (string $state, OrderStatusMapper $mapper): string => $mapper->mapForDisplay($state))
                                             ->badge(),
@@ -121,7 +129,9 @@ class OrderResource extends Resource
 
                                                 return money($state, $record->discounts[0]->code);
                                             })->label(__('Discount Amount')),
-                                        TextEntry::make('updated_at')->dateTime(config('app.datetime_format')),
+                                        TextEntry::make('updated_at')
+                                            ->label(__('Updated At'))
+                                            ->dateTime(config('app.datetime_format')),
                                     ])->columns(3),
                                 Section::make(__('Order Items'))
                                     ->description(__('View details about order items.'))
@@ -195,5 +205,10 @@ class OrderResource extends Resource
     public static function isDiscovered(): bool
     {
         return app()->make(ConfigService::class)->get('app.customer_dashboard.show_orders', true);
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Orders');
     }
 }

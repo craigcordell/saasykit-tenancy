@@ -34,6 +34,7 @@ class RoleResource extends Resource
                 Forms\Components\Section::make()->schema([
                     Forms\Components\TextInput::make('name')
                         ->required()
+                        ->label(__('Name'))
                         ->helperText(__('The name of the role.'))
                         ->maxLength(255),
                     Forms\Components\Select::make('permissions')
@@ -60,6 +61,7 @@ class RoleResource extends Resource
                         ])
                         ->preload()
                         ->multiple()
+                        ->label(__('Permissions'))
                         ->helperText(__('Choose the permissions for this role.'))
                         ->placeholder(__('Select permissions...')),
                 ]),
@@ -71,10 +73,14 @@ class RoleResource extends Resource
         return $table
             ->description(__('Manage and create custom roles for your team.'))
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
+                    ->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))->sortable(),
             ])
             ->filters([

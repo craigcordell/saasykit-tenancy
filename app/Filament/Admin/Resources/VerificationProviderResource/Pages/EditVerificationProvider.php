@@ -29,6 +29,7 @@ class EditVerificationProvider extends EditRecord
                     $record->slug.'-settings'
                 )),
             \Filament\Actions\Action::make('send-test-sms')
+                ->label(__('Send Test SMS'))
                 ->color('gray')
                 ->form([
                     TextInput::make('phone')->required(),

@@ -34,9 +34,11 @@ class PlanResource extends Resource
                 Forms\Components\Section::make([
                     Forms\Components\TextInput::make('name')
                         ->required()
+                        ->label(__('Name'))
                         ->maxLength(255),
                     Forms\Components\TextInput::make('slug')
                         ->nullable()
+                        ->label(__('Slug'))
                         ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
                             if (empty($state)) {
                                 $product = Product::find($get('product_id'));
@@ -62,6 +64,7 @@ class PlanResource extends Resource
                         ->unique(ignoreRecord: true)
                         ->disabledOn('edit'),
                     Forms\Components\Radio::make('type')
+                        ->label(__('Type'))
                         ->helperText(
                             new HtmlString(
                                 __('Flat Rate: Fixed price per billing cycle. Seat Based: Charge per seat/user for each billing cycle. Usage Based: Price per unit with optional tiers.').'<br><strong>'.__('Important').'</strong>: '.__('Usage-based pricing is not supported for Paddle.')
@@ -84,6 +87,7 @@ class PlanResource extends Resource
                         ->minValue(0)
                         ->required(),
                     Forms\Components\Select::make('meter_id')
+                        ->label(__('Meter'))
                         ->relationship('meter', 'name')
                         ->searchable()
                         ->preload()
@@ -102,16 +106,19 @@ class PlanResource extends Resource
                     Forms\Components\Select::make('product_id')
                         // only products with is_default = false can be selected
                         ->relationship('product', 'name', modifyQueryUsing: fn (Builder $query) => $query->where('is_default', false))
+                        ->label(__('Product'))
                         ->required()
                         ->preload(),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('interval_count')
+                            ->label(__('Interval Count'))
                             ->required()
                             ->integer()
                             ->minValue(1)
                             ->default(1)
                             ->helperText(__('The number of intervals (weeks, months, etc) between each billing cycle.')),
                         Forms\Components\Select::make('interval_id')
+                            ->label(__('Interval'))
                             ->relationship('interval', 'name')
                             ->options(function () {
                                 return Interval::all()->mapWithKeys(fn ($interval) => [$interval->id => __($interval->name)]);
@@ -124,6 +131,7 @@ class PlanResource extends Resource
                     ),
                     Forms\Components\Toggle::make('has_trial')
                         ->reactive()
+                        ->label(__('Has Trial'))
                         ->requiredWith('trial_interval_id')
                         ->afterStateUpdated(
                             fn ($state, callable $set) => $state ? $set('trial_interval_id', null) : $set('trial_interval_id', 'hidden')
@@ -135,6 +143,7 @@ class PlanResource extends Resource
                         Forms\Components\TextInput::make('trial_interval_count')
                             ->required()
                             ->integer()
+                            ->label(__('Trial Interval Count'))
                             ->minValue(1)
                             ->required(
                                 fn (\Filament\Forms\Get $get): bool => $get('has_trial') === true
@@ -144,6 +153,7 @@ class PlanResource extends Resource
                             ),
                         Forms\Components\Select::make('trial_interval_id')
                             ->relationship('trialInterval', 'name')
+                            ->label(__('Trial Interval'))
                             ->options(function () {
                                 return Interval::all()->mapWithKeys(fn ($interval) => [$interval->id => __($interval->name)]);
                             })
@@ -159,6 +169,7 @@ class PlanResource extends Resource
                         fn (\Filament\Forms\Get $get): bool => $get('is_default') === true
                     ),
                     Forms\Components\Toggle::make('is_active')
+                        ->label(__('Is Active'))
                         ->default(true)
                         ->required(),
                     Forms\Components\RichEditor::make('description'),
@@ -172,8 +183,8 @@ class PlanResource extends Resource
             ->heading(__('Plans are the different tiers of your product that you offer to your customers.'))
             ->description(__('For example: if you have Starter, Pro and Premium products, you would create a monthly and yearly plans for each of those to offer them in different intervals.'))
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('slug')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable()->label(__('Name')),
+                Tables\Columns\TextColumn::make('slug')->searchable()->sortable()->label(__('Slug')),
                 Tables\Columns\TextColumn::make('product.name')
                     ->label(__('Product')),
                 Tables\Columns\TextColumn::make('interval')->formatStateUsing(function (string $state, $record) {
@@ -190,12 +201,14 @@ class PlanResource extends Resource
                     return '-';
                 })->label(__('Trial')),
                 Tables\Columns\IconColumn::make('is_active')
+                    ->label(__('Active'))
                     ->boolean(),
                 Tables\Columns\IconColumn::make('prices_exists')
                     ->exists('prices')
                     ->label(__('Has Prices'))
                     ->boolean(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime(),
             ])
             ->filters([

@@ -29,8 +29,10 @@ class ProductResource extends Resource
                 Forms\Components\Section::make([
                     Forms\Components\TextInput::make('name')
                         ->required()
+                        ->label(__('Name'))
                         ->maxLength(255),
                     Forms\Components\TextInput::make('slug')
+                        ->label(__('Slug'))
                         ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
                             if (empty($state)) {
                                 // add a random string if there is a product with the same slug
@@ -50,6 +52,7 @@ class ProductResource extends Resource
                         ->unique(ignoreRecord: true)
                         ->disabledOn('edit'),
                     Forms\Components\Textarea::make('description')
+                        ->label(__('Description'))
                         ->helperText(__('One line description of the product.')),
                     Forms\Components\Toggle::make('is_popular')
                         ->label(__('Popular product'))
@@ -63,13 +66,15 @@ class ProductResource extends Resource
                         ->default(false)
                         ->helperText(__('A default product is a kind of a hidden product that allows you to set the features (and metadata) for users that have no active plan. Add a default product if you want to offer a free tier to your users. You can only have 1 default product and it cannot have any plans.')),
                     Forms\Components\KeyValue::make('metadata')
+                        ->label(__('Metadata'))
                         ->helperText(__('Add any additional data to this product. You can use this to store product features that could later be retrieved to serve your users.'))
                         ->keyLabel(__('Property name'))
                         ->valueLabel(__('Property value')),
                     Forms\Components\Repeater::make('features')
+                        ->label(__('Features'))
                         ->helperText(__('Add features that this plan offers. These will be displayed on the pricing page and on the checkout page.'))
                         ->schema([
-                            Forms\Components\TextInput::make('feature')->required(),
+                            Forms\Components\TextInput::make('feature')->required()->label(__('Feature')),
                         ]),
                 ]),
             ]);
@@ -81,11 +86,12 @@ class ProductResource extends Resource
             ->heading(__('A product is bundle of features that you offer to your customers.'))
             ->description(__('If you want to provide a Starter, Pro and Premium offerings to your customers, create a product for each of them.'))
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('slug')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable()->label(__('Name')),
+                Tables\Columns\TextColumn::make('slug')->searchable()->sortable()->label(__('Slug')),
                 Tables\Columns\IconColumn::make('is_popular')->label(__('Popular'))->boolean(),
                 Tables\Columns\IconColumn::make('is_default')->label(__('Default'))->boolean(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format')),
             ])
             ->filters([

@@ -33,6 +33,7 @@ class InvitationResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('email')
+                    ->label(__('Email'))
                     ->email()
                     ->required()
                     ->helperText(__('Enter the email address of the person you want to invite.'))
@@ -66,6 +67,7 @@ class InvitationResource extends Resource
                         return $tenantPermissionService->getAllAvailableTenantRolesForDisplay(Filament::getTenant());
                     })
                     ->default(TenancyPermissionConstants::ROLE_USER)
+                    ->label(__('Role'))
                     ->required()
                     ->helperText(__('Choose the role for this user.')),
             ]);
@@ -85,19 +87,23 @@ class InvitationResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('Status'))
                     ->badge()
                     ->formatStateUsing(function ($state, InvitationStatusMapper $invitationStatusMapper) {
                         return $invitationStatusMapper->mapForDisplay($state);
                     }),
                 Tables\Columns\TextColumn::make('role')
+                    ->label(__('Role'))
                     ->formatStateUsing(function ($state) {
                         return Str::of($state)->title();
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expires_at')
+                    ->label(__('Expires At'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

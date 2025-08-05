@@ -27,6 +27,7 @@ class VerificationProviderResource extends Resource
             ->schema([
                 Forms\Components\Section::make()->schema([
                     Forms\Components\TextInput::make('name')
+                        ->label(__('Name'))
                         ->required()
                         ->maxLength(255),
                 ]),
@@ -38,6 +39,7 @@ class VerificationProviderResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('icon')
+                    ->label(__('Icon'))
                     ->getStateUsing(function (VerificationProvider $record) {
                         return new HtmlString(
                             '<div class="flex gap-2">'.
@@ -46,14 +48,18 @@ class VerificationProviderResource extends Resource
                         );
                     }),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label(__('Slug'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

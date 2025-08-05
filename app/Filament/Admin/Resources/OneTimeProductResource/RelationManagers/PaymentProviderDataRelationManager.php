@@ -28,7 +28,8 @@ class PaymentProviderDataRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('payment_provider_id')->label('Payment Provider')
+                Forms\Components\Select::make('payment_provider_id')
+                    ->label(__('Payment Provider'))
                     ->options(
                         \App\Models\PaymentProvider::all()
                             ->mapWithKeys(function ($paymentProvider) {
@@ -43,7 +44,7 @@ class PaymentProviderDataRelationManager extends RelationManager
                     ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('payment_provider_product_id')
-                    ->label('Payment Provider Product/Variant ID')
+                    ->label(__('Payment Provider Product/Variant ID'))
                     ->helperText('For Lemon Squeezy, this should be equal to the variant ID.')
                     ->required()
                     ->maxLength(255),
@@ -97,10 +98,13 @@ class PaymentProviderDataRelationManager extends RelationManager
             ->description(new HtmlString('⚠️ Advanced settings, these records are created automatically when a product is created. You <b>SHOULD NOT</b> need to create or edit these records manually unless you use "Lemon Squeezy" as your payment provider because it does not support product creation via the API.'))
             ->recordTitleAttribute('Payment Provider Product/Variant ID')
             ->columns([
-                Tables\Columns\TextColumn::make('payment_provider_id')->label('Payment Provider')->formatStateUsing(function ($record) {
-                    return $record->paymentProvider->name;
-                }),
-                Tables\Columns\TextColumn::make('payment_provider_product_id')->label('Payment Provider Product/Variant ID'),
+                Tables\Columns\TextColumn::make('payment_provider_id')
+                    ->label(__('Payment Provider'))
+                    ->formatStateUsing(function ($record) {
+                        return $record->paymentProvider->name;
+                    }),
+                Tables\Columns\TextColumn::make('payment_provider_product_id')
+                    ->label(__('Payment Provider Product/Variant ID')),
             ])
             ->filters([
                 //

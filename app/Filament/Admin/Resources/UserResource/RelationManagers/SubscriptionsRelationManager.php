@@ -27,10 +27,13 @@ class SubscriptionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('user_id')
             ->columns([
-                Tables\Columns\TextColumn::make('plan.name')->label(__('Plan'))->searchable(),
-                Tables\Columns\TextColumn::make('price')->formatStateUsing(function (string $state, $record) {
-                    return money($state, $record->currency->code).' / '.$record->interval->name;
-                }),
+                Tables\Columns\TextColumn::make('plan.name')
+                    ->label(__('Plan'))->searchable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->label(__('Price'))
+                    ->formatStateUsing(function (string $state, $record) {
+                        return money($state, $record->currency->code).' / '.$record->interval->name;
+                    }),
                 Tables\Columns\TextColumn::make('payment_provider_id')
                     ->formatStateUsing(function (string $state, $record) {
                         return $record->paymentProvider->name;
@@ -39,6 +42,7 @@ class SubscriptionsRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->label(__('Status'))
                     ->colors([
                         'success' => SubscriptionStatus::ACTIVE->value,
                     ])

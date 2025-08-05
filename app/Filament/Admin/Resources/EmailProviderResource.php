@@ -28,10 +28,12 @@ class EmailProviderResource extends Resource
                 Forms\Components\Section::make()->schema([
                     Forms\Components\TextInput::make('name')
                         ->required()
+                        ->label(__('Name'))
                         ->maxLength(255),
                     Forms\Components\TextInput::make('slug')
                         ->required()
                         ->readOnly()
+                        ->label(__('Slug'))
                         ->maxLength(255),
                 ]),
             ]);
@@ -42,6 +44,7 @@ class EmailProviderResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->getStateUsing(function (EmailProvider $record) {
                         return new HtmlString(
                             '<div class="flex gap-2">'.
@@ -51,6 +54,7 @@ class EmailProviderResource extends Resource
                         );
                     }),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label(__('Slug'))
                     ->searchable(),
             ])
             ->filters([

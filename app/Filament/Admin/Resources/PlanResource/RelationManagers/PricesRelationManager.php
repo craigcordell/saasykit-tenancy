@@ -38,6 +38,7 @@ class PricesRelationManager extends RelationManager
                 Forms\Components\Section::make([
                     Forms\Components\Radio::make('type')
                         ->helperText(__('Pick the price type for this plan.'))
+                        ->label(__('Type'))
                         ->options(function () {
                             return PlanPriceMapper::getPlanPriceTypes($this->ownerRecord->type);
                         })
@@ -90,12 +91,14 @@ class PricesRelationManager extends RelationManager
                         ->required()
                         ->type('number')
                         ->gte(0)
+                        ->label(__('Price per unit'))
                         ->visible(function ($get) {
                             return $get('type') === PlanPriceType::USAGE_BASED_PER_UNIT->value;
                         })
                         ->helperText(__('Enter price per unit in lowest denomination for a currency (cents). E.g. 1000 = $10.00')),
                     Forms\Components\Repeater::make('tiers')
                         ->helperText(__('Enter tier prices in lowest denomination for a currency (cents). E.g. 1000 = $10.00'))
+                        ->label(__('Tiers'))
                         ->schema([
                             Forms\Components\TextInput::make('until_unit')->label(__('Up until (x) units'))->required()
                                 ->suffixAction(\Filament\Forms\Components\Actions\Action::make('infinity')->icon('icon-infinity')->action(function (Forms\Get $get, Forms\Set $set) {
@@ -195,12 +198,13 @@ class PricesRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('price')
+                    ->label(__('Price'))
                     // divide by 100 to get price in dollars
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
                 Tables\Columns\TextColumn::make('currency.name')
-                    ->label('Currency'),
+                    ->label(__('Currency')),
             ])
             ->filters([
                 //

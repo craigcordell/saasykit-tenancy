@@ -21,6 +21,7 @@ class CodesRelationManager extends RelationManager
             ->schema([
                 Forms\Components\Section::make([
                     Forms\Components\TextInput::make('code')
+                        ->label(__('Code'))
                         ->helperText(__('The code that will be used to redeem the discount.'))
                         ->required()
                         ->unique()
@@ -33,8 +34,9 @@ class CodesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('code'),
+                Tables\Columns\TextColumn::make('code')->label(__('Code')),
                 Tables\Columns\TextColumn::make('redemptions_count')
+                    ->label(__('Redemptions'))
                     ->counts('redemptions'),
             ])
             ->filters([

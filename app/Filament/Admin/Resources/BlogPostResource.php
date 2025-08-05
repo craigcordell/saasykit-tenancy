@@ -31,6 +31,7 @@ class BlogPostResource extends Resource
                 Forms\Components\Section::make([
                     Forms\Components\TextInput::make('title')
                         ->required()
+                        ->label(__('Title'))
                         ->maxLength(1000),
                     Forms\Components\Textarea::make('description')
                         ->maxLength(1000)
@@ -40,6 +41,7 @@ class BlogPostResource extends Resource
                     TinyEditor::make('body')
                         ->columns(10)
                         ->required()
+                        ->label(__('Content'))
                         ->toolbarSticky(true)
                         ->setRelativeUrls(false)
                         ->fileAttachmentsDirectory('blog-images')
@@ -47,6 +49,7 @@ class BlogPostResource extends Resource
                 ])->columnSpan(2),
                 Forms\Components\Section::make([
                     Forms\Components\TextInput::make('slug')
+                        ->label(__('Slug'))
                         ->helperText(__('Will be used in the URL of the post. Leave empty to generate slug automatically from title.'))
                         ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
                             if (empty($state)) {
@@ -73,10 +76,13 @@ class BlogPostResource extends Resource
                         ),
                     Forms\Components\SpatieMediaLibraryFileUpload::make('image')
                         ->collection('blog-images')
+                        ->label(__('Images'))
                         ->acceptedFileTypes(['image/webp', 'image/jpeg', 'image/png']),
                     Forms\Components\Toggle::make('is_published')
+                        ->label(__('Is Published'))
                         ->required(),
                     Forms\Components\DateTimePicker::make('published_at')
+                        ->label(__('Published At'))
                         ->required(function ($state, \Filament\Forms\Get $get) {
                             return $get('is_published');
                         }),
@@ -89,6 +95,7 @@ class BlogPostResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author_id')
                     ->label(__('Author'))
@@ -97,6 +104,7 @@ class BlogPostResource extends Resource
                     })
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')
+                    ->label(__('Published'))
                     ->boolean(),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->with([

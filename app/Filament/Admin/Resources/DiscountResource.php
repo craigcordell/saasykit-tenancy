@@ -31,12 +31,15 @@ class DiscountResource extends Resource
                 Forms\Components\Section::make([
                     Forms\Components\TextInput::make('name')
                         ->required()
+                        ->label(__('Name'))
                         ->maxLength(255),
                     Forms\Components\Textarea::make('description')
+                        ->label(__('Description'))
                         ->maxLength(255),
 
                     Forms\Components\Radio::make('type')
                         ->required()
+                        ->label(__('Type'))
                         ->options([
                             DiscountConstants::TYPE_FIXED => __('Fixed amount'),
                             DiscountConstants::TYPE_PERCENTAGE => __('Percentage (of the total price)'),
@@ -45,6 +48,7 @@ class DiscountResource extends Resource
 
                     Forms\Components\Grid::make()->schema([
                         Forms\Components\TextInput::make('amount')
+                            ->label(__('Amount'))
                             ->helperText(__('If you choose percentage, enter a number between 0 and 100. For example: 90 for 90%. For fixed amount, enter the amount in cents. For example: 1000 for $10.00'))
                             ->integer()
                             ->required(),
@@ -57,6 +61,7 @@ class DiscountResource extends Resource
                             ->live(),
                         Forms\Components\Select::make('plans')
                             ->multiple()
+                            ->label(__('Plans'))
                             ->disabled(function (Get $get) {
                                 return $get('is_enabled_for_all_plans') === true;
                             })
@@ -86,24 +91,30 @@ class DiscountResource extends Resource
                     //                        // change the default value to null
                     //                        ->default(null),
                     Forms\Components\TextInput::make('max_redemptions')
+                        ->label(__('Maximum Redemptions'))
                         ->integer()
                         ->default(-1)
                         ->helperText(__('Enter -1 for unlimited redemptions (total).')),
                     Forms\Components\TextInput::make('max_redemptions_per_user')
+                        ->label(__('Maximum Redemptions Per User'))
                         ->integer()
                         ->default(-1)
                         ->helperText(__('Enter -1 for unlimited redemptions per user.')),
                     Forms\Components\Toggle::make('is_recurring')
+                        ->label(__('Is Recurring?'))
                         ->helperText(__('If enabled, this discount will keep being applied to the subscription forever (or until valid if you set maximum valid date).'))
                         ->required(),
                     Forms\Components\Toggle::make('is_active')
+                        ->label(__('Active'))
                         ->default(true)
                         ->required(),
                     Forms\Components\TextInput::make('duration_in_months')
+                        ->label(__('Duration in Months'))
                         ->integer()
                         ->helperText(__('This allows you define how many months the discount should apply. Only works with payment providers that support this feature. (like Stripe or Lemon Squeezy)'))
                         ->default(null),
                     Forms\Components\TextInput::make('maximum_recurring_intervals')
+                        ->label(__('Maximum Recurring Intervals'))
                         ->integer()
                         ->helperText(__('Amount of subscription billing periods that this discount recurs for. Only works with payment providers that support this feature. (like Paddle)'))
                         ->default(null),

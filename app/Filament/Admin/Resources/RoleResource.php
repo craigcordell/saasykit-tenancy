@@ -33,6 +33,7 @@ class RoleResource extends Resource
             ->schema([
                 Forms\Components\Section::make()->schema([
                     Forms\Components\TextInput::make('name')
+                        ->label(__('Role Name'))
                         ->required()
                         ->helperText(__('The name of the role.'))
                         ->disabled(fn (?Model $record) => $record && $record->name === 'admin' && ! $record->is_tenant_role)
@@ -46,6 +47,7 @@ class RoleResource extends Resource
                         ->required(),
                     Forms\Components\Select::make('permissions')
                         ->disabled(fn (?Model $record) => $record && $record->name === 'admin' && ! $record->is_tenant_role)
+                        ->label(__('Permissions'))
                         ->relationship('permissions', 'name',
                             modifyQueryUsing: fn (Builder $query, Forms\Get $get) => $query->when($get('is_tenant_role'), function ($query) {
                                 $query->where('name', 'like', TenancyPermissionConstants::TENANCY_PERMISSION_PREFIX.'%');
@@ -99,7 +101,7 @@ class RoleResource extends Resource
         return $table
             ->description(__('Manage the roles in your application. Roles that start with "tenancy:" are supposed to be used for multi-tenancy users to control user dashboard capabilities.'))
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable()->label(__('Name')),
                 Tables\Columns\IconColumn::make('is_tenant_role')
                     ->label(__('Is Tenant Role'))
                     ->sortable()
@@ -110,8 +112,10 @@ class RoleResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))->sortable(),
             ])
             ->filters([
