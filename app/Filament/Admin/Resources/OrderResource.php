@@ -332,4 +332,14 @@ class OrderResource extends Resource
     {
         return __('Orders');
     }
+
+    public static function getModelLabel(): string
+    {
+        return __('Order');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Orders');
+    }
 }

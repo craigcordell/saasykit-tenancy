@@ -25,16 +25,16 @@ class ListSubscriptions extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make(),
-            'active' => Tab::make()
+            __('all') => Tab::make(),
+            __('active') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::ACTIVE)),
-            'inactive' => Tab::make()
+            __('inactive') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::INACTIVE)),
-            'pending' => Tab::make()
+            __('pending') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::PENDING)),
-            'canceled' => Tab::make()
+            __('canceled') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::CANCELED)),
-            'past Due' => Tab::make()
+            __('past Due') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::PAST_DUE)),
         ];
     }
