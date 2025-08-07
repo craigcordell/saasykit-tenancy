@@ -34,16 +34,16 @@ class ListTransactions extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make(),
-            'success' => Tab::make()
+            __('all') => Tab::make(),
+            __('success') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', TransactionStatus::SUCCESS)),
-            'refunded' => Tab::make()
+            __('refunded') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', TransactionStatus::REFUNDED)),
-            'failed' => Tab::make()
+            __('failed') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', TransactionStatus::FAILED)),
-            'pending' => Tab::make()
+            __('pending') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', TransactionStatus::PENDING)),
-            'disputed' => Tab::make()
+            __('disputed') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', TransactionStatus::DISPUTED)),
         ];
     }

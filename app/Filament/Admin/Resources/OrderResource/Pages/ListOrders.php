@@ -23,16 +23,16 @@ class ListOrders extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make(),
-            'success' => Tab::make()
+            __('all') => Tab::make(),
+            __('success') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', OrderStatus::SUCCESS)),
-            'refunded' => Tab::make()
+            __('refunded') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', OrderStatus::REFUNDED)),
-            'pending' => Tab::make()
+            __('pending') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', OrderStatus::PENDING)),
-            'failed' => Tab::make()
+            __('failed') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', OrderStatus::FAILED)),
-            'disputed' => Tab::make()
+            __('disputed') => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', OrderStatus::DISPUTED)),
         ];
     }
