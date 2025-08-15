@@ -4,7 +4,7 @@
             {{ __('Terms of Service') }}
         </x-slot>
 
-        <x-heading.h1 class="md:!text-4xl !text-4xl pt-4 pb-6">
+        <x-heading.h1 class="md:text-4xl! text-4xl! pt-4 pb-6">
             {{ __('Terms of Service') }}
         </x-heading.h1>
 

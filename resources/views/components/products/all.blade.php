@@ -31,7 +31,7 @@
                     <span class="ms-1 text-primary-500 text-2xl font-bold">@money($price->price, $price->currency->code)</span>
                 </p>
 
-                <x-button-link.primary href="{{route('buy.product', ['productSlug' => $product->slug])}}" class="mt-6 text-lg !py-4 px-6">
+                <x-button-link.primary href="{{route('buy.product', ['productSlug' => $product->slug])}}" class="mt-6 text-lg py-4! px-6">
                     {{ __('Get :name Now', ['name' => $product->name]) }}
                 </x-button-link.primary>
 

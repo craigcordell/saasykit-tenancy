@@ -55,14 +55,14 @@
                                 @enderror
                             </div>
 
-                            <x-button-link.primary class="flex flex-row items-center justify-center gap-3 !min-w-64 disabled:opacity-40" elementType="button" wire:click="verifyCode" wire:loading.attr="disabled">
+                            <x-button-link.primary class="flex flex-row items-center justify-center gap-3 min-w-64! disabled:opacity-40" elementType="button" wire:click="verifyCode" wire:loading.attr="disabled">
                                 {{ __('Verify Phone') }}
                                 <div wire:loading class="max-w-fit max-h-fit">
                                     <span class="loading loading-ring loading-xs"></span>
                                 </div>
                             </x-button-link.primary>
                         @else
-                            <x-button-link.primary class="flex flex-row items-center justify-center gap-3 !min-w-64 disabled:opacity-40" elementType="button" wire:click="sendVerificationCode" wire:loading.attr="disabled">
+                            <x-button-link.primary class="flex flex-row items-center justify-center gap-3 min-w-64! disabled:opacity-40" elementType="button" wire:click="sendVerificationCode" wire:loading.attr="disabled">
                                 {{ __('Send Verification Code') }}
                                 <div wire:loading class="max-w-fit max-h-fit">
                                     <span class="loading loading-ring loading-xs"></span>

@@ -2,18 +2,10 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 import common from './tailwind.common.js'
 
 export default {
-    plugins: [require("daisyui")],
-    daisyui: {
-        themes: ["light"],
-    },
     content: [
         "./resources/**/*.blade.php",
-        './app/Filament/**/*.php',
-        './resources/views/filament/**/*.blade.php',
-        './resources/views/vendor/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         "./resources/**/*.js",
-        "./resources/**/*.vue",
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     ],
     darkMode: 'class',

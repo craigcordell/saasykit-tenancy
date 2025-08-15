@@ -9,16 +9,16 @@
     @include('components.layouts.partials.head')
 </head>
 <body class="text-primary-900 flex flex-col min-h-screen" x-data>
-    <div id="app" class="flex flex-col flex-grow">
-        <x-layouts.app.header class="flex-shrink-0"/>
+    <div id="app" class="flex flex-col grow">
+        <x-layouts.app.header class="shrink-0"/>
 
-        <div class="flex-grow">
+        <div class="grow">
             <div class="mx-auto">
                 {{ $slot }}
             </div>
         </div>
 
-        <x-layouts.app.footer class="flex-shrink-0" />
+        <x-layouts.app.footer class="shrink-0" />
 
         @include('components.layouts.partials.tail')
     </div>

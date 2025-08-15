@@ -19,10 +19,10 @@
             <div class="flex flex-wrap gap-4 justify-center flex-col md:flex-row mt-6">
                 <x-effect.glow></x-effect.glow>
 
-                <x-button-link.secondary href="#pricing" class="self-center !py-3" elementType="a">
+                <x-button-link.secondary href="#pricing" class="self-center py-3!" elementType="a">
                     {{ __('Get SaaSykit') }}
                 </x-button-link.secondary>
-                <x-button-link.primary-outline href="//demo.saasykit.com" class=" bg-transparent self-center !py-3 text-white border-white" rel=”nofollow” >
+                <x-button-link.primary-outline href="//demo.saasykit.com" class=" bg-transparent self-center py-3! text-white border-white" rel=”nofollow” >
                     {{ __('Check The Demo') }}
                 </x-button-link.primary-outline>
 
@@ -208,7 +208,7 @@
 
             <x-tab-slider.tab-content id="tab-1">
                 <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
+                    <x-heading.h4 class="text-primary-900 font-semibold!">
                         {{ __('Testimonials') }}
                     </x-heading.h4>
 
@@ -227,7 +227,7 @@
 
             <x-tab-slider.tab-content id="tab-2">
                 <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
+                    <x-heading.h4 class="text-primary-900 font-semibold!">
                         {{ __('Plans & Pricing Component') }}
                     </x-heading.h4>
 
@@ -246,7 +246,7 @@
 
             <x-tab-slider.tab-content id="tab-3">
                 <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
+                    <x-heading.h4 class="text-primary-900 font-semibold!">
                         {{ __('Hero section Component') }}
                     </x-heading.h4>
 
@@ -265,7 +265,7 @@
 
             <x-tab-slider.tab-content id="tab-4">
                 <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
+                    <x-heading.h4 class="text-primary-900 font-semibold!">
                         {{ __('FAQ Component') }}
                     </x-heading.h4>
 
@@ -284,7 +284,7 @@
 
             <x-tab-slider.tab-content id="tab-5">
                 <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
+                    <x-heading.h4 class="text-primary-900 font-semibold!">
                         {{ __('Call to action component') }}
                     </x-heading.h4>
 
@@ -303,7 +303,7 @@
 
             <x-tab-slider.tab-content id="tab-6">
                 <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
+                    <x-heading.h4 class="text-primary-900 font-semibold!">
                         {{ __('Tab Slider Component') }}
                     </x-heading.h4>
 

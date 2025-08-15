@@ -1,11 +1,11 @@
 @guest()
     <div class="mb-4">
 
-        <x-heading.h2 class="text-primary-900 !text-xl">
+        <x-heading.h2 class="text-primary-900 text-xl!">
             {{ __('Enter your details') }}
         </x-heading.h2>
 
-        <div class="relative rounded-2xl border border-natural-300 mt-4 overflow-hidden p-6">
+        <div class="relative rounded-2xl border border-neutral-200 mt-4 overflow-hidden p-6">
 
             @if (!empty($intro))
                 <div class="mb-4 text-sm">

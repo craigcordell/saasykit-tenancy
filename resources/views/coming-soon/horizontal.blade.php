@@ -1,6 +1,6 @@
-<x-layouts.focus-center class="md:!max-w-6xl mx-auto overflow-x-hidden" :backButton="false">
+<x-layouts.focus-center class="md:max-w-6xl! mx-auto overflow-x-hidden" :backButton="false">
 
-    <x-effect.gradient class="-end-72 -top-16 !w-1/3 !opacity-70"/>
+    <x-effect.gradient class="-end-72 -top-16 w-1/3! opacity-70!"/>
 
     <div class="md:max-w-6xl mx-auto mt-8">
         <div class="flex flex-wrap md:flex-nowrap gap-8 mx-4">
@@ -32,7 +32,7 @@
                                 <input type="text" class="grow" placeholder="{{ __('Your email')}}" />
                             </label>
 
-                            <x-button-link.primary href="" class="!py-3">
+                            <x-button-link.primary href="" class="py-3!">
                                 {{ __('Subscribe') }}
                             </x-button-link.primary>
                         </div>

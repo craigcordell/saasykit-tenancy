@@ -19,7 +19,7 @@
                     {{ __('By continuing, you agree to our') }} <a target="_blank" href="{{route('terms-of-service')}}" class="text-primary-900 underline">{{ __('Terms of Service') }}</a> {{ __('and') }} <a target="_blank" href="{{route('privacy-policy')}}" class="text-primary-900 underline">{{ __('Privacy Policy') }}</a>.
                 </p>
 
-                <x-button-link.primary class="flex flex-row items-center justify-center gap-3  !min-w-64 disabled:opacity-40" elementType="button" type="submit" wire:loading.attr="disabled">
+                <x-button-link.primary class="flex flex-row items-center justify-center gap-3  min-w-64! disabled:opacity-40" elementType="button" type="submit" wire:loading.attr="disabled">
                     {{ __('Confirm & Pay') }}
                     <div wire:loading class="max-w-fit max-h-fit">
                         <span class="loading loading-ring loading-xs"></span>
