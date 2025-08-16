@@ -3,7 +3,8 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Constants\DiscountConstants;
-use App\Filament\Admin\Resources\OrderResource\Pages;
+use App\Filament\Admin\Resources\OrderResource\Pages\ListOrders;
+use App\Filament\Admin\Resources\OrderResource\Pages\ViewOrder;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Mapper\OrderStatusMapper;
 use App\Models\Order;
@@ -11,15 +12,19 @@ use App\Models\User;
 use App\Services\CurrencyService;
 use App\Services\OneTimeProductService;
 use App\Services\OrderService;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -32,10 +37,10 @@ class OrderResource extends Resource
         return __('Revenue');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
             ]);
     }
@@ -44,10 +49,10 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label(__('User'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->badge()
                     ->label(__('Status'))
                     ->color(fn (Order $record, OrderStatusMapper $mapper): string => $mapper->mapColor($record->status))
@@ -56,33 +61,33 @@ class OrderResource extends Resource
                             return $mapper->mapForDisplay($state);
                         })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('total_amount')
+                TextColumn::make('total_amount')
                     ->label(__('Total Amount'))
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('total_amount_after_discount')
+                TextColumn::make('total_amount_after_discount')
                     ->label(__('Total Amount After Discount'))
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('total_discount_amount')
+                TextColumn::make('total_discount_amount')
                     ->label(__('Total Discount Amount'))
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('payment_provider_id')
+                TextColumn::make('payment_provider_id')
                     ->formatStateUsing(function (string $state, $record) {
                         return $record->paymentProvider->name;
                     })
                     ->label(__('Payment Provider'))
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_local')
+                IconColumn::make('is_local')
                     ->label(__('Is Local Order (Manual)'))
                     ->toggleable()
                     ->toggledHiddenByDefault()
                     ->boolean(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
@@ -96,13 +101,13 @@ class OrderResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                ViewAction::make(),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('create')
+                Action::make('create')
                     ->label(__('Create Order'))
-                    ->form([
+                    ->schema([
                         Select::make('user_id')
                             ->label(__('User'))
                             ->searchable()
@@ -158,19 +163,19 @@ class OrderResource extends Resource
                             ->send();
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                \Filament\Infolists\Components\Tabs::make('Order')
+        return $schema
+            ->components([
+                Tabs::make('Order')
                     ->columnSpan('full')
                     ->tabs([
-                        \Filament\Infolists\Components\Tabs\Tab::make(__('Details'))
+                        Tab::make(__('Details'))
                             ->schema([
                                 Section::make(__('Order Details'))
                                     ->description(__('View details about this order.'))
@@ -279,8 +284,8 @@ class OrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrders::route('/'),
-            'view' => Pages\ViewOrder::route('/{record}'),
+            'index' => ListOrders::route('/'),
+            'view' => ViewOrder::route('/{record}'),
         ];
     }
 

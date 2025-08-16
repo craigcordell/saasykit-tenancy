@@ -2,10 +2,17 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Forms;
-use Filament\Forms\Form;
+use App\Filament\Admin\Resources\RoleResource\Pages\CreateRole;
+use App\Filament\Admin\Resources\RoleResource\Pages\EditRole;
+use App\Filament\Admin\Resources\RoleResource\Pages\ListRoles;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Role;
@@ -21,18 +28,18 @@ class RoleResource extends Resource
         return __('User Management');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()->schema([
-                    Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                Section::make()->schema([
+                    TextInput::make('name')
                         ->label(__('Role Name'))
                         ->required()
                         ->helperText('The name of the role.')
                         ->disabled(fn (?Model $record) => $record && $record->name === 'admin')
                         ->maxLength(255),
-                    Forms\Components\Select::make('permissions')
+                    Select::make('permissions')
                         ->label(__('Permissions'))
                         ->disabled(fn (?Model $record) => $record && $record->name === 'admin')
                         ->relationship('permissions', 'name')
@@ -48,22 +55,22 @@ class RoleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable()->label(__('Name')),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('name')->sortable()->searchable()->label(__('Name')),
+                TextColumn::make('created_at')
                     ->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))->sortable(),
             ])
             ->filters([
 
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -77,9 +84,9 @@ class RoleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\RoleResource\Pages\ListRoles::route('/'),
-            'create' => \App\Filament\Admin\Resources\RoleResource\Pages\CreateRole::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\RoleResource\Pages\EditRole::route('/{record}/edit'),
+            'index' => ListRoles::route('/'),
+            'create' => CreateRole::route('/create'),
+            'edit' => EditRole::route('/{record}/edit'),
         ];
     }
 

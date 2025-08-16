@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\ConfigService;
+use Exception;
 use Illuminate\Support\ServiceProvider;
 
 class ConfigProvider extends ServiceProvider
@@ -22,7 +23,7 @@ class ConfigProvider extends ServiceProvider
     {
         try {
             $configService->loadConfigs();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // We don't want to throw an exception if the database is not yet migrated
         }
     }

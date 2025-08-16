@@ -2,11 +2,25 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\BitbucketSettings;
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\EditOauthLoginProvider;
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\FacebookSettings;
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\GithubSettings;
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\GitlabSettings;
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\GoogleSettings;
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\LinkedinSettings;
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\ListOauthLoginProviders;
+use App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\TwitterSettings;
 use App\Models\OauthLoginProvider;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 
@@ -19,23 +33,23 @@ class OauthLoginProviderResource extends Resource
         return __('Settings');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()
+        return $schema
+            ->components([
+                Section::make()
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->disabled()
                             ->required()
                             ->label(__('Name'))
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('provider_name')
+                        TextInput::make('provider_name')
                             ->required()
                             ->disabled()
                             ->label(__('Provider Name'))
                             ->maxLength(255),
-                        Forms\Components\Toggle::make('enabled')
+                        Toggle::make('enabled')
                             ->label(__('Enabled'))
                             ->required(),
                     ]),
@@ -46,7 +60,7 @@ class OauthLoginProviderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('Name'))
                     ->getStateUsing(function (OauthLoginProvider $record) {
                         return new HtmlString(
@@ -56,17 +70,17 @@ class OauthLoginProviderResource extends Resource
                             .'</div>'
                         );
                     }),
-                Tables\Columns\TextColumn::make('provider_name')->label(__('Provider Name')),
-                Tables\Columns\ToggleColumn::make('enabled')->label(__('Enabled')),
+                TextColumn::make('provider_name')->label(__('Provider Name')),
+                ToggleColumn::make('enabled')->label(__('Enabled')),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -80,15 +94,15 @@ class OauthLoginProviderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\ListOauthLoginProviders::route('/'),
-            'edit' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\EditOauthLoginProvider::route('/{record}/edit'),
-            'google-settings' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\GoogleSettings::route('/google-settings'),
-            'github-settings' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\GithubSettings::route('/github-settings'),
-            'gitlab-settings' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\GitlabSettings::route('/gitlab-settings'),
-            'twitter-oauth-2-settings' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\TwitterSettings::route('/twitter-settings'),
-            'linkedin-openid-settings' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\LinkedinSettings::route('/linkedin-settings'),
-            'facebook-settings' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\FacebookSettings::route('/facebook-settings'),
-            'bitbucket-settings' => \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\BitbucketSettings::route('/bitbucket-settings'),
+            'index' => ListOauthLoginProviders::route('/'),
+            'edit' => EditOauthLoginProvider::route('/{record}/edit'),
+            'google-settings' => GoogleSettings::route('/google-settings'),
+            'github-settings' => GithubSettings::route('/github-settings'),
+            'gitlab-settings' => GitlabSettings::route('/gitlab-settings'),
+            'twitter-oauth-2-settings' => TwitterSettings::route('/twitter-settings'),
+            'linkedin-openid-settings' => LinkedinSettings::route('/linkedin-settings'),
+            'facebook-settings' => FacebookSettings::route('/facebook-settings'),
+            'bitbucket-settings' => BitbucketSettings::route('/bitbucket-settings'),
         ];
     }
 

@@ -24,6 +24,7 @@ use App\Services\PaymentProviders\PaymentProviderInterface;
 use App\Services\PlanService;
 use App\Services\SubscriptionService;
 use Carbon\Carbon;
+use Exception;
 
 class PaddleProvider implements PaymentProviderInterface
 {
@@ -71,7 +72,7 @@ class PaddleProvider implements PaymentProviderInterface
             try {
                 $paddleDiscountId = $this->findOrCreatePaddleDiscount($discount, $paymentProvider, $currency->code);
                 $results['paddleDiscountId'] = $paddleDiscountId;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 logger()->error('Failed to create paddle discount: '.$e->getMessage());
             }
         }
@@ -109,7 +110,7 @@ class PaddleProvider implements PaymentProviderInterface
         );
 
         if ($response->failed()) {
-            throw new \Exception('Failed to update paddle subscription: '.$response->body());
+            throw new Exception('Failed to update paddle subscription: '.$response->body());
         }
 
         $this->subscriptionService->updateSubscription($subscription, [
@@ -163,7 +164,7 @@ class PaddleProvider implements PaymentProviderInterface
         if ($response->failed()) {
             logger()->error('Failed to get paddle payment method update transaction: '.$subscription->payment_provider_subscription_id.' '.$response->body());
 
-            throw new \Exception('Failed to get paddle payment method update transaction');
+            throw new Exception('Failed to get paddle payment method update transaction');
         }
 
         $responseBody = $response->json()['data'];
@@ -211,7 +212,7 @@ class PaddleProvider implements PaymentProviderInterface
             try {
                 $paddleDiscountId = $this->findOrCreatePaddleDiscount($discount, $paymentProvider, $currency->code);
                 $results['paddleDiscountId'] = $paddleDiscountId;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 logger()->error('Failed to create paddle discount: '.$e->getMessage());
             }
         }
@@ -221,7 +222,7 @@ class PaddleProvider implements PaymentProviderInterface
 
     public function createProductCheckoutRedirectLink(Order $order, ?Discount $discount = null): string
     {
-        throw new \Exception('Not a redirect payment provider');
+        throw new Exception('Not a redirect payment provider');
     }
 
     public function getSlug(): string
@@ -231,7 +232,7 @@ class PaddleProvider implements PaymentProviderInterface
 
     public function createSubscriptionCheckoutRedirectLink(Plan $plan, Subscription $subscription, ?Discount $discount = null): string
     {
-        throw new \Exception('Not a redirect payment provider');
+        throw new Exception('Not a redirect payment provider');
     }
 
     public function isRedirectProvider(): bool
@@ -273,7 +274,7 @@ class PaddleProvider implements PaymentProviderInterface
         );
 
         if ($response->failed()) {
-            throw new \Exception('Failed to create paddle discount: '.$response->body());
+            throw new Exception('Failed to create paddle discount: '.$response->body());
         }
 
         $paddleDiscountId = $response->json()['data']['id'];
@@ -292,7 +293,7 @@ class PaddleProvider implements PaymentProviderInterface
         );
 
         if ($createProductResponse->failed()) {
-            throw new \Exception('Failed to create paddle product: '.$createProductResponse->body());
+            throw new Exception('Failed to create paddle product: '.$createProductResponse->body());
         }
 
         $paddleProductId = $createProductResponse->json()['data']['id'];
@@ -311,7 +312,7 @@ class PaddleProvider implements PaymentProviderInterface
         );
 
         if ($createProductResponse->failed()) {
-            throw new \Exception('Failed to create paddle product: '.$createProductResponse->body());
+            throw new Exception('Failed to create paddle product: '.$createProductResponse->body());
         }
 
         $paddleProductId = $createProductResponse->json()['data']['id'];
@@ -347,7 +348,7 @@ class PaddleProvider implements PaymentProviderInterface
         );
 
         if ($response->failed()) {
-            throw new \Exception('Failed to create paddle price: '.$response->body());
+            throw new Exception('Failed to create paddle price: '.$response->body());
         }
 
         $paddlePrice = $response->json()['data']['id'];
@@ -374,7 +375,7 @@ class PaddleProvider implements PaymentProviderInterface
         );
 
         if ($response->failed()) {
-            throw new \Exception('Failed to create paddle price: '.$response->body());
+            throw new Exception('Failed to create paddle price: '.$response->body());
         }
 
         $paddlePrice = $response->json()['data']['id'];
@@ -389,7 +390,7 @@ class PaddleProvider implements PaymentProviderInterface
         $paymentProvider = PaymentProvider::where('slug', $this->getSlug())->firstOrFail();
 
         if ($paymentProvider->is_active === false) {
-            throw new \Exception('Payment provider is not active: '.$this->getSlug());
+            throw new Exception('Payment provider is not active: '.$this->getSlug());
         }
 
         return $paymentProvider;
@@ -426,7 +427,7 @@ class PaddleProvider implements PaymentProviderInterface
 
     public function reportUsage(Subscription $subscription, int $unitCount): bool
     {
-        throw new \Exception('Padddle does not support usage based billing');
+        throw new Exception('Padddle does not support usage based billing');
     }
 
     public function supportsSkippingTrial(): bool

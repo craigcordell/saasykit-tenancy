@@ -2,13 +2,27 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\BlogPostResource\Pages;
+use App\Filament\Admin\Resources\BlogPostResource\Pages\CreateBlogPost;
+use App\Filament\Admin\Resources\BlogPostResource\Pages\EditBlogPost;
+use App\Filament\Admin\Resources\BlogPostResource\Pages\ListBlogPosts;
 use App\Models\BlogPost;
+use App\Models\User;
 use CodeIsAwesome\FilamentTinyEditor\TinyEditor;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -24,16 +38,16 @@ class BlogPostResource extends Resource
         return __('Blog');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make([
-                    Forms\Components\TextInput::make('title')
+        return $schema
+            ->components([
+                Section::make([
+                    TextInput::make('title')
                         ->required()
                         ->label(__('Title'))
                         ->maxLength(1000),
-                    Forms\Components\Textarea::make('description')
+                    Textarea::make('description')
                         ->maxLength(1000)
                         ->helperText(__('A short description of the post (will be used in meta tags).'))
                         ->label('Description')
@@ -47,11 +61,11 @@ class BlogPostResource extends Resource
                         ->fileAttachmentsDirectory('blog-images')
                         ->columnSpanFull(),
                 ])->columnSpan(2),
-                Forms\Components\Section::make([
-                    Forms\Components\TextInput::make('slug')
+                Section::make([
+                    TextInput::make('slug')
                         ->label(__('Slug'))
                         ->helperText(__('Will be used in the URL of the post. Leave empty to generate slug automatically from title.'))
-                        ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
+                        ->dehydrateStateUsing(function ($state, Get $get) {
                             if (empty($state)) {
                                 $title = $get('title');
 
@@ -61,29 +75,29 @@ class BlogPostResource extends Resource
                             return Str::slug($state);
                         })
                         ->maxLength(255),
-                    Forms\Components\Select::make('blog_post_category_id')
+                    Select::make('blog_post_category_id')
                         ->relationship('blogPostCategory', 'name'),
-                    Forms\Components\Select::make('author_id')
+                    Select::make('author_id')
                         ->label(__('Author'))
                         ->default(auth()->user()->id)
                         ->required()
                         ->options(
-                            \App\Models\User::admin()->get()->sortBy('name')
+                            User::admin()->get()->sortBy('name')
                                 ->mapWithKeys(function ($user) {
                                     return [$user->id => $user->getPublicName()];
                                 })
                                 ->toArray()
                         ),
-                    Forms\Components\SpatieMediaLibraryFileUpload::make('image')
+                    SpatieMediaLibraryFileUpload::make('image')
                         ->collection('blog-images')
                         ->label(__('Images'))
                         ->acceptedFileTypes(['image/webp', 'image/jpeg', 'image/png']),
-                    Forms\Components\Toggle::make('is_published')
+                    Toggle::make('is_published')
                         ->label(__('Is Published'))
                         ->required(),
-                    Forms\Components\DateTimePicker::make('published_at')
+                    DateTimePicker::make('published_at')
                         ->label(__('Published At'))
-                        ->required(function ($state, \Filament\Forms\Get $get) {
+                        ->required(function ($state, Get $get) {
                             return $get('is_published');
                         }),
                 ])->columnSpan(1),
@@ -94,16 +108,16 @@ class BlogPostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->label(__('Title'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('author_id')
+                TextColumn::make('author_id')
                     ->label(__('Author'))
                     ->formatStateUsing(function ($state, $record) {
                         return $record->author->getPublicName();
                     })
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_published')
+                IconColumn::make('is_published')
                     ->label(__('Published'))
                     ->boolean(),
             ])
@@ -114,12 +128,12 @@ class BlogPostResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -134,9 +148,9 @@ class BlogPostResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBlogPosts::route('/'),
-            'create' => Pages\CreateBlogPost::route('/create'),
-            'edit' => Pages\EditBlogPost::route('/{record}/edit'),
+            'index' => ListBlogPosts::route('/'),
+            'create' => CreateBlogPost::route('/create'),
+            'edit' => EditBlogPost::route('/{record}/edit'),
         ];
     }
 

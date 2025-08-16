@@ -10,7 +10,7 @@ class TwitterSettings extends Page
 {
     protected static string $resource = OauthLoginProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.oauth-login-provider-resource.pages.twitter-settings';
+    protected string $view = 'filament.admin.resources.oauth-login-provider-resource.pages.twitter-settings';
 
     public function mount(): void
     {

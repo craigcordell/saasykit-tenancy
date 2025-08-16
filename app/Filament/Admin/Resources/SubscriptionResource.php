@@ -8,6 +8,9 @@ use App\Constants\PlanPriceType;
 use App\Constants\SubscriptionStatus;
 use App\Constants\SubscriptionType;
 use App\Exceptions\SubscriptionCreationNotAllowedException;
+use App\Filament\Admin\Resources\SubscriptionResource\Pages\ListSubscriptions;
+use App\Filament\Admin\Resources\SubscriptionResource\Pages\ViewSubscription;
+use App\Filament\Admin\Resources\SubscriptionResource\RelationManagers\UsagesRelationManager;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Mapper\SubscriptionStatusMapper;
 use App\Models\Subscription;
@@ -16,15 +19,22 @@ use App\Services\CurrencyService;
 use App\Services\PlanService;
 use App\Services\SubscriptionService;
 use Carbon\Carbon;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -41,33 +51,33 @@ class SubscriptionResource extends Resource
         return __('Revenue');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
         /** @var CurrencyService $currencyService */
         $currencyService = resolve(CurrencyService::class);
 
-        return $form
-            ->schema([
-                Forms\Components\Tabs::make('Subscription')
+        return $schema
+            ->components([
+                Tabs::make('Subscription')
                     ->columnSpan('full')
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make(__('Details'))
+                        Tab::make(__('Details'))
                             ->schema([
-                                Forms\Components\Section::make()->schema([
-                                    Forms\Components\Select::make('user_id')
+                                Section::make()->schema([
+                                    Select::make('user_id')
                                         ->label(__('User'))
                                         ->relationship('user', 'name')
                                         ->preload()
                                         ->required(),
-                                    Forms\Components\Select::make('plan_id')
+                                    Select::make('plan_id')
                                         ->label(__('Plan'))
                                         ->relationship('plan', 'name')
                                         ->preload()
                                         ->required(),
-                                    Forms\Components\TextInput::make('price')
+                                    TextInput::make('price')
                                         ->label(__('Price'))
                                         ->required(),
-                                    Forms\Components\Select::make('currency_id')
+                                    Select::make('currency_id')
                                         ->options(
                                             $currencyService->getAllCurrencies()
                                                 ->mapWithKeys(function ($currency) {
@@ -77,19 +87,19 @@ class SubscriptionResource extends Resource
                                         )
                                         ->label(__('Currency'))
                                         ->required(),
-                                    Forms\Components\DateTimePicker::make('renew_at')
+                                    DateTimePicker::make('renew_at')
                                         ->label(__('Next Renewal'))
                                         ->displayFormat(config('app.datetime_format')),
-                                    Forms\Components\DateTimePicker::make('cancelled_at')
+                                    DateTimePicker::make('cancelled_at')
                                         ->label(__('Cancelled At'))
                                         ->displayFormat(config('app.datetime_format')),
-                                    Forms\Components\DateTimePicker::make('grace_period_ends_at')
+                                    DateTimePicker::make('grace_period_ends_at')
                                         ->label(__('Grace Period Ends At'))
                                         ->displayFormat(config('app.datetime_format')),
-                                    Forms\Components\Toggle::make('is_active')
+                                    Toggle::make('is_active')
                                         ->label(__('Active'))
                                         ->required(),
-                                    Forms\Components\Toggle::make('is_trial_active')
+                                    Toggle::make('is_trial_active')
                                         ->label(__('Trial Active'))
                                         ->required(),
                                 ]),
@@ -103,9 +113,9 @@ class SubscriptionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')->label(__('User'))->searchable(),
-                Tables\Columns\TextColumn::make('plan.name')->label(__('Plan'))->searchable(),
-                Tables\Columns\TextColumn::make('price')
+                TextColumn::make('user.name')->label(__('User'))->searchable(),
+                TextColumn::make('plan.name')->label(__('Plan'))->searchable(),
+                TextColumn::make('price')
                     ->label(__('Price'))
                     ->formatStateUsing(function (string $state, $record) {
                         $interval = $record->interval->name;
@@ -115,13 +125,13 @@ class SubscriptionResource extends Resource
 
                         return money($state, $record->currency->code).' / '.$interval;
                     }),
-                Tables\Columns\TextColumn::make('payment_provider_id')
+                TextColumn::make('payment_provider_id')
                     ->formatStateUsing(function (string $state, $record) {
                         return $record->paymentProvider->name;
                     })
                     ->label(__('Payment Provider'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->badge()
                     ->color(fn (Subscription $record, SubscriptionStatusMapper $mapper): string => $mapper->mapColor($record->status))
@@ -130,10 +140,10 @@ class SubscriptionResource extends Resource
                             return $mapper->mapForDisplay($state);
                         })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')->label(__('Created At'))
+                TextColumn::make('created_at')->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')->label(__('Updated At'))
+                TextColumn::make('updated_at')->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
 
@@ -141,20 +151,20 @@ class SubscriptionResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('create')
+                Action::make('create')
                     ->label(__('Create Subscription'))
-                    ->form([
-                        Forms\Components\Select::make('user_id')
+                    ->schema([
+                        Select::make('user_id')
                             ->relationship('user', 'name')
                             ->searchable()
                             ->label(__('User'))
                             ->getSearchResultsUsing(function (string $query) {
-                                return \App\Models\User::query()
+                                return User::query()
                                     ->where('name', 'like', '%'.$query.'%')
                                     ->orWhere('email', 'like', '%'.$query.'%')
                                     ->limit(20)
@@ -163,7 +173,7 @@ class SubscriptionResource extends Resource
                             })
                             ->helperText(__('Adding a subscription to a user will create a "locally managed" subscription, which means the user will be able to use subscription features without being billed, and they can later convert to a "payment provider managed" subscription from their dashboard.'))
                             ->required(),
-                        Forms\Components\Select::make('plan_id')
+                        Select::make('plan_id')
                             ->label(__('Plan'))
                             ->options(function (PlanService $planService) {
                                 return $planService->getAllPlansWithPrices()->mapWithKeys(function ($plan) {
@@ -171,7 +181,7 @@ class SubscriptionResource extends Resource
                                 });
                             })
                             ->required(),
-                        Forms\Components\DateTimePicker::make('ends_at')
+                        DateTimePicker::make('ends_at')
                             ->displayFormat(config('app.datetime_format'))
                             ->label(__('Ends At'))
                             ->afterOrEqual('now')
@@ -208,22 +218,22 @@ class SubscriptionResource extends Resource
                 'paymentProvider',
                 'interval',
             ]))
-            ->bulkActions([
+            ->toolbarActions([
             ])->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
     {
         return [
-            'usages' => \App\Filament\Admin\Resources\SubscriptionResource\RelationManagers\UsagesRelationManager::class,
+            'usages' => UsagesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\SubscriptionResource\Pages\ListSubscriptions::route('/'),
-            'view' => \App\Filament\Admin\Resources\SubscriptionResource\Pages\ViewSubscription::route('/{record}'),
+            'index' => ListSubscriptions::route('/'),
+            'view' => ViewSubscription::route('/{record}'),
         ];
     }
 
@@ -298,14 +308,14 @@ class SubscriptionResource extends Resource
         return static::$cachedSubscriptionHistoryComponents;
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                \Filament\Infolists\Components\Tabs::make('Subscription')
+        return $schema
+            ->components([
+                Tabs::make('Subscription')
                     ->columnSpan('full')
                     ->tabs([
-                        \Filament\Infolists\Components\Tabs\Tab::make(__('Details'))
+                        Tab::make(__('Details'))
                             ->schema([
                                 Section::make(__('Subscription Details'))
                                     ->description(__('View details about subscription.'))
@@ -430,7 +440,7 @@ class SubscriptionResource extends Resource
                                     ]),
 
                             ]),
-                        \Filament\Infolists\Components\Tabs\Tab::make(__('Changes'))
+                        Tab::make(__('Changes'))
                             ->schema(
                                 function ($record) {
                                     // Filament schema is called multiple times for some reason, so we need to cache the components to avoid performance issues.

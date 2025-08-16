@@ -4,6 +4,8 @@ namespace App\Filament\Admin\Resources\SubscriptionResource\Pages;
 
 use App\Filament\Admin\Resources\SubscriptionResource;
 use App\Filament\CrudDefaults;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSubscription extends EditRecord
@@ -15,8 +17,8 @@ class EditSubscription extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\ViewAction::make(),
-            \Filament\Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

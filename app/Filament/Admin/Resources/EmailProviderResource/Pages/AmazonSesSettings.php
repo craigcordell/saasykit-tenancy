@@ -9,7 +9,7 @@ class AmazonSesSettings extends Page
 {
     protected static string $resource = EmailProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.email-provider-resource.pages.amazon-ses-settings';
+    protected string $view = 'filament.admin.resources.email-provider-resource.pages.amazon-ses-settings';
 
     public function mount(): void
     {

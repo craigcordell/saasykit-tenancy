@@ -3,23 +3,24 @@
 namespace App\Livewire\Filament;
 
 use App\Services\ConfigService;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 use SaaSykit\OpenGraphy\ImageGenerator;
+use Throwable;
 
 class OpenGraphImageSettings extends Component implements HasForms
 {
@@ -72,10 +73,10 @@ class OpenGraphImageSettings extends Component implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('Open Graph Images'))
                     ->schema([
                         Toggle::make('open_graphy_image_enabled')
@@ -174,7 +175,7 @@ class OpenGraphImageSettings extends Component implements HasForms
                                                         $encodedImage = $imageGenerator->base64FromPath($imagePath);
 
                                                         return new HtmlString("<img src=\"data:image/$imageType;base64,$encodedImage\" alt=\"Open Graph Image Preview\" class=\"w-full h-auto\" />");
-                                                    } catch (\Throwable $e) {
+                                                    } catch (Throwable $e) {
                                                         return new HtmlString('<p class="text-red-500">'.__('Cannot render image, make sure the chrome binary is set correctly in the config file "open-graphy.php".').'</p>');
                                                     }
                                                 }),

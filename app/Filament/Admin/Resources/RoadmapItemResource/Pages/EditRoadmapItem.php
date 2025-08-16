@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\RoadmapItemResource\Pages;
 
 use App\Filament\Admin\Resources\RoadmapItemResource;
 use App\Filament\CrudDefaults;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditRoadmapItem extends EditRecord
@@ -16,7 +16,7 @@ class EditRoadmapItem extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

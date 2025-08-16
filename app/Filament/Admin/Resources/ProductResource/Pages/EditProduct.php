@@ -17,7 +17,7 @@ class EditProduct extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\DeleteAction::make()
+            DeleteAction::make()
                 ->before(function (DeleteAction $action) {
                     if ($this->record->plans()->count() > 0) {
                         Notification::make()

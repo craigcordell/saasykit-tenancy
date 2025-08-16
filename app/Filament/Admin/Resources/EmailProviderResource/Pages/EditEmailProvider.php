@@ -6,7 +6,9 @@ use App\Filament\Admin\Resources\EmailProviderResource;
 use App\Mail\TestEmail;
 use App\Models\EmailProvider;
 use App\Services\ConfigService;
-use Filament\Actions;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -21,18 +23,18 @@ class EditEmailProvider extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
-            \Filament\Actions\Action::make('edit-credentials')
+            DeleteAction::make(),
+            Action::make('edit-credentials')
                 ->label(__('Edit Credentials'))
                 ->visible(fn (ConfigService $configService) => $configService->isAdminSettingsEnabled())
                 ->color('primary')
                 ->icon('heroicon-o-rocket-launch')
-                ->url(fn (EmailProvider $record): string => \App\Filament\Admin\Resources\EmailProviderResource::getUrl(
+                ->url(fn (EmailProvider $record): string => EmailProviderResource::getUrl(
                     $record->slug.'-settings'
                 )),
-            \Filament\Actions\Action::make('send-test-email')
+            Action::make('send-test-email')
                 ->color('gray')
-                ->form([
+                ->schema([
                     TextInput::make('email')->default(config('app.support_email'))->required(),
                     TextInput::make('subject')->default('Test Email')->required(),
                     RichEditor::make('body')->default('This is a test email.')->required(),
@@ -46,7 +48,7 @@ class EditEmailProvider extends EditRecord
                                 $data['subject'],
                                 $data['body'],
                             ));
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Log::error($e->getMessage());
                         Notification::make()
                             ->title(__('Test Email Failed To Send with message:'))

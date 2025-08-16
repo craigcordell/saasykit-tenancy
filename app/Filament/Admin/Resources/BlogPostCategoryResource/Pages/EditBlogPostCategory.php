@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\BlogPostCategoryResource\Pages;
 
 use App\Filament\Admin\Resources\BlogPostCategoryResource;
 use App\Filament\CrudDefaults;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditBlogPostCategory extends EditRecord
@@ -16,7 +16,7 @@ class EditBlogPostCategory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

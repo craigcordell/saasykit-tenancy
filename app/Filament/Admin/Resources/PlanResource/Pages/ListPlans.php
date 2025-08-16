@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\PlanResource\Pages;
 
 use App\Filament\Admin\Resources\PlanResource;
 use App\Filament\ListDefaults;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPlans extends ListRecords
@@ -15,7 +16,7 @@ class ListPlans extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

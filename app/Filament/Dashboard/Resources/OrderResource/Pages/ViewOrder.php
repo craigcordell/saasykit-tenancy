@@ -3,7 +3,7 @@
 namespace App\Filament\Dashboard\Resources\OrderResource\Pages;
 
 use App\Filament\Dashboard\Resources\OrderResource;
-use Filament\Actions;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewOrder extends ViewRecord
@@ -13,7 +13,7 @@ class ViewOrder extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

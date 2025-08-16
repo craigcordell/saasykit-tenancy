@@ -10,7 +10,7 @@ class CancelSubscription extends Page
 {
     protected static string $resource = SubscriptionResource::class;
 
-    protected static string $view = 'filament.dashboard.resources.subscription-resource.pages.cancel-subscription';
+    protected string $view = 'filament.dashboard.resources.subscription-resource.pages.cancel-subscription';
 
     protected function getViewData(): array
     {

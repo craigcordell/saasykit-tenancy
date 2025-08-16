@@ -3,16 +3,19 @@
 namespace App\Filament\Dashboard\Resources;
 
 use App\Constants\DiscountConstants;
-use App\Filament\Dashboard\Resources\OrderResource\Pages;
+use App\Filament\Dashboard\Resources\OrderResource\Pages\ListOrders;
+use App\Filament\Dashboard\Resources\OrderResource\Pages\ViewOrder;
 use App\Mapper\OrderStatusMapper;
 use App\Models\Order;
 use App\Services\ConfigService;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -20,12 +23,12 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
             ]);
     }
@@ -34,7 +37,7 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('total_amount_after_discount')->formatStateUsing(function (string $state, $record) {
+                TextColumn::make('total_amount_after_discount')->formatStateUsing(function (string $state, $record) {
                     if ($record->transactions()->count() > 0) {
                         $transaction = $record->transactions()->first();
 
@@ -43,7 +46,7 @@ class OrderResource extends Resource
 
                     return money($state, $record->currency->code);
                 })->label(__('Total Amount')),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->color(fn (Order $record, OrderStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->badge()
@@ -52,30 +55,30 @@ class OrderResource extends Resource
                             return $mapper->mapForDisplay($state);
                         })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('updated_at')->label(__('Updated At'))
+                TextColumn::make('updated_at')->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ])
             ->defaultSort('updated_at', 'desc');
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                \Filament\Infolists\Components\Tabs::make('Subscription')
+        return $schema
+            ->components([
+                Tabs::make('Subscription')
                     ->columnSpan('full')
                     ->tabs([
-                        \Filament\Infolists\Components\Tabs\Tab::make(__('Details'))
+                        Tab::make(__('Details'))
                             ->schema([
                                 Section::make(__('Order Details'))
                                     ->description(__('View details about this order.'))
@@ -186,8 +189,8 @@ class OrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrders::route('/'),
-            'view' => Pages\ViewOrder::route('/{record}'),
+            'index' => ListOrders::route('/'),
+            'view' => ViewOrder::route('/{record}'),
         ];
     }
 

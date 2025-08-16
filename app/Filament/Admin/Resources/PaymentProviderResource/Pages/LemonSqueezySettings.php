@@ -10,7 +10,7 @@ class LemonSqueezySettings extends Page
 {
     protected static string $resource = PaymentProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.payment-provider-resource.pages.lemon-squeezy-settings';
+    protected string $view = 'filament.admin.resources.payment-provider-resource.pages.lemon-squeezy-settings';
 
     public function mount(): void
     {

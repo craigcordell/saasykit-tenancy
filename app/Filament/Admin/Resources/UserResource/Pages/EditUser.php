@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource;
 use App\Filament\CrudDefaults;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
@@ -19,7 +20,7 @@ class EditUser extends EditRecord
     {
         return [
             DeleteAction::make(),
-            \Filament\Actions\Action::make('disable-two-factor-authentication')
+            Action::make('disable-two-factor-authentication')
                 ->label(__('Disable Two-Factor Authentication'))
                 ->color('gray')
                 ->icon('heroicon-s-shield-exclamation')

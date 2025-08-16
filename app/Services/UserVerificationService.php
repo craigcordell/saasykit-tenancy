@@ -6,6 +6,7 @@ use App\Dto\SmsVerificationDto;
 use App\Events\User\UserPhoneVerified;
 use App\Models\User;
 use App\Services\VerificationProviders\VerificationProviderInterface;
+use Exception;
 
 class UserVerificationService
 {
@@ -28,7 +29,7 @@ class UserVerificationService
             }
         }
 
-        throw new \Exception('No verification provider found with slug '.$providerSlug);
+        throw new Exception('No verification provider found with slug '.$providerSlug);
     }
 
     public function phoneAlreadyExists(User $currentUser, string $phoneNumber): bool

@@ -2,12 +2,21 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\AnnouncementResource\Pages;
+use App\Filament\Admin\Resources\AnnouncementResource\Pages\CreateAnnouncement;
+use App\Filament\Admin\Resources\AnnouncementResource\Pages\EditAnnouncement;
+use App\Filament\Admin\Resources\AnnouncementResource\Pages\ListAnnouncements;
 use App\Models\Announcement;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 class AnnouncementResource extends Resource
@@ -19,16 +28,16 @@ class AnnouncementResource extends Resource
         return __('Announcements');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
+        return $schema
+            ->components([
+                TextInput::make('title')
                     ->label(__('Title'))
                     ->helperText(__('The title of the announcement (for internal use only).'))
                     ->required()
                     ->maxLength(255),
-                Forms\Components\RichEditor::make('content')
+                RichEditor::make('content')
                     ->label(__('Content'))
                     ->helperText(__('The content of the announcement.'))
                     ->required()
@@ -43,34 +52,34 @@ class AnnouncementResource extends Resource
                         'undo',
                     ])
                     ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('starts_at')
+                DateTimePicker::make('starts_at')
                     ->label(__('Starts At'))
                     ->helperText(__('The date and time the announcement will start displaying.'))
                     ->required(),
-                Forms\Components\DateTimePicker::make('ends_at')
+                DateTimePicker::make('ends_at')
                     ->label(__('Ends At'))
                     ->helperText(__('The date and time the announcement will stop displaying.'))
                     ->required(),
-                Forms\Components\Toggle::make('is_active')
+                Toggle::make('is_active')
                     ->label(__('Is Active'))
                     ->default(true)
                     ->required(),
-                Forms\Components\Toggle::make('is_dismissible')
+                Toggle::make('is_dismissible')
                     ->label(__('Is Dismissible'))
                     ->helperText(__('If enabled, users will be able to dismiss the announcement.'))
                     ->default(true)
                     ->required(),
-                Forms\Components\Toggle::make('show_on_frontend')
+                Toggle::make('show_on_frontend')
                     ->label(__('Show on frontend'))
                     ->helperText(__('If enabled, the announcement will be displayed on the frontend website.'))
                     ->default(true)
                     ->required(),
-                Forms\Components\Toggle::make('show_on_user_dashboard')
+                Toggle::make('show_on_user_dashboard')
                     ->label(__('Show on user dashboard'))
                     ->helperText(__('If enabled, the announcement will be displayed on the user dashboard.'))
                     ->default(true)
                     ->required(),
-                Forms\Components\Toggle::make('show_for_customers')
+                Toggle::make('show_for_customers')
                     ->label(__('Show for customers'))
                     ->helperText(__('If enabled, the announcement will be displayed for customers (users who either bought a product or subscribed to a plan).'))
                     ->default(true)
@@ -82,25 +91,25 @@ class AnnouncementResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->label(__('Title'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('starts_at')
+                TextColumn::make('starts_at')
                     ->label(__('Starts At'))
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('ends_at')
+                TextColumn::make('ends_at')
                     ->label(__('Ends At'))
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\ToggleColumn::make('is_active')
+                ToggleColumn::make('is_active')
                     ->label(__('Active')),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->sortable()
@@ -109,12 +118,12 @@ class AnnouncementResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('starts_at', 'desc');
@@ -130,9 +139,9 @@ class AnnouncementResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAnnouncements::route('/'),
-            'create' => Pages\CreateAnnouncement::route('/create'),
-            'edit' => Pages\EditAnnouncement::route('/{record}/edit'),
+            'index' => ListAnnouncements::route('/'),
+            'create' => CreateAnnouncement::route('/create'),
+            'edit' => EditAnnouncement::route('/{record}/edit'),
         ];
     }
 

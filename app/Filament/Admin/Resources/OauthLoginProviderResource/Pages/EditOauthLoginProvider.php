@@ -6,6 +6,8 @@ use App\Filament\Admin\Resources\OauthLoginProviderResource;
 use App\Filament\CrudDefaults;
 use App\Models\OauthLoginProvider;
 use App\Services\ConfigService;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditOauthLoginProvider extends EditRecord
@@ -17,13 +19,13 @@ class EditOauthLoginProvider extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\DeleteAction::make(),
-            \Filament\Actions\Action::make('edit-credentials')
+            DeleteAction::make(),
+            Action::make('edit-credentials')
                 ->label(__('Edit Credentials'))
                 ->color('primary')
                 ->visible(fn (ConfigService $configService) => $configService->isAdminSettingsEnabled())
                 ->icon('heroicon-o-rocket-launch')
-                ->url(fn (OauthLoginProvider $record): string => \App\Filament\Admin\Resources\OauthLoginProviderResource::getUrl(
+                ->url(fn (OauthLoginProvider $record): string => OauthLoginProviderResource::getUrl(
                     $record->provider_name.'-settings'
                 )),
         ];

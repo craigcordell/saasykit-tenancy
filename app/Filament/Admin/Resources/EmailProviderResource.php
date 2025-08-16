@@ -2,12 +2,22 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\EmailProviderResource\Pages;
+use App\Filament\Admin\Resources\EmailProviderResource\Pages\AmazonSesSettings;
+use App\Filament\Admin\Resources\EmailProviderResource\Pages\EditEmailProvider;
+use App\Filament\Admin\Resources\EmailProviderResource\Pages\ListEmailProviders;
+use App\Filament\Admin\Resources\EmailProviderResource\Pages\MailgunSettings;
+use App\Filament\Admin\Resources\EmailProviderResource\Pages\PostmarkSettings;
+use App\Filament\Admin\Resources\EmailProviderResource\Pages\ResendSettings;
+use App\Filament\Admin\Resources\EmailProviderResource\Pages\SmtpSettings;
 use App\Models\EmailProvider;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
@@ -21,16 +31,16 @@ class EmailProviderResource extends Resource
         return __('Settings');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()->schema([
-                    Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                Section::make()->schema([
+                    TextInput::make('name')
                         ->required()
                         ->label(__('Name'))
                         ->maxLength(255),
-                    Forms\Components\TextInput::make('slug')
+                    TextInput::make('slug')
                         ->required()
                         ->readOnly()
                         ->label(__('Slug'))
@@ -43,7 +53,7 @@ class EmailProviderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('Name'))
                     ->getStateUsing(function (EmailProvider $record) {
                         return new HtmlString(
@@ -53,19 +63,19 @@ class EmailProviderResource extends Resource
                             .'</div>'
                         );
                     }),
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make('slug')
                     ->label(__('Slug'))
                     ->searchable(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -80,13 +90,13 @@ class EmailProviderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEmailProviders::route('/'),
-            'edit' => Pages\EditEmailProvider::route('/{record}/edit'),
-            'mailgun-settings' => Pages\MailgunSettings::route('/mailgun-settings'),
-            'postmark-settings' => Pages\PostmarkSettings::route('/postmark-settings'),
-            'ses-settings' => Pages\AmazonSesSettings::route('/ses-settings'),
-            'resend-settings' => Pages\ResendSettings::route('/resend-settings'),
-            'smtp-settings' => Pages\SmtpSettings::route('/smtp-settings'),
+            'index' => ListEmailProviders::route('/'),
+            'edit' => EditEmailProvider::route('/{record}/edit'),
+            'mailgun-settings' => MailgunSettings::route('/mailgun-settings'),
+            'postmark-settings' => PostmarkSettings::route('/postmark-settings'),
+            'ses-settings' => AmazonSesSettings::route('/ses-settings'),
+            'resend-settings' => ResendSettings::route('/resend-settings'),
+            'smtp-settings' => SmtpSettings::route('/smtp-settings'),
         ];
     }
 

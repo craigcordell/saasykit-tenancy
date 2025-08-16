@@ -17,7 +17,7 @@ class EditPlan extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\DeleteAction::make()->before(function (DeleteAction $action) {
+            DeleteAction::make()->before(function (DeleteAction $action) {
                 if ($this->record->subscriptions()->count() > 0) {
                     Notification::make()
                         ->warning()

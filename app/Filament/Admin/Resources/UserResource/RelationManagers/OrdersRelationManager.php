@@ -3,21 +3,22 @@
 namespace App\Filament\Admin\Resources\UserResource\RelationManagers;
 
 use App\Constants\OrderStatus;
-use App\Filament\Admin\Resources\OrderResource;
+use App\Filament\Admin\Resources\OrderResource\Pages\ViewOrder;
 use App\Mapper\OrderStatusMapper;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class OrdersRelationManager extends RelationManager
 {
     protected static string $relationship = 'orders';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
             ]);
     }
@@ -27,8 +28,8 @@ class OrdersRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('user_id')
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label(__('Id'))->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('id')->label(__('Id'))->searchable()->sortable(),
+                TextColumn::make('status')
                     ->badge()
                     ->label(__('Status'))
                     ->colors([
@@ -38,28 +39,28 @@ class OrdersRelationManager extends RelationManager
                         function (string $state, $record, OrderStatusMapper $mapper) {
                             return $mapper->mapForDisplay($state);
                         }),
-                Tables\Columns\TextColumn::make('total_amount')
+                TextColumn::make('total_amount')
                     ->label(__('Total Amount'))
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('total_amount_after_discount')
+                TextColumn::make('total_amount_after_discount')
                     ->label(__('Total Amount After Discount'))
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('total_discount_amount')
+                TextColumn::make('total_discount_amount')
                     ->label(__('Total Discount'))
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('payment_provider_id')
+                TextColumn::make('payment_provider_id')
                     ->formatStateUsing(function (string $state, $record) {
                         return $record->paymentProvider->name;
                     })
                     ->label(__('Payment Provider'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
@@ -71,13 +72,13 @@ class OrdersRelationManager extends RelationManager
             ->headerActions([
 
             ])
-            ->actions([
-                Tables\Actions\Action::make('view')
-                    ->url(fn ($record) => OrderResource\Pages\ViewOrder::getUrl(['record' => $record]))
+            ->recordActions([
+                Action::make('view')
+                    ->url(fn ($record) => ViewOrder::getUrl(['record' => $record]))
                     ->label(__('View'))
                     ->icon('heroicon-o-eye'),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }

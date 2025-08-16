@@ -7,6 +7,7 @@ use App\Constants\TransactionStatus;
 use App\Models\Invoice as InvoiceEntity;
 use App\Models\Transaction;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -33,7 +34,7 @@ class InvoiceService
             $storage = Storage::disk(config('invoices.disk'));
 
             if (! $storage->exists($invoiceEntity->filename)) {
-                throw new \Exception(sprintf('Invoice file not found for transaction %s', $transaction->id));
+                throw new Exception(sprintf('Invoice file not found for transaction %s', $transaction->id));
             }
 
             return response()->file($storage->path($invoiceEntity->filename));

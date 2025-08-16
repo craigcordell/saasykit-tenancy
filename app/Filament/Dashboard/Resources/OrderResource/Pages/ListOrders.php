@@ -4,9 +4,9 @@ namespace App\Filament\Dashboard\Resources\OrderResource\Pages;
 
 use App\Constants\OrderStatus;
 use App\Filament\Dashboard\Resources\OrderResource;
-use Filament\Actions;
-use Filament\Resources\Components\Tab;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListOrders extends ListRecords
@@ -16,7 +16,7 @@ class ListOrders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 

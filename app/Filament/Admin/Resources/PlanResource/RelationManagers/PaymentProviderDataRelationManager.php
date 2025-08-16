@@ -5,11 +5,21 @@ namespace App\Filament\Admin\Resources\PlanResource\RelationManagers;
 use App\Constants\PaymentProviderConstants;
 use App\Models\PaymentProvider;
 use App\Services\PaymentProviders\LemonSqueezy\LemonSqueezyProductValidator;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 
@@ -24,33 +34,33 @@ class PaymentProviderDataRelationManager extends RelationManager
         return __('Payment Provider Data');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('payment_provider_id')
+        return $schema
+            ->components([
+                Select::make('payment_provider_id')
                     ->label('Payment Provider')
                     ->options(
-                        \App\Models\PaymentProvider::all()
+                        PaymentProvider::all()
                             ->mapWithKeys(function ($paymentProvider) {
                                 return [$paymentProvider->id => $paymentProvider->name];
                             })
                             ->toArray()
                     )
-                    ->default(\App\Models\PaymentProvider::where('slug', PaymentProviderConstants::LEMON_SQUEEZY_SLUG)?->first()?->id ?? null)
+                    ->default(PaymentProvider::where('slug', PaymentProviderConstants::LEMON_SQUEEZY_SLUG)?->first()?->id ?? null)
                     ->live()
-                    ->unique(modifyRuleUsing: function ($rule, \Filament\Forms\Get $get, RelationManager $livewire) {
+                    ->unique(modifyRuleUsing: function ($rule, Get $get, RelationManager $livewire) {
                         return $rule->where('plan_id', $livewire->ownerRecord->id)->ignore($get('id'));
                     })
                     ->preload()
                     ->required(),
-                Forms\Components\TextInput::make('payment_provider_product_id')
+                TextInput::make('payment_provider_product_id')
                     ->label('Payment Provider Product/Variant ID')
                     ->helperText('For Lemon Squeezy, this should be equal to the variant ID.')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Actions::make([
-                    Forms\Components\Actions\Action::make('submit')
+                Actions::make([
+                    Action::make('submit')
                         ->label(__('Validate Product (Lemon Squeezy)'))
                         ->color('success')
                         ->outlined()
@@ -71,7 +81,7 @@ class PaymentProviderDataRelationManager extends RelationManager
 
                             try {
                                 $validator->validatePlan($variantId, $this->ownerRecord);
-                            } catch (\Exception $e) {
+                            } catch (Exception $e) {
                                 Notification::make()
                                     ->danger()
                                     ->title(__('Problem validating product'))
@@ -99,26 +109,26 @@ class PaymentProviderDataRelationManager extends RelationManager
             ->description(new HtmlString('⚠️ Advanced settings, these records are created automatically when a plan is created. You <b>SHOULD NOT</b> need to create or edit these records manually unless you use "Lemon Squeezy" as your payment provider because it does not support plan creation via the API.'))
             ->recordTitleAttribute('Payment Provider Product/Variant ID')
             ->columns([
-                Tables\Columns\TextColumn::make('payment_provider_id')
+                TextColumn::make('payment_provider_id')
                     ->label('Payment Provider')->formatStateUsing(function ($record) {
                         return $record->paymentProvider->name;
                     }),
-                Tables\Columns\TextColumn::make('payment_provider_product_id')
+                TextColumn::make('payment_provider_product_id')
                     ->label('Payment Provider Product/Variant ID'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

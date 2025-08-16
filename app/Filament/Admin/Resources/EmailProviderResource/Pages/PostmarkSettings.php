@@ -10,7 +10,7 @@ class PostmarkSettings extends Page
 {
     protected static string $resource = EmailProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.email-provider-resource.pages.postmark-settings';
+    protected string $view = 'filament.admin.resources.email-provider-resource.pages.postmark-settings';
 
     public function mount(): void
     {

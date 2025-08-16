@@ -5,7 +5,9 @@ namespace App\Filament\Admin\Resources\BlogPostResource\Pages;
 use App\Filament\Admin\Resources\BlogPostResource;
 use App\Filament\CrudDefaults;
 use App\Models\BlogPost;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditBlogPost extends EditRecord
@@ -19,7 +21,7 @@ class EditBlogPost extends EditRecord
     {
         return [
             // view the post
-            Actions\Action::make('view')
+            Action::make('view')
                 ->label(__('View Post'))
                 ->color('success')
                 ->url(
@@ -27,8 +29,8 @@ class EditBlogPost extends EditRecord
                     true
                 )
                 ->icon('heroicon-o-eye'),
-            Actions\ActionGroup::make([
-                Actions\DeleteAction::make(),
+            ActionGroup::make([
+                DeleteAction::make(),
             ]),
         ];
     }
@@ -36,7 +38,7 @@ class EditBlogPost extends EditRecord
     protected function getFormActions(): array
     {
         return array_merge(parent::getFormActions(), [
-            Actions\Action::make('view')
+            Action::make('view')
                 ->label(__('View Post'))
                 ->color('success')
                 ->url(

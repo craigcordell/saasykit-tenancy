@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\RoleResource\Pages;
 
 use App\Filament\Admin\Resources\RoleResource;
 use App\Filament\ListDefaults;
-use Filament\Pages\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListRoles extends ListRecords
@@ -16,7 +16,7 @@ class ListRoles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

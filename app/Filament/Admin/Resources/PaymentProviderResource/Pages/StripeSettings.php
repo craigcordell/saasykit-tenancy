@@ -10,7 +10,7 @@ class StripeSettings extends Page
 {
     protected static string $resource = PaymentProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.payment-provider-resource.pages.stripe-settings';
+    protected string $view = 'filament.admin.resources.payment-provider-resource.pages.stripe-settings';
 
     public function mount(): void
     {

@@ -2,12 +2,20 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\PaymentProviderResource\Pages;
+use App\Filament\Admin\Resources\PaymentProviderResource\Pages\EditPaymentProvider;
+use App\Filament\Admin\Resources\PaymentProviderResource\Pages\LemonSqueezySettings;
+use App\Filament\Admin\Resources\PaymentProviderResource\Pages\ListPaymentProviders;
+use App\Filament\Admin\Resources\PaymentProviderResource\Pages\PaddleSettings;
+use App\Filament\Admin\Resources\PaymentProviderResource\Pages\StripeSettings;
 use App\Models\PaymentProvider;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
@@ -21,21 +29,21 @@ class PaymentProviderResource extends Resource
         return __('Settings');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()->schema([
-                    Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                Section::make()->schema([
+                    TextInput::make('name')
                         ->label(__('Name'))
                         ->required()
                         ->helperText(__('The name of the payment provider (shown on checkout page).'))
                         ->maxLength(255),
-                    Forms\Components\Toggle::make('is_active')
+                    Toggle::make('is_active')
                         ->label(__('Active'))
                         ->helperText(__('Deactivating this payment provider will prevent it from being used for new & old subscriptions. Customers will not be able to pay for their services so USE WITH CAUTION.'))
                         ->required(),
-                    Forms\Components\Toggle::make('is_enabled_for_new_payments')
+                    Toggle::make('is_enabled_for_new_payments')
                         ->label(__('Enabled for new payments'))
                         ->helperText(__('If disabled, this payment provider will not be shown on the checkout page, but will still be available for existing subscriptions and receiving webhooks.'))
                         ->required(),
@@ -48,7 +56,7 @@ class PaymentProviderResource extends Resource
         return $table
             ->reorderable('sort')
             ->columns([
-                Tables\Columns\TextColumn::make('icon')
+                TextColumn::make('icon')
                     ->label(__('Icon'))
                     ->getStateUsing(function (PaymentProvider $record) {
                         return new HtmlString(
@@ -57,22 +65,22 @@ class PaymentProviderResource extends Resource
                             .'</div>'
                         );
                     }),
-                Tables\Columns\TextColumn::make('name')->label(__('Name')),
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make('name')->label(__('Name')),
+                TextColumn::make('slug')
                     ->label(__('Slug'))
                     ->searchable(),
-                Tables\Columns\ToggleColumn::make('is_active')
+                ToggleColumn::make('is_active')
                     ->label(__('Active')),
-                Tables\Columns\ToggleColumn::make('is_enabled_for_new_payments')
+                ToggleColumn::make('is_enabled_for_new_payments')
                     ->label(__('Enabled for new payments')),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ])
             ->defaultSort('sort', 'asc');
     }
@@ -87,11 +95,11 @@ class PaymentProviderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPaymentProviders::route('/'),
-            'edit' => Pages\EditPaymentProvider::route('/{record}/edit'),
-            'stripe-settings' => Pages\StripeSettings::route('/stripe-settings'),
-            'paddle-settings' => Pages\PaddleSettings::route('/paddle-settings'),
-            'lemon-squeezy-settings' => Pages\LemonSqueezySettings::route('/lemon-squeezy-settings'),
+            'index' => ListPaymentProviders::route('/'),
+            'edit' => EditPaymentProvider::route('/{record}/edit'),
+            'stripe-settings' => StripeSettings::route('/stripe-settings'),
+            'paddle-settings' => PaddleSettings::route('/paddle-settings'),
+            'lemon-squeezy-settings' => LemonSqueezySettings::route('/lemon-squeezy-settings'),
         ];
     }
 

@@ -2,10 +2,16 @@
 
 namespace App\Filament\Admin\Resources\DiscountResource\RelationManagers;
 
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
@@ -15,12 +21,12 @@ class CodesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'code';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make([
-                    Forms\Components\TextInput::make('code')
+        return $schema
+            ->components([
+                Section::make([
+                    TextInput::make('code')
                         ->label(__('Code'))
                         ->helperText(__('The code that will be used to redeem the discount.'))
                         ->required()
@@ -34,8 +40,8 @@ class CodesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('code')->label(__('Code')),
-                Tables\Columns\TextColumn::make('redemptions_count')
+                TextColumn::make('code')->label(__('Code')),
+                TextColumn::make('redemptions_count')
                     ->label(__('Redemptions'))
                     ->counts('redemptions'),
             ])
@@ -43,16 +49,16 @@ class CodesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\Action::make(__('add_bulk_codes'))
+                CreateAction::make(),
+                Action::make(__('add_bulk_codes'))
                     ->label(__('New Bulk Codes'))
                     ->color('gray')
                     ->button()
-                    ->form([
-                        Forms\Components\TextInput::make('prefix')
+                    ->schema([
+                        TextInput::make('prefix')
                             ->helperText(__('The prefix will be added to the beginning of each code.'))
                             ->label(__('Prefix')),
-                        Forms\Components\TextInput::make('count')
+                        TextInput::make('count')
                             ->label(__('Count'))
                             ->helperText(__('The number of codes to generate.'))
                             ->type('number')
@@ -73,12 +79,12 @@ class CodesRelationManager extends RelationManager
                         $record->codes()->createMany($codes);
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 }

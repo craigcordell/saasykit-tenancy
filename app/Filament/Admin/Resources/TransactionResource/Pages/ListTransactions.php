@@ -6,9 +6,9 @@ use App\Constants\TransactionStatus;
 use App\Filament\Admin\Resources\TransactionResource;
 use App\Filament\Admin\Resources\TransactionResource\Widgets\TransactionOverview;
 use App\Filament\ListDefaults;
-use Filament\Actions;
-use Filament\Resources\Components\Tab;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListTransactions extends ListRecords
@@ -20,7 +20,7 @@ class ListTransactions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 

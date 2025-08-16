@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -46,7 +47,7 @@ class OneTimeProduct extends Model
 
         static::deleting(function (OneTimeProduct $oneTimeProduct) {
             if (! $oneTimeProduct->isDeletable()) {
-                throw new \Exception('Cannot delete a one-time product that has been ordered.');
+                throw new Exception('Cannot delete a one-time product that has been ordered.');
             }
 
             $oneTimeProduct->paymentProviderData()->delete();

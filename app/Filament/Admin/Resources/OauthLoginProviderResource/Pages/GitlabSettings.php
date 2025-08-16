@@ -10,7 +10,7 @@ class GitlabSettings extends Page
 {
     protected static string $resource = OauthLoginProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.oauth-login-provider-resource.pages.gitlab-settings';
+    protected string $view = 'filament.admin.resources.oauth-login-provider-resource.pages.gitlab-settings';
 
     public function mount(): void
     {

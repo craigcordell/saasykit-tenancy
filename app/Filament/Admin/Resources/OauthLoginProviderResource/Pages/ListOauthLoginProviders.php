@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\OauthLoginProviderResource\Pages;
 
 use App\Filament\Admin\Resources\OauthLoginProviderResource;
 use App\Filament\ListDefaults;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListOauthLoginProviders extends ListRecords
@@ -15,7 +16,7 @@ class ListOauthLoginProviders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

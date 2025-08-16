@@ -5,16 +5,19 @@ namespace App\Filament\Dashboard\Resources;
 use App\Constants\TransactionStatus;
 use App\Filament\Dashboard\Resources\OrderResource\Pages\ViewOrder;
 use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\ViewSubscription;
-use App\Filament\Dashboard\Resources\TransactionResource\Pages;
+use App\Filament\Dashboard\Resources\TransactionResource\Pages\ListTransactions;
 use App\Mapper\TransactionStatusMapper;
 use App\Models\Transaction;
 use App\Services\AddressService;
 use App\Services\ConfigService;
 use App\Services\InvoiceService;
 use Filament\Actions\Action;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -24,29 +27,29 @@ class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([]);
+        return $schema
+            ->components([]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('amount')
+                TextColumn::make('amount')
                     ->label(__('Amount'))
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->color(fn (Transaction $record, TransactionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->badge()
                     ->formatStateUsing(fn (string $state, TransactionStatusMapper $mapper): string => $mapper->mapForDisplay($state)),
-                Tables\Columns\TextColumn::make('owner')
+                TextColumn::make('owner')
                     ->label(__('Owner'))
                     ->getStateUsing(fn (Transaction $record) => $record->subscription_id !== null ? ($record->subscription->plan?->name ?? '-') : ($record->order_id !== null ? __('View Order') : '-'))
                     ->url(function (Transaction $record) {
@@ -58,16 +61,16 @@ class TransactionResource extends Resource
                             return ViewOrder::getUrl(['record' => $record->order]);
                         }
                     }),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Date'))
                     ->dateTime(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('see-invoice')
+            ->recordActions([
+                EditAction::make(),
+                Action::make('see-invoice')
                     ->label(__('See Invoice'))
                     ->icon('heroicon-o-document')
                     ->visible(fn (Transaction $record, InvoiceService $invoiceService): bool => $invoiceService->canGenerateInvoices($record))
@@ -88,9 +91,9 @@ class TransactionResource extends Resource
                         return redirect()->route('invoice.generate', ['transactionUuid' => $record->uuid]);
                     }),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('updated_at', 'desc');
@@ -106,7 +109,7 @@ class TransactionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTransactions::route('/'),
+            'index' => ListTransactions::route('/'),
         ];
     }
 

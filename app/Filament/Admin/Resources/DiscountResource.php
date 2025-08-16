@@ -3,12 +3,27 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Constants\DiscountConstants;
+use App\Filament\Admin\Resources\DiscountResource\Pages\CreateDiscount;
+use App\Filament\Admin\Resources\DiscountResource\Pages\EditDiscount;
+use App\Filament\Admin\Resources\DiscountResource\Pages\ListDiscounts;
+use App\Filament\Admin\Resources\DiscountResource\RelationManagers\CodesRelationManager;
 use App\Models\Discount;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -23,21 +38,21 @@ class DiscountResource extends Resource
         return __('Product Management');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 // card
-                Forms\Components\Section::make([
-                    Forms\Components\TextInput::make('name')
+                Section::make([
+                    TextInput::make('name')
                         ->required()
                         ->label(__('Name'))
                         ->maxLength(255),
-                    Forms\Components\Textarea::make('description')
+                    Textarea::make('description')
                         ->label(__('Description'))
                         ->maxLength(255),
 
-                    Forms\Components\Radio::make('type')
+                    Radio::make('type')
                         ->required()
                         ->label(__('Type'))
                         ->options([
@@ -46,20 +61,20 @@ class DiscountResource extends Resource
                         ])
                         ->default('fixed'),
 
-                    Forms\Components\Grid::make()->schema([
-                        Forms\Components\TextInput::make('amount')
+                    Grid::make()->schema([
+                        TextInput::make('amount')
                             ->label(__('Amount'))
                             ->helperText(__('If you choose percentage, enter a number between 0 and 100. For example: 90 for 90%. For fixed amount, enter the amount in cents. For example: 1000 for $10.00'))
                             ->integer()
                             ->required(),
-                        Forms\Components\DateTimePicker::make('valid_until'),
+                        DateTimePicker::make('valid_until'),
                     ]),
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\Toggle::make('is_enabled_for_all_plans')
+                    Grid::make(2)->schema([
+                        Toggle::make('is_enabled_for_all_plans')
                             ->label(__('Enabled for all plans'))
                             ->helperText(__('If enabled, this discount will be applied to all plans. If disabled, you can select specific plans.'))
                             ->live(),
-                        Forms\Components\Select::make('plans')
+                        Select::make('plans')
                             ->multiple()
                             ->label(__('Plans'))
                             ->disabled(function (Get $get) {
@@ -70,11 +85,11 @@ class DiscountResource extends Resource
                             })
                             ->preload()
                             ->helperText(__('Select the plans that this discount will be applied to.')),
-                        Forms\Components\Toggle::make('is_enabled_for_all_one_time_products')
+                        Toggle::make('is_enabled_for_all_one_time_products')
                             ->label(__('Enabled for all one-time products'))
                             ->helperText(__('If enabled, this discount will be applied to all one-time products. If disabled, you can select specific one-time products.'))
                             ->live(),
-                        Forms\Components\Select::make('oneTimeProducts')
+                        Select::make('oneTimeProducts')
                             ->label(__('One-time purchase products'))
                             ->multiple()
                             ->relationship('oneTimeProducts', 'name', modifyQueryUsing: function (Builder $query) {
@@ -90,30 +105,30 @@ class DiscountResource extends Resource
                     //                        ->options(DiscountConstants::ACTION_TYPES)
                     //                        // change the default value to null
                     //                        ->default(null),
-                    Forms\Components\TextInput::make('max_redemptions')
+                    TextInput::make('max_redemptions')
                         ->label(__('Maximum Redemptions'))
                         ->integer()
                         ->default(-1)
                         ->helperText(__('Enter -1 for unlimited redemptions (total).')),
-                    Forms\Components\TextInput::make('max_redemptions_per_user')
+                    TextInput::make('max_redemptions_per_user')
                         ->label(__('Maximum Redemptions Per User'))
                         ->integer()
                         ->default(-1)
                         ->helperText(__('Enter -1 for unlimited redemptions per user.')),
-                    Forms\Components\Toggle::make('is_recurring')
+                    Toggle::make('is_recurring')
                         ->label(__('Is Recurring?'))
                         ->helperText(__('If enabled, this discount will keep being applied to the subscription forever (or until valid if you set maximum valid date).'))
                         ->required(),
-                    Forms\Components\Toggle::make('is_active')
+                    Toggle::make('is_active')
                         ->label(__('Active'))
                         ->default(true)
                         ->required(),
-                    Forms\Components\TextInput::make('duration_in_months')
+                    TextInput::make('duration_in_months')
                         ->label(__('Duration in Months'))
                         ->integer()
                         ->helperText(__('This allows you define how many months the discount should apply. Only works with payment providers that support this feature. (like Stripe or Lemon Squeezy)'))
                         ->default(null),
-                    Forms\Components\TextInput::make('maximum_recurring_intervals')
+                    TextInput::make('maximum_recurring_intervals')
                         ->label(__('Maximum Recurring Intervals'))
                         ->integer()
                         ->helperText(__('Amount of subscription billing periods that this discount recurs for. Only works with payment providers that support this feature. (like Paddle)'))
@@ -127,47 +142,47 @@ class DiscountResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('Name'))
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('type')->label(__('Type')),
-                Tables\Columns\TextColumn::make('amount')->label(__('Amount'))->formatStateUsing(function (string $state, $record) {
+                TextColumn::make('type')->label(__('Type')),
+                TextColumn::make('amount')->label(__('Amount'))->formatStateUsing(function (string $state, $record) {
                     if ($record->type === DiscountConstants::TYPE_PERCENTAGE) {
                         return $state.'%';
                     }
 
                     return intval($state) / 100;
                 }),
-                Tables\Columns\ToggleColumn::make('is_active')->label(__('Active')),
-                Tables\Columns\TextColumn::make('redemptions')->label(__('Redemptions')),
-                Tables\Columns\TextColumn::make('updated_at')->label(__('Updated at'))
+                ToggleColumn::make('is_active')->label(__('Active')),
+                TextColumn::make('redemptions')->label(__('Redemptions')),
+                TextColumn::make('updated_at')->label(__('Updated at'))
                     ->dateTime(config('app.datetime_format')),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Admin\Resources\DiscountResource\RelationManagers\CodesRelationManager::class,
+            CodesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\DiscountResource\Pages\ListDiscounts::route('/'),
-            'create' => \App\Filament\Admin\Resources\DiscountResource\Pages\CreateDiscount::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\DiscountResource\Pages\EditDiscount::route('/{record}/edit'),
+            'index' => ListDiscounts::route('/'),
+            'create' => CreateDiscount::route('/create'),
+            'edit' => EditDiscount::route('/{record}/edit'),
         ];
     }
 

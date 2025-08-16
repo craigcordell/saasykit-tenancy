@@ -10,7 +10,7 @@ class ChangeSubscriptionPlan extends Page
 {
     protected static string $resource = SubscriptionResource::class;
 
-    protected static string $view = 'filament.dashboard.resources.subscription-resource.pages.change-subscription-plan';
+    protected string $view = 'filament.dashboard.resources.subscription-resource.pages.change-subscription-plan';
 
     protected function getViewData(): array
     {

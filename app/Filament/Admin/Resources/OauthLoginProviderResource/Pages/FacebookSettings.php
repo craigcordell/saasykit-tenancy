@@ -10,7 +10,7 @@ class FacebookSettings extends Page
 {
     protected static string $resource = OauthLoginProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.oauth-login-provider-resource.pages.facebook-settings';
+    protected string $view = 'filament.admin.resources.oauth-login-provider-resource.pages.facebook-settings';
 
     public function mount(): void
     {

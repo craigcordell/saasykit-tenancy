@@ -9,8 +9,8 @@ use App\Services\SubscriptionService;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use Livewire\Component;
 
 class AddSubscriptionDiscountForm extends Component implements HasForms
@@ -49,10 +49,10 @@ class AddSubscriptionDiscountForm extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('code')
                     ->required()
                     ->nullable(false),

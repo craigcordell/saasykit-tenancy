@@ -10,7 +10,7 @@ class SmtpSettings extends Page
 {
     protected static string $resource = EmailProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.email-provider-resource.pages.smtp-settings';
+    protected string $view = 'filament.admin.resources.email-provider-resource.pages.smtp-settings';
 
     public function mount(): void
     {

@@ -3,13 +3,27 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Constants\PlanType;
+use App\Filament\Admin\Resources\PlanResource\Pages\CreatePlan;
+use App\Filament\Admin\Resources\PlanResource\Pages\EditPlan;
+use App\Filament\Admin\Resources\PlanResource\Pages\ListPlans;
+use App\Filament\Admin\Resources\PlanResource\RelationManagers\PaymentProviderDataRelationManager;
+use App\Filament\Admin\Resources\PlanResource\RelationManagers\PricesRelationManager;
 use App\Models\Interval;
 use App\Models\Plan;
 use App\Models\Product;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
@@ -26,19 +40,19 @@ class PlanResource extends Resource
         return __('Product Management');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make([
-                    Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                Section::make([
+                    TextInput::make('name')
                         ->required()
                         ->label(__('Name'))
                         ->maxLength(255),
-                    Forms\Components\TextInput::make('slug')
+                    TextInput::make('slug')
                         ->nullable()
                         ->label(__('Slug'))
-                        ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
+                        ->dehydrateStateUsing(function ($state, Get $get) {
                             if (empty($state)) {
                                 $product = Product::find($get('product_id'));
                                 $interval = Interval::find($get('interval_id'));
@@ -62,7 +76,7 @@ class PlanResource extends Resource
                         ->rules(['alpha_dash'])
                         ->unique(ignoreRecord: true)
                         ->disabledOn('edit'),
-                    Forms\Components\Radio::make('type')
+                    Radio::make('type')
                         ->label(__('Type'))
                         ->helperText(
                             new HtmlString(
@@ -77,38 +91,38 @@ class PlanResource extends Resource
                         ->disabledOn('edit')
                         ->live()
                         ->required(),
-                    Forms\Components\Select::make('meter_id')
+                    Select::make('meter_id')
                         ->label(__('Meter'))
                         ->relationship('meter', 'name')
                         ->searchable()
                         ->preload()
                         ->createOptionForm([
-                            Forms\Components\TextInput::make('name')
+                            TextInput::make('name')
                                 ->helperText(__('The name of the meter. Please use singular form, for example: "Token" instead of "Tokens".'))
                                 ->required()
                                 ->maxLength(255),
                         ])
-                        ->visible(function (\Filament\Forms\Get $get) {
+                        ->visible(function (Get $get) {
                             return $get('type') === PlanType::USAGE_BASED->value;
                         })
-                        ->required(function (\Filament\Forms\Get $get) {
+                        ->required(function (Get $get) {
                             return $get('type') === PlanType::USAGE_BASED->value;
                         }),
-                    Forms\Components\Select::make('product_id')
+                    Select::make('product_id')
                         // only products with is_default = false can be selected
                         ->relationship('product', 'name', modifyQueryUsing: fn (Builder $query) => $query->where('is_default', false))
                         ->label(__('Product'))
                         ->required()
                         ->preload(),
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\TextInput::make('interval_count')
+                    Grid::make(2)->schema([
+                        TextInput::make('interval_count')
                             ->label(__('Interval Count'))
                             ->required()
                             ->integer()
                             ->minValue(1)
                             ->default(1)
                             ->helperText(__('The number of intervals (weeks, months, etc) between each billing cycle.')),
-                        Forms\Components\Select::make('interval_id')
+                        Select::make('interval_id')
                             ->label(__('Interval'))
                             ->relationship('interval', 'name')
                             ->options(function () {
@@ -118,9 +132,9 @@ class PlanResource extends Resource
                             ->required()
                             ->preload(),
                     ])->hidden(
-                        fn (\Filament\Forms\Get $get): bool => $get('is_default') === true
+                        fn (Get $get): bool => $get('is_default') === true
                     ),
-                    Forms\Components\Toggle::make('has_trial')
+                    Toggle::make('has_trial')
                         ->reactive()
                         ->label(__('Has Trial'))
                         ->requiredWith('trial_interval_id')
@@ -128,21 +142,21 @@ class PlanResource extends Resource
                             fn ($state, callable $set) => $state ? $set('trial_interval_id', null) : $set('trial_interval_id', 'hidden')
                         )
                         ->hidden(
-                            fn (\Filament\Forms\Get $get): bool => $get('is_default') === true
+                            fn (Get $get): bool => $get('is_default') === true
                         ),
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\TextInput::make('trial_interval_count')
+                    Grid::make(2)->schema([
+                        TextInput::make('trial_interval_count')
                             ->required()
                             ->integer()
                             ->label(__('Trial Interval Count'))
                             ->minValue(1)
                             ->required(
-                                fn (\Filament\Forms\Get $get): bool => $get('has_trial') === true
+                                fn (Get $get): bool => $get('has_trial') === true
                             )
                             ->hidden(
-                                fn (\Filament\Forms\Get $get): bool => $get('has_trial') === false
+                                fn (Get $get): bool => $get('has_trial') === false
                             ),
-                        Forms\Components\Select::make('trial_interval_id')
+                        Select::make('trial_interval_id')
                             ->relationship('trialInterval', 'name')
                             ->label(__('Trial Interval'))
                             ->options(function () {
@@ -151,19 +165,19 @@ class PlanResource extends Resource
                             ->requiredWith('has_trial')
                             ->preload()
                             ->required(
-                                fn (\Filament\Forms\Get $get): bool => $get('has_trial') === true
+                                fn (Get $get): bool => $get('has_trial') === true
                             )
                             ->hidden(
-                                fn (\Filament\Forms\Get $get): bool => $get('has_trial') === false
+                                fn (Get $get): bool => $get('has_trial') === false
                             ),
                     ])->hidden(
-                        fn (\Filament\Forms\Get $get): bool => $get('is_default') === true
+                        fn (Get $get): bool => $get('is_default') === true
                     ),
-                    Forms\Components\Toggle::make('is_active')
+                    Toggle::make('is_active')
                         ->label(__('Is Active'))
                         ->default(true)
                         ->required(),
-                    Forms\Components\RichEditor::make('description'),
+                    RichEditor::make('description'),
                 ]),
             ]);
     }
@@ -174,59 +188,59 @@ class PlanResource extends Resource
             ->heading(__('Plans are the different tiers of your product that you offer to your customers.'))
             ->description(__('For example: if you have Starter, Pro and Premium products, you would create a monthly and yearly plans for each of those to offer them in different intervals.'))
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable()->label(__('Name')),
-                Tables\Columns\TextColumn::make('slug')->searchable()->sortable()->label(__('Slug')),
-                Tables\Columns\TextColumn::make('product.name')
+                TextColumn::make('name')->searchable()->sortable()->label(__('Name')),
+                TextColumn::make('slug')->searchable()->sortable()->label(__('Slug')),
+                TextColumn::make('product.name')
                     ->label(__('Product')),
-                Tables\Columns\TextColumn::make('interval')->formatStateUsing(function (string $state, $record) {
+                TextColumn::make('interval')->formatStateUsing(function (string $state, $record) {
                     return $record->interval_count.' '.$record->interval->name;
                 })->label(__('Interval')),
-                Tables\Columns\TextColumn::make('has_trial')->formatStateUsing(function (string $state, $record) {
+                TextColumn::make('has_trial')->formatStateUsing(function (string $state, $record) {
                     if ($record->has_trial) {
                         return $record->trial_interval_count.' '.$record->trialInterval->name;
                     }
 
                     return '-';
                 })->label(__('Trial')),
-                Tables\Columns\IconColumn::make('is_active')
+                IconColumn::make('is_active')
                     ->label(__('Active'))
                     ->boolean(),
-                Tables\Columns\IconColumn::make('prices_exists')
+                IconColumn::make('prices_exists')
                     ->exists('prices')
                     ->label(__('Has Prices'))
                     ->boolean(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->with([
                 'interval',
                 'trialInterval',
             ]))
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Admin\Resources\PlanResource\RelationManagers\PricesRelationManager::class,
-            \App\Filament\Admin\Resources\PlanResource\RelationManagers\PaymentProviderDataRelationManager::class,
+            PricesRelationManager::class,
+            PaymentProviderDataRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\PlanResource\Pages\ListPlans::route('/'),
-            'create' => \App\Filament\Admin\Resources\PlanResource\Pages\CreatePlan::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\PlanResource\Pages\EditPlan::route('/{record}/edit'),
+            'index' => ListPlans::route('/'),
+            'create' => CreatePlan::route('/create'),
+            'edit' => EditPlan::route('/{record}/edit'),
         ];
     }
 

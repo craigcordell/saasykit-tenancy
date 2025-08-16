@@ -5,7 +5,8 @@ namespace App\Filament\Admin\Resources\PaymentProviderResource\Pages;
 use App\Filament\Admin\Resources\PaymentProviderResource;
 use App\Models\PaymentProvider;
 use App\Services\ConfigService;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditPaymentProvider extends EditRecord
@@ -15,8 +16,8 @@ class EditPaymentProvider extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
-            \Filament\Actions\Action::make('edit-credentials')
+            DeleteAction::make(),
+            Action::make('edit-credentials')
                 ->label(__('Edit Credentials'))
                 ->color('primary')
                 ->visible(fn (PaymentProvider $record, ConfigService $configService) => $configService->isAdminSettingsEnabled() && PaymentProviderResource::hasPage($record->slug.'-settings'))

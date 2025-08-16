@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Resources\EmailProviderResource\Pages;
 
 use App\Filament\Admin\Resources\EmailProviderResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListEmailProviders extends ListRecords
@@ -13,7 +13,7 @@ class ListEmailProviders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

@@ -6,7 +6,9 @@ use App\Filament\Admin\Resources\VerificationProviderResource;
 use App\Models\VerificationProvider;
 use App\Services\ConfigService;
 use App\Services\UserVerificationService;
-use Filament\Actions;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -19,8 +21,8 @@ class EditVerificationProvider extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
-            \Filament\Actions\Action::make('edit-credentials')
+            DeleteAction::make(),
+            Action::make('edit-credentials')
                 ->label(__('Edit Credentials'))
                 ->color('primary')
                 ->visible(fn (ConfigService $configService) => $configService->isAdminSettingsEnabled())
@@ -28,10 +30,10 @@ class EditVerificationProvider extends EditRecord
                 ->url(fn (VerificationProvider $record): string => VerificationProviderResource::getUrl(
                     $record->slug.'-settings'
                 )),
-            \Filament\Actions\Action::make('send-test-sms')
+            Action::make('send-test-sms')
                 ->label(__('Send Test SMS'))
                 ->color('gray')
-                ->form([
+                ->schema([
                     TextInput::make('phone')->required(),
                     Textarea::make('body')->default('This is a test sms.')->required(),
                 ])
@@ -39,7 +41,7 @@ class EditVerificationProvider extends EditRecord
                     try {
                         $userVerificationService->getProviderBySlug($record->slug)
                             ->sendSms($data['phone'], $data['body']);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         logger()->error($e->getMessage());
                         Notification::make()
                             ->title(__('Test SMS Failed To Send with message:'))

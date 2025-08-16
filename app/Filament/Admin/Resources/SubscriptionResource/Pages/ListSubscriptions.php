@@ -5,8 +5,9 @@ namespace App\Filament\Admin\Resources\SubscriptionResource\Pages;
 use App\Constants\SubscriptionStatus;
 use App\Filament\Admin\Resources\SubscriptionResource;
 use App\Filament\ListDefaults;
-use Filament\Resources\Components\Tab;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListSubscriptions extends ListRecords
@@ -18,7 +19,7 @@ class ListSubscriptions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 

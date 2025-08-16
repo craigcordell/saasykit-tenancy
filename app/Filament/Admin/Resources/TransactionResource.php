@@ -5,18 +5,23 @@ namespace App\Filament\Admin\Resources;
 use App\Constants\TransactionStatus;
 use App\Filament\Admin\Resources\OrderResource\Pages\ViewOrder;
 use App\Filament\Admin\Resources\SubscriptionResource\Pages\ViewSubscription;
-use App\Filament\Admin\Resources\TransactionResource\Pages;
+use App\Filament\Admin\Resources\TransactionResource\Pages\ListTransactions;
+use App\Filament\Admin\Resources\TransactionResource\Pages\ViewTranscription;
 use App\Filament\Admin\Resources\TransactionResource\Widgets\TransactionOverview;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Mapper\TransactionStatusMapper;
 use App\Models\Transaction;
 use App\Services\InvoiceService;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -31,10 +36,10 @@ class TransactionResource extends Resource
         return __('Revenue');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
             ]);
     }
@@ -43,13 +48,13 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')->label(__('User'))->searchable(),
-                Tables\Columns\TextColumn::make('amount')
+                TextColumn::make('user.name')->label(__('User'))->searchable(),
+                TextColumn::make('amount')
                     ->label(__('Amount'))
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->badge()
                     ->label(__('Status'))
                     ->color(fn (Transaction $record, TransactionStatusMapper $mapper): string => $mapper->mapColor($record->status))
@@ -57,15 +62,15 @@ class TransactionResource extends Resource
                         return $mapper->mapForDisplay($state);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('payment_provider_id')
+                TextColumn::make('payment_provider_id')
                     ->label(__('Payment Provider'))
                     ->getStateUsing(fn (Transaction $record) => $record->paymentProvider->name)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('owner')
+                TextColumn::make('owner')
                     ->label(__('Owner'))
                     ->getStateUsing(fn (Transaction $record) => $record->subscription_id !== null ? ($record->subscription->plan?->name ?? '-') : ($record->order_id !== null ? __('Order Nr. ').$record->order_id : '-'))
                     ->url(fn (Transaction $record) => $record->subscription_id !== null ? ViewSubscription::getUrl(['record' => $record->subscription]) : ($record->order_id !== null ? ViewOrder::getUrl(['record' => $record->order]) : '-')),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->sortable(),
@@ -74,10 +79,10 @@ class TransactionResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\Action::make('see-invoice')
+            ->recordActions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    Action::make('see-invoice')
                         ->label(__('See Invoice'))
                         ->icon('heroicon-o-document')
                         ->visible(fn (Transaction $record, InvoiceService $invoiceService): bool => $invoiceService->canGenerateInvoices($record))
@@ -85,7 +90,7 @@ class TransactionResource extends Resource
                             fn (Transaction $record): string => route('invoice.generate', ['transactionUuid' => $record->uuid]),
                             shouldOpenInNewTab: true
                         ),
-                    Tables\Actions\Action::make('force-regenerate')
+                    Action::make('force-regenerate')
                         ->label(__('Force Regenerate Invoice'))
                         ->color('gray')
                         ->icon('heroicon-o-arrow-path')
@@ -106,7 +111,7 @@ class TransactionResource extends Resource
                 'subscription',
                 'subscription.plan',
             ]))
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }
@@ -121,8 +126,8 @@ class TransactionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTransactions::route('/'),
-            'view' => Pages\ViewTranscription::route('/{record}'),
+            'index' => ListTransactions::route('/'),
+            'view' => ViewTranscription::route('/{record}'),
         ];
     }
 
@@ -136,14 +141,14 @@ class TransactionResource extends Resource
         return false;
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                \Filament\Infolists\Components\Tabs::make('Transaction')
+        return $schema
+            ->components([
+                Tabs::make('Transaction')
                     ->columnSpan('full')
                     ->tabs([
-                        \Filament\Infolists\Components\Tabs\Tab::make(__('Details'))
+                        Tab::make(__('Details'))
                             ->icon('heroicon-s-currency-dollar')
                             ->schema([
                                 TextEntry::make('uuid')->copyable(),
@@ -214,7 +219,7 @@ class TransactionResource extends Resource
                                 'xl' => 2,
                                 '2xl' => 2,
                             ]),
-                        \Filament\Infolists\Components\Tabs\Tab::make(__('Changes'))
+                        Tab::make(__('Changes'))
                             ->icon('heroicon-m-arrow-uturn-down')
                             ->schema(function ($record) {
                                 // Filament schema is called multiple times for some reason, so we need to cache the components to avoid performance issues.

@@ -19,6 +19,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Stripe\Event;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
+use Stripe\Webhook;
+use Throwable;
 
 class StripeWebhookHandler
 {
@@ -32,7 +36,7 @@ class StripeWebhookHandler
     {
         try {
             $event = $this->buildStripeEvent($request);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Invalid payload',
             ], 400);
@@ -290,7 +294,7 @@ class StripeWebhookHandler
     {
         $this->setupClient();
 
-        return \Stripe\Webhook::constructEvent(
+        return Webhook::constructEvent(
             $request->getContent(),
             $request->header('Stripe-Signature'),
             config('services.stripe.webhook_signing_secret')
@@ -299,7 +303,7 @@ class StripeWebhookHandler
 
     private function setupClient()
     {
-        \Stripe\Stripe::setApiKey(config('services.stripe.secret_key'));
+        Stripe::setApiKey(config('services.stripe.secret_key'));
     }
 
     private function sumDiscountAmounts(array $stripeDiscounts): int
@@ -330,7 +334,7 @@ class StripeWebhookHandler
             return null;
         }
 
-        $paymentIntent = \Stripe\PaymentIntent::retrieve([
+        $paymentIntent = PaymentIntent::retrieve([
             'id' => $paymentIntentId,
             'expand' => ['latest_charge.balance_transaction'],
         ]);

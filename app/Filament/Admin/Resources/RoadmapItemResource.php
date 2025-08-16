@@ -4,14 +4,25 @@ namespace App\Filament\Admin\Resources;
 
 use App\Constants\RoadmapItemStatus;
 use App\Constants\RoadmapItemType;
-use App\Filament\Admin\Resources\RoadmapItemResource\Pages;
-use App\Filament\Admin\Resources\RoadmapItemResource\RelationManagers;
+use App\Filament\Admin\Resources\RoadmapItemResource\Pages\CreateRoadmapItem;
+use App\Filament\Admin\Resources\RoadmapItemResource\Pages\EditRoadmapItem;
+use App\Filament\Admin\Resources\RoadmapItemResource\Pages\ListRoadmapItems;
+use App\Filament\Admin\Resources\RoadmapItemResource\RelationManagers\UpvotesRelationManager;
 use App\Mapper\RoadmapMapper;
 use App\Models\RoadmapItem;
-use Filament\Forms;
-use Filament\Forms\Form;
+use App\Models\User;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
@@ -19,25 +30,25 @@ class RoadmapItemResource extends Resource
 {
     protected static ?string $model = RoadmapItem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getNavigationGroup(): ?string
     {
         return __('Roadmap');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make([
-                    Forms\Components\TextInput::make('title')
+        return $schema
+            ->components([
+                Section::make([
+                    TextInput::make('title')
                         ->label(__('Title'))
                         ->required()
                         ->maxLength(255),
-                    Forms\Components\TextInput::make('slug')
+                    TextInput::make('slug')
                         ->label(__('Slug'))
-                        ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
+                        ->dehydrateStateUsing(function ($state, Get $get) {
                             if (empty($state)) {
                                 // add a random string if there is a roadmap item with the same slug
                                 $state = Str::slug($get('title'));
@@ -52,11 +63,11 @@ class RoadmapItemResource extends Resource
                         })
                         ->maxLength(255),
 
-                    Forms\Components\Textarea::make('description')
+                    Textarea::make('description')
                         ->rows(5)
                         ->label(__('Description'))
                         ->columnSpanFull(),
-                    Forms\Components\Select::make('status')
+                    Select::make('status')
                         ->label(__('Status'))
                         ->options(function () {
                             return collect(RoadmapItemStatus::cases())->mapWithKeys(function ($status) {
@@ -65,7 +76,7 @@ class RoadmapItemResource extends Resource
                         })
                         ->required()
                         ->default(RoadmapItemStatus::APPROVED->value),
-                    Forms\Components\Select::make('type')
+                    Select::make('type')
                         ->label(__('Type'))
                         ->options(function () {
                             return collect(RoadmapItemType::cases())->mapWithKeys(function ($type) {
@@ -74,16 +85,16 @@ class RoadmapItemResource extends Resource
                         })
                         ->required()
                         ->default(RoadmapItemType::FEATURE->value),
-                    Forms\Components\TextInput::make('upvotes')
+                    TextInput::make('upvotes')
                         ->label(__('Upvotes'))
                         ->required()
                         ->numeric()
                         ->default(1),
-                    Forms\Components\Select::make('user_id')
+                    Select::make('user_id')
                         ->label(__('User'))
                         ->lazy()
                         ->searchable()
-                        ->options(fn () => \App\Models\User::pluck('name', 'id'))
+                        ->options(fn () => User::pluck('name', 'id'))
                         ->default(fn () => auth()->user()->id)
                         ->required(),
                 ]),
@@ -94,10 +105,10 @@ class RoadmapItemResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->label(__('Title'))
                     ->searchable(),
-                Tables\Columns\SelectColumn::make('status')
+                SelectColumn::make('status')
                     ->label(__('Status'))
                     ->options(function () {
                         return collect(RoadmapItemStatus::cases())->mapWithKeys(function ($status) {
@@ -106,7 +117,7 @@ class RoadmapItemResource extends Resource
                     })
                     ->rules(['required'])
                     ->searchable(),
-                Tables\Columns\SelectColumn::make('type')
+                SelectColumn::make('type')
                     ->label(__('Type'))
                     ->options(function () {
                         return collect(RoadmapItemType::cases())->mapWithKeys(function ($type) {
@@ -115,15 +126,15 @@ class RoadmapItemResource extends Resource
                     })
                     ->rules(['required'])
                     ->searchable(),
-                Tables\Columns\TextColumn::make('upvotes')
+                TextColumn::make('upvotes')
                     ->label(__('Upvotes'))
                     ->default(1)
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label(__('User'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime()
                     ->sortable()
@@ -132,12 +143,12 @@ class RoadmapItemResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('upvotes', 'desc');
@@ -146,16 +157,16 @@ class RoadmapItemResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\UpvotesRelationManager::class,
+            UpvotesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRoadmapItems::route('/'),
-            'create' => Pages\CreateRoadmapItem::route('/create'),
-            'edit' => Pages\EditRoadmapItem::route('/{record}/edit'),
+            'index' => ListRoadmapItems::route('/'),
+            'create' => CreateRoadmapItem::route('/create'),
+            'edit' => EditRoadmapItem::route('/{record}/edit'),
         ];
     }
 

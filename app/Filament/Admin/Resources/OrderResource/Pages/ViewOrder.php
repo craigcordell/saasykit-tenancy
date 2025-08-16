@@ -23,7 +23,7 @@ class ViewOrder extends ViewRecord
                 ->color('gray')
                 ->label(__('Update Order'))
                 ->icon('heroicon-m-pencil')
-                ->form([
+                ->schema([
                     Select::make('status')
                         ->label(__('Order Status'))
                         ->default($this->getRecord()->status)

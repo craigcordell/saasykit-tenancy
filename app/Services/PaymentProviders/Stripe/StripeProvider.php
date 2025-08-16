@@ -25,6 +25,7 @@ use App\Services\PaymentProviders\PaymentProviderInterface;
 use App\Services\PlanService;
 use App\Services\SubscriptionService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -683,7 +684,7 @@ class StripeProvider implements PaymentProviderInterface
         $paymentProvider = PaymentProvider::where('slug', $this->getSlug())->firstOrFail();
 
         if ($paymentProvider->is_active === false) {
-            throw new \Exception('Payment provider is not active: '.$this->getSlug());
+            throw new Exception('Payment provider is not active: '.$this->getSlug());
         }
 
         return $paymentProvider;

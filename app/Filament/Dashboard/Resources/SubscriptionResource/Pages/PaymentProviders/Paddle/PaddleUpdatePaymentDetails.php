@@ -10,7 +10,7 @@ class PaddleUpdatePaymentDetails extends Page
 {
     protected static string $resource = SubscriptionResource::class;
 
-    protected static string $view = 'filament.dashboard.resources.subscription-resource.pages.payment-providers.paddle.update-payment-details';
+    protected string $view = 'filament.dashboard.resources.subscription-resource.pages.payment-providers.paddle.update-payment-details';
 
     protected function getViewData(): array
     {

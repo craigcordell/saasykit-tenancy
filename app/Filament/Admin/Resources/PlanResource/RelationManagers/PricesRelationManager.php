@@ -8,13 +8,27 @@ use App\Constants\PlanType;
 use App\Mapper\PlanPriceMapper;
 use App\Models\Currency;
 use App\Services\CurrencyService;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Closure;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Unique;
+use Throwable;
 
 class PricesRelationManager extends RelationManager
 {
@@ -29,14 +43,14 @@ class PricesRelationManager extends RelationManager
         $this->currencyService = $currencyService;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $defaultCurrency = $this->currencyService->getCurrency()->id;
 
-        return $form
-            ->schema([
-                Forms\Components\Section::make([
-                    Forms\Components\Radio::make('type')
+        return $schema
+            ->components([
+                Section::make([
+                    Radio::make('type')
                         ->helperText(__('Pick the price type for this plan.'))
                         ->label(__('Type'))
                         ->options(function () {
@@ -48,7 +62,7 @@ class PricesRelationManager extends RelationManager
                         })
                         ->live()
                         ->required(),
-                    Forms\Components\Select::make('currency_id')
+                    Select::make('currency_id')
                         ->label('Currency')
                         ->live()
                         ->options(
@@ -60,20 +74,20 @@ class PricesRelationManager extends RelationManager
                         )
                         ->default($defaultCurrency)
                         ->required()
-                        ->unique(modifyRuleUsing: function (Unique $rule, \Filament\Forms\Get $get, RelationManager $livewire) {
+                        ->unique(modifyRuleUsing: function (Unique $rule, Get $get, RelationManager $livewire) {
                             return $rule->where('plan_id', $livewire->ownerRecord->id)->ignore($get('id'));
                         })
                         ->preload(),
-                    Forms\Components\TextInput::make('price')
+                    TextInput::make('price')
                         ->required()
                         ->type('number')
                         ->gte(0)
                         ->live()
-                        ->label(function (Forms\Get $get) {
+                        ->label(function (Get $get) {
                             return $get('type') === PlanPriceType::FLAT_RATE->value ? __('Price') : __('Fixed Fee');
                         })
                         ->helperText(
-                            function (Forms\Get $get) {
+                            function (Get $get) {
                                 if ($get('type') === PlanPriceType::FLAT_RATE->value) {
                                     return new HtmlString(
                                         __('Enter price in lowest denomination for a currency (cents). E.g. 1000 = $10.00')
@@ -87,7 +101,7 @@ class PricesRelationManager extends RelationManager
                                 }
                             }
                         ),
-                    Forms\Components\TextInput::make('price_per_unit')
+                    TextInput::make('price_per_unit')
                         ->required()
                         ->type('number')
                         ->gte(0)
@@ -96,16 +110,16 @@ class PricesRelationManager extends RelationManager
                             return $get('type') === PlanPriceType::USAGE_BASED_PER_UNIT->value;
                         })
                         ->helperText(__('Enter price per unit in lowest denomination for a currency (cents). E.g. 1000 = $10.00')),
-                    Forms\Components\Repeater::make('tiers')
+                    Repeater::make('tiers')
                         ->helperText(__('Enter tier prices in lowest denomination for a currency (cents). E.g. 1000 = $10.00'))
                         ->label(__('Tiers'))
                         ->schema([
-                            Forms\Components\TextInput::make('until_unit')->label(__('Up until (x) units'))->required()
-                                ->suffixAction(\Filament\Forms\Components\Actions\Action::make('infinity')->icon('icon-infinity')->action(function (Forms\Get $get, Forms\Set $set) {
+                            TextInput::make('until_unit')->label(__('Up until (x) units'))->required()
+                                ->suffixAction(Action::make('infinity')->icon('icon-infinity')->action(function (Get $get, Set $set) {
                                     $set('until_unit', '∞');
                                 })),
-                            Forms\Components\TextInput::make('per_unit')->label(__('Price per unit'))->numeric()->minValue(0)->default(0)->required(),
-                            Forms\Components\TextInput::make('flat_fee')->label(__('Flat fee'))->numeric()->minValue(0)->default(0)->required(),
+                            TextInput::make('per_unit')->label(__('Price per unit'))->numeric()->minValue(0)->default(0)->required(),
+                            TextInput::make('flat_fee')->label(__('Flat fee'))->numeric()->minValue(0)->default(0)->required(),
                         ])
                         ->live()
                         ->default([
@@ -121,7 +135,7 @@ class PricesRelationManager extends RelationManager
                             ],
                         ])
                         ->rules([
-                            fn (Forms\Get $get): \Closure => function (string $attribute, $value, \Closure $fail) {
+                            fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) {
                                 if (! is_array($value) || empty($value)) {
                                     $fail(__('At least one tier is required'));
 
@@ -168,16 +182,16 @@ class PricesRelationManager extends RelationManager
                                 $get('type') === PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value;
                         })
                         ->columns(3),
-                    Forms\Components\Section::make([
-                        Forms\Components\TextInput::make('example_unit_quantity')
+                    Section::make([
+                        TextInput::make('example_unit_quantity')
                             ->integer()
                             ->label(__('Unit Quantity'))
                             ->helperText(__('Enter an example unit quantity to see how the price is calculated.'))
                             ->dehydrated(false)
                             ->live(),
-                        Forms\Components\Placeholder::make('price_preview')
+                        Placeholder::make('price_preview')
                             ->label(__('Price Preview Calculation'))
-                            ->content(function (Forms\Get $get) {
+                            ->content(function (Get $get) {
                                 return $this->calculatePricePreview($get);
                             })
                             ->visible(function ($get) {
@@ -197,31 +211,31 @@ class PricesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('price')
+                TextColumn::make('price')
                     ->label(__('Price'))
                     // divide by 100 to get price in dollars
                     ->formatStateUsing(function (string $state, $record) {
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('currency.name')
+                TextColumn::make('currency.name')
                     ->label(__('Currency')),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
-    private function calculatePricePreview(Forms\Get $get): HtmlString
+    private function calculatePricePreview(Get $get): HtmlString
     {
         try {
 
@@ -321,7 +335,7 @@ class PricesRelationManager extends RelationManager
                     .$explanation
                 );
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
 
         }
 

@@ -10,7 +10,7 @@ class AddDiscount extends Page
 {
     protected static string $resource = SubscriptionResource::class;
 
-    protected static string $view = 'filament.dashboard.resources.subscription-resource.pages.add-discount';
+    protected string $view = 'filament.dashboard.resources.subscription-resource.pages.add-discount';
 
     protected function getViewData(): array
     {

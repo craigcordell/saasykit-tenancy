@@ -11,12 +11,14 @@ use App\Services\SubscriptionDiscountService;
 use App\Services\SubscriptionService;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Utilities\Get;
 
 class ViewSubscription extends ViewRecord
 {
@@ -25,7 +27,7 @@ class ViewSubscription extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\ActionGroup::make([
+            ActionGroup::make([
                 Action::make('change-plan')
                     ->label(__('Change Plan'))
                     ->color('primary')
@@ -33,7 +35,7 @@ class ViewSubscription extends ViewRecord
                     ->visible(function (Subscription $record, SubscriptionService $subscriptionService): bool {
                         return $subscriptionService->canChangeSubscriptionPlan($record);
                     })
-                    ->form([
+                    ->schema([
                         Select::make('plan_id')
                             ->label(__('Plan'))
                             ->default($this->getRecord()->plan_id)
@@ -87,8 +89,8 @@ class ViewSubscription extends ViewRecord
                     ->visible(function (Subscription $record, SubscriptionService $subscriptionService): bool {
                         return $subscriptionService->canAddDiscount($record);
                     })
-                    ->form([
-                        \Filament\Forms\Components\TextInput::make('code')
+                    ->schema([
+                        TextInput::make('code')
                             ->label(__('Discount code'))
                             ->required(),
                     ])
@@ -175,7 +177,7 @@ class ViewSubscription extends ViewRecord
                 ->color('gray')
                 ->label(__('Update Subscription'))
                 ->icon('heroicon-m-pencil')
-                ->form([
+                ->schema([
                     DateTimePicker::make('ends_at')
                         ->label(__('Subscription End Date'))
                         ->default($this->getRecord()->ends_at)

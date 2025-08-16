@@ -7,19 +7,28 @@ use App\Constants\PlanPriceTierConstants;
 use App\Constants\PlanPriceType;
 use App\Constants\SubscriptionStatus;
 use App\Filament\Dashboard\Resources\SubscriptionResource\ActionHandlers\DiscardSubscriptionCancellationActionHandler;
-use App\Filament\Dashboard\Resources\SubscriptionResource\Pages;
+use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\AddDiscount;
+use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\CancelSubscription;
+use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\ChangeSubscriptionPlan;
+use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\ConfirmCancelSubscription;
+use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\ListSubscriptions;
+use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\PaymentProviders\Paddle\PaddleUpdatePaymentDetails;
+use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\ViewSubscription;
 use App\Filament\Dashboard\Resources\SubscriptionResource\RelationManagers\UsagesRelationManager;
 use App\Mapper\SubscriptionStatusMapper;
 use App\Models\Subscription;
 use App\Services\ConfigService;
 use App\Services\SubscriptionService;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -29,12 +38,12 @@ class SubscriptionResource extends Resource
 {
     protected static ?string $model = Subscription::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-fire';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-fire';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
             ]);
     }
 
@@ -42,9 +51,9 @@ class SubscriptionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('plan.name')
+                TextColumn::make('plan.name')
                     ->label(__('Plan')),
-                Tables\Columns\TextColumn::make('price')
+                TextColumn::make('price')
                     ->label(__('Price'))
                     ->formatStateUsing(function (string $state, $record) {
                         $interval = $record->interval->name;
@@ -54,13 +63,13 @@ class SubscriptionResource extends Resource
 
                         return money($state, $record->currency->code).' / '.$interval;
                     }),
-                Tables\Columns\TextColumn::make('ends_at')->dateTime(config('app.datetime_format'))->label(__('Next Renewal')),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('ends_at')->dateTime(config('app.datetime_format'))->label(__('Next Renewal')),
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->color(fn (Subscription $record, SubscriptionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->badge()
                     ->formatStateUsing(fn (string $state, SubscriptionStatusMapper $mapper): string => $mapper->mapForDisplay($state)),
-                Tables\Columns\IconColumn::make('is_canceled_at_end_of_cycle')
+                IconColumn::make('is_canceled_at_end_of_cycle')
                     ->label(__('Renews automatically'))
                     ->icon(function ($state) {
                         $state = boolval($state);
@@ -71,35 +80,35 @@ class SubscriptionResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\Action::make('verify-phone')
+            ->recordActions([
+                Action::make('verify-phone')
                     ->button()
                     ->color('warning')
                     ->icon('heroicon-s-phone')
                     ->visible(fn (Subscription $record, SubscriptionService $subscriptionService): bool => $subscriptionService->subscriptionRequiresUserVerification($record))
                     ->url(fn (Subscription $record): string => route('user.phone-verify'))
                     ->label(__('Verify Phone Number')),
-                Tables\Actions\Action::make('complete-subscription')
+                Action::make('complete-subscription')
                     ->button()
                     ->color('primary')
                     ->icon('heroicon-s-wallet')
                     ->visible(fn (Subscription $record, SubscriptionService $subscriptionService): bool => $subscriptionService->isIncompleteSubscription($record))
                     ->url(fn (Subscription $record): string => route('checkout.convert-local-subscription', ['subscriptionUuid' => $record->uuid]))
                     ->label(__('Complete Subscription')),
-                Tables\Actions\ViewAction::make()
+                ViewAction::make()
                     ->label(__('View Details')),
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('change-plan')
+                ActionGroup::make([
+                    Action::make('change-plan')
                         ->label(__('Change Plan'))
                         ->icon('heroicon-o-rocket-launch')
                         ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('change-plan', ['record' => $record->uuid]))
                         ->visible(fn (Subscription $record, SubscriptionService $subscriptionService): bool => $subscriptionService->canChangeSubscriptionPlan($record)),
-                    Tables\Actions\Action::make('cancel')
+                    Action::make('cancel')
                         ->label(__('Cancel Subscription'))
                         ->icon('heroicon-m-x-circle')
                         ->visible(fn (Subscription $record, SubscriptionService $subscriptionService): bool => $subscriptionService->canCancelSubscription($record))
                         ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('cancel', ['record' => $record->uuid])),
-                    Tables\Actions\Action::make('discard-cancellation')
+                    Action::make('discard-cancellation')
                         ->label(__('Discard Cancellation'))
                         ->icon('heroicon-m-x-circle')
                         ->action(function ($record, DiscardSubscriptionCancellationActionHandler $handler) {
@@ -107,7 +116,7 @@ class SubscriptionResource extends Resource
                         })->visible(fn (Subscription $record, SubscriptionService $subscriptionService): bool => $subscriptionService->canDiscardSubscriptionCancellation($record)),
                 ]),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ])
             ->defaultSort('updated_at', 'desc');
     }
@@ -122,13 +131,13 @@ class SubscriptionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSubscriptions::route('/'),
-            'view' => Pages\ViewSubscription::route('/{record}'),
-            'change-plan' => Pages\ChangeSubscriptionPlan::route('/{record}/change-plan'),
-            'cancel' => Pages\CancelSubscription::route('/{record}/cancel'),
-            'confirm-cancellation' => Pages\ConfirmCancelSubscription::route('/{record}/confirm-cancellation'),
-            'add-discount' => Pages\AddDiscount::route('/{record}/add-discount'),
-            'paddle.update-payment-details' => Pages\PaymentProviders\Paddle\PaddleUpdatePaymentDetails::route('/paddle/update-payment-details'),
+            'index' => ListSubscriptions::route('/'),
+            'view' => ViewSubscription::route('/{record}'),
+            'change-plan' => ChangeSubscriptionPlan::route('/{record}/change-plan'),
+            'cancel' => CancelSubscription::route('/{record}/cancel'),
+            'confirm-cancellation' => ConfirmCancelSubscription::route('/{record}/confirm-cancellation'),
+            'add-discount' => AddDiscount::route('/{record}/add-discount'),
+            'paddle.update-payment-details' => PaddleUpdatePaymentDetails::route('/paddle/update-payment-details'),
         ];
     }
 
@@ -172,10 +181,10 @@ class SubscriptionResource extends Resource
         return true;  // we want to ignore the default permission check (from the policy) and allow all users to view their own subscriptions
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('Subscription Details'))
                     ->description(__('View details about your subscription.'))
                     ->schema([

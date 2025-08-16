@@ -10,7 +10,7 @@ class TwilioSettings extends Page
 {
     protected static string $resource = VerificationProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.verification-provider-resource.pages.twilio-settings';
+    protected string $view = 'filament.admin.resources.verification-provider-resource.pages.twilio-settings';
 
     public function mount(): void
     {

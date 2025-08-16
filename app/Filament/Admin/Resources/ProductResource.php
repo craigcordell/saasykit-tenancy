@@ -2,11 +2,22 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\ProductResource\Pages\CreateProduct;
+use App\Filament\Admin\Resources\ProductResource\Pages\EditProduct;
+use App\Filament\Admin\Resources\ProductResource\Pages\ListProducts;
 use App\Models\Product;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
@@ -22,18 +33,18 @@ class ProductResource extends Resource
         return __('Product Management');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make([
-                    Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                Section::make([
+                    TextInput::make('name')
                         ->required()
                         ->label(__('Name'))
                         ->maxLength(255),
-                    Forms\Components\TextInput::make('slug')
+                    TextInput::make('slug')
                         ->label(__('Slug'))
-                        ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
+                        ->dehydrateStateUsing(function ($state, Get $get) {
                             if (empty($state)) {
                                 // add a random string if there is a product with the same slug
                                 $state = Str::slug($get('name'));
@@ -51,13 +62,13 @@ class ProductResource extends Resource
                         ->rules(['alpha_dash'])
                         ->unique(ignoreRecord: true)
                         ->disabledOn('edit'),
-                    Forms\Components\Textarea::make('description')
+                    Textarea::make('description')
                         ->label(__('Description'))
                         ->helperText(__('One line description of the product.')),
-                    Forms\Components\Toggle::make('is_popular')
+                    Toggle::make('is_popular')
                         ->label(__('Popular product'))
                         ->helperText(__('Mark this product as popular. This will be used to highlight this product in the pricing page.')),
-                    Forms\Components\Toggle::make('is_default')
+                    Toggle::make('is_default')
                         ->label(__('Is default product'))
                         ->validationAttribute(__('default product'))
                         ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule) {
@@ -65,16 +76,16 @@ class ProductResource extends Resource
                         })
                         ->default(false)
                         ->helperText(__('A default product is a kind of a hidden product that allows you to set the features (and metadata) for users that have no active plan. Add a default product if you want to offer a free tier to your users. You can only have 1 default product and it cannot have any plans.')),
-                    Forms\Components\KeyValue::make('metadata')
+                    KeyValue::make('metadata')
                         ->label(__('Metadata'))
                         ->helperText(__('Add any additional data to this product. You can use this to store product features that could later be retrieved to serve your users.'))
                         ->keyLabel(__('Property name'))
                         ->valueLabel(__('Property value')),
-                    Forms\Components\Repeater::make('features')
+                    Repeater::make('features')
                         ->label(__('Features'))
                         ->helperText(__('Add features that this plan offers. These will be displayed on the pricing page and on the checkout page.'))
                         ->schema([
-                            Forms\Components\TextInput::make('feature')->required()->label(__('Feature')),
+                            TextInput::make('feature')->required()->label(__('Feature')),
                         ]),
                 ]),
             ]);
@@ -86,21 +97,21 @@ class ProductResource extends Resource
             ->heading(__('A product is bundle of features that you offer to your customers.'))
             ->description(__('If you want to provide a Starter, Pro and Premium offerings to your customers, create a product for each of them.'))
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable()->label(__('Name')),
-                Tables\Columns\TextColumn::make('slug')->searchable()->sortable()->label(__('Slug')),
-                Tables\Columns\IconColumn::make('is_popular')->label(__('Popular'))->boolean(),
-                Tables\Columns\IconColumn::make('is_default')->label(__('Default'))->boolean(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('name')->searchable()->sortable()->label(__('Name')),
+                TextColumn::make('slug')->searchable()->sortable()->label(__('Slug')),
+                IconColumn::make('is_popular')->label(__('Popular'))->boolean(),
+                IconColumn::make('is_default')->label(__('Default'))->boolean(),
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format')),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 
@@ -113,9 +124,9 @@ class ProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\ProductResource\Pages\ListProducts::route('/'),
-            'create' => \App\Filament\Admin\Resources\ProductResource\Pages\CreateProduct::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\ProductResource\Pages\EditProduct::route('/{record}/edit'),
+            'index' => ListProducts::route('/'),
+            'create' => CreateProduct::route('/create'),
+            'edit' => EditProduct::route('/{record}/edit'),
         ];
     }
 

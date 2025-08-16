@@ -5,9 +5,9 @@ namespace App\Filament\Admin\Resources\RoadmapItemResource\Pages;
 use App\Constants\RoadmapItemStatus;
 use App\Filament\Admin\Resources\RoadmapItemResource;
 use App\Filament\ListDefaults;
-use Filament\Actions;
-use Filament\Resources\Components\Tab;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListRoadmapItems extends ListRecords
@@ -19,7 +19,7 @@ class ListRoadmapItems extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 

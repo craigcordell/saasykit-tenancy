@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Constants\TransactionStatus;
 use App\Services\InvoiceService;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -45,7 +46,7 @@ class Transaction extends Model
             if ($transaction->status == TransactionStatus::SUCCESS->value) {
                 try {
                     $invoiceService->addInvoicePlaceholderForTransaction($transaction);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error($e->getMessage());
                 }
             }
@@ -57,7 +58,7 @@ class Transaction extends Model
             if ($transaction->status == TransactionStatus::SUCCESS->value) {
                 try {
                     $invoiceService->addInvoicePlaceholderForTransaction($transaction);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error($e->getMessage());
                 }
             }

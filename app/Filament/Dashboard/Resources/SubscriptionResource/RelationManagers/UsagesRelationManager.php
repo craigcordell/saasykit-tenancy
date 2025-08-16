@@ -4,10 +4,10 @@ namespace App\Filament\Dashboard\Resources\SubscriptionResource\RelationManagers
 
 use App\Constants\PlanType;
 use App\Models\Subscription;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,11 +15,11 @@ class UsagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'usages';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('unit_count')
+        return $schema
+            ->components([
+                TextInput::make('unit_count')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -31,10 +31,10 @@ class UsagesRelationManager extends RelationManager
             ->heading(__('Unit Usages'))
             ->recordTitleAttribute('unit_count')
             ->columns([
-                Tables\Columns\TextColumn::make('unit_count')->label(function () {
+                TextColumn::make('unit_count')->label(function () {
                     return __('Unit Count').' ('.str()->plural(__($this->ownerRecord->plan->meter->name)).')';
                 }),
-                Tables\Columns\TextColumn::make('created_at')->label(__('Created At'))
+                TextColumn::make('created_at')->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
             ])
@@ -44,9 +44,9 @@ class UsagesRelationManager extends RelationManager
             ->headerActions([
 
             ])
-            ->actions([
+            ->recordActions([
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }

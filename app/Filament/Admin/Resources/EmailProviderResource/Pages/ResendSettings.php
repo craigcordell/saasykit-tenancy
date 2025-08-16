@@ -10,7 +10,7 @@ class ResendSettings extends Page
 {
     protected static string $resource = EmailProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.email-provider-resource.pages.resend-settings';
+    protected string $view = 'filament.admin.resources.email-provider-resource.pages.resend-settings';
 
     public function mount(): void
     {
