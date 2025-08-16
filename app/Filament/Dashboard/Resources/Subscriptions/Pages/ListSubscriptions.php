@@ -3,7 +3,6 @@
 namespace App\Filament\Dashboard\Resources\Subscriptions\Pages;
 
 use App\Filament\Dashboard\Resources\Subscriptions\SubscriptionResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSubscriptions extends ListRecords
@@ -13,7 +12,7 @@ class ListSubscriptions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+
         ];
     }
 

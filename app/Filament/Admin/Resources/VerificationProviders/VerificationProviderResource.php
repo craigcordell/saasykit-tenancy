@@ -37,7 +37,7 @@ class VerificationProviderResource extends Resource
                         ->label(__('Name'))
                         ->required()
                         ->maxLength(255),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

@@ -87,7 +87,7 @@ class ProductResource extends Resource
                         ->schema([
                             TextInput::make('feature')->required()->label(__('Feature')),
                         ]),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

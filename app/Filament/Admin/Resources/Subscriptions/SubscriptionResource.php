@@ -7,19 +7,14 @@ use App\Constants\PlanPriceTierConstants;
 use App\Constants\PlanPriceType;
 use App\Constants\SubscriptionStatus;
 use App\Constants\SubscriptionType;
-use App\Exceptions\SubscriptionCreationNotAllowedException;
 use App\Filament\Admin\Resources\Subscriptions\Pages\ListSubscriptions;
 use App\Filament\Admin\Resources\Subscriptions\Pages\ViewSubscription;
 use App\Filament\Admin\Resources\Subscriptions\RelationManagers\UsagesRelationManager;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Mapper\SubscriptionStatusMapper;
 use App\Models\Subscription;
-use App\Models\User;
 use App\Services\CurrencyService;
-use App\Services\PlanService;
 use App\Services\SubscriptionService;
-use Carbon\Carbon;
-use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -28,7 +23,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -156,61 +150,7 @@ class SubscriptionResource extends Resource
                 EditAction::make(),
             ])
             ->headerActions([
-                Action::make('create')
-                    ->label(__('Create Subscription'))
-                    ->schema([
-                        Select::make('user_id')
-                            ->relationship('user', 'name')
-                            ->searchable()
-                            ->label(__('User'))
-                            ->getSearchResultsUsing(function (string $query) {
-                                return User::query()
-                                    ->where('name', 'like', '%'.$query.'%')
-                                    ->orWhere('email', 'like', '%'.$query.'%')
-                                    ->limit(20)
-                                    ->get()
-                                    ->mapWithKeys(fn ($user) => [$user->id => "{$user->name} <{$user->email}>"])->toArray();
-                            })
-                            ->helperText(__('Adding a subscription to a user will create a "locally managed" subscription, which means the user will be able to use subscription features without being billed, and they can later convert to a "payment provider managed" subscription from their dashboard.'))
-                            ->required(),
-                        Select::make('plan_id')
-                            ->label(__('Plan'))
-                            ->options(function (PlanService $planService) {
-                                return $planService->getAllPlansWithPrices()->mapWithKeys(function ($plan) {
-                                    return [$plan->id => $plan->name];
-                                });
-                            })
-                            ->required(),
-                        DateTimePicker::make('ends_at')
-                            ->displayFormat(config('app.datetime_format'))
-                            ->label(__('Ends At'))
-                            ->afterOrEqual('now')
-                            ->helperText(__('The date when the subscription will end.'))
-                            ->required(),
-                    ])
-                    ->action(function (array $data, SubscriptionService $subscriptionService, PlanService $planService) {
-                        $user = User::find($data['user_id']);
-                        $plan = $planService->getActivePlanById($data['plan_id']);
 
-                        try {
-                            $subscriptionService->create(
-                                $plan->slug,
-                                $user->id,
-                                localSubscription: true,
-                                endsAt: Carbon::parse($data['ends_at'])
-                            );
-                        } catch (SubscriptionCreationNotAllowedException $e) {
-                            Notification::make()
-                                ->title(__('Failed to create subscription. User already has an active subscription and cannot have more than one.'))
-                                ->danger()
-                                ->send();
-                        }
-
-                        Notification::make()
-                            ->title(__('Subscription created successfully.'))
-                            ->success()
-                            ->send();
-                    }),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->with([
                 'user',

@@ -45,7 +45,7 @@ class EmailProviderResource extends Resource
                         ->readOnly()
                         ->label(__('Slug'))
                         ->maxLength(255),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

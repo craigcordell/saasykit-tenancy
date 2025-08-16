@@ -47,7 +47,7 @@ class RoleResource extends Resource
                         ->preload()
                         ->helperText('Choose the permissions for this role.')
                         ->placeholder(__('Select permissions...')),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

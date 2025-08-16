@@ -15,7 +15,6 @@ use App\Filament\Dashboard\Resources\Subscriptions\Pages\ListSubscriptions;
 use App\Filament\Dashboard\Resources\Subscriptions\Pages\PaymentProviders\Paddle\PaddleUpdatePaymentDetails;
 use App\Filament\Dashboard\Resources\Subscriptions\Pages\ViewSubscription;
 use App\Filament\Dashboard\Resources\Subscriptions\RelationManagers\UsagesRelationManager;
-use App\Filament\Dashboard\Resources\Subscriptions\SubscriptionResource;
 use App\Mapper\SubscriptionStatusMapper;
 use App\Models\Subscription;
 use App\Services\ConfigService;
@@ -257,7 +256,7 @@ class SubscriptionResource extends Resource
                                 function ($state) {
                                     return boolval($state) ? __('No') : __('Yes');
                                 }),
-                    ]),
+                    ])->columnSpanFull(),
                 Section::make(__('Discount Details'))
                     ->hidden(fn (Subscription $record): bool => $record->discounts->isEmpty() ||
                         ($record->discounts[0]->valid_until !== null && $record->discounts[0]->valid_until < now())
@@ -278,7 +277,7 @@ class SubscriptionResource extends Resource
                             ->dateTime(config('app.datetime_format'))
                             ->visible(fn (Subscription $record): bool => $record->discounts[0]->valid_until !== null)
                             ->label(__('Valid Until')),
-                    ]),
+                    ])->columnSpanFull(),
 
             ]);
     }

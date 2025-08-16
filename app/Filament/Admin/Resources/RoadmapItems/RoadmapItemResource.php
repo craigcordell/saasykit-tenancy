@@ -97,7 +97,7 @@ class RoadmapItemResource extends Resource
                         ->options(fn () => User::pluck('name', 'id'))
                         ->default(fn () => auth()->user()->id)
                         ->required(),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

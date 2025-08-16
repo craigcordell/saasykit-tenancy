@@ -39,7 +39,8 @@ class Dashboard extends \Filament\Pages\Dashboard
                     'year' => __('Year'),
                 ])->default('month'),
 
-            ])->columns(3),
+            ])->columnSpanFull()
+                ->columns(3),
         ]);
     }
 }

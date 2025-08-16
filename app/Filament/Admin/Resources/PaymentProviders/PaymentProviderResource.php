@@ -47,7 +47,7 @@ class PaymentProviderResource extends Resource
                         ->label(__('Enabled for new payments'))
                         ->helperText(__('If disabled, this payment provider will not be shown on the checkout page, but will still be available for existing subscriptions and receiving webhooks.'))
                         ->required(),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

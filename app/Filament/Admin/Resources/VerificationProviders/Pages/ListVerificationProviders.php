@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\VerificationProviders\Pages;
 
 use App\Filament\Admin\Resources\VerificationProviders\VerificationProviderResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListVerificationProviders extends ListRecords
@@ -13,7 +12,7 @@ class ListVerificationProviders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+
         ];
     }
 }

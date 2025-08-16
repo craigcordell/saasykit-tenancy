@@ -115,7 +115,7 @@ class OpenGraphImageSettings extends Component implements HasForms
                                 return array_combine(array_keys($templates), array_keys($templates));
                             })
                             ->required(),
-                        Grid::make('template_settings_container')
+                        Grid::make()
                             ->columns(2)
                             ->schema([
                                 $this->buildTemplateSettingsFields(),

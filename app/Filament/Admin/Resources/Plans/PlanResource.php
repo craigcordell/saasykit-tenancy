@@ -178,7 +178,7 @@ class PlanResource extends Resource
                         ->default(true)
                         ->required(),
                     RichEditor::make('description'),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

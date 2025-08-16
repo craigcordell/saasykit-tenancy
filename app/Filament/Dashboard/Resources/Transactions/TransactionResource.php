@@ -13,8 +13,6 @@ use App\Services\ConfigService;
 use App\Services\InvoiceService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -69,7 +67,6 @@ class TransactionResource extends Resource
                 //
             ])
             ->recordActions([
-                EditAction::make(),
                 Action::make('see-invoice')
                     ->label(__('See Invoice'))
                     ->icon('heroicon-o-document')
@@ -93,7 +90,7 @@ class TransactionResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+
                 ]),
             ])
             ->defaultSort('updated_at', 'desc');

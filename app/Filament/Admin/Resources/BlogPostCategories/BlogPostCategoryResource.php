@@ -51,7 +51,7 @@ class BlogPostCategoryResource extends Resource
                         })
                         ->helperText(__('Leave empty to generate slug automatically name.'))
                         ->maxLength(255),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

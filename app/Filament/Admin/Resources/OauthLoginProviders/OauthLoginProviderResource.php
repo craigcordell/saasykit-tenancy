@@ -52,7 +52,7 @@ class OauthLoginProviderResource extends Resource
                         Toggle::make('enabled')
                             ->label(__('Enabled'))
                             ->required(),
-                    ]),
+                    ])->columnSpanFull(),
             ]);
     }
 

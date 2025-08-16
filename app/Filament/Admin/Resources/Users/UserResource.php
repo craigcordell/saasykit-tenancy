@@ -24,7 +24,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
-use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class UserResource extends Resource
 {
@@ -78,14 +78,14 @@ class UserResource extends Resource
                         ->label('Is Admin?')
                         ->helperText('If checked, this user will be able to access the admin panel. There has to be at least 1 admin user, so if this field is disabled, you will have to create another admin user first before you can disable this one.')
                         // there has to be at least 1 admin user
-                        ->disabled(fn (User $user): bool => $user->is_admin && User::where('is_admin', true)->count() === 1)
+                        ->disabled(fn (?User $user): bool => $user && $user->is_admin && User::where('is_admin', true)->count() === 1)
                         ->default(false),
                     Checkbox::make('is_blocked')
                         ->label('Is Blocked?')
-                        ->disabled(fn (User $user, string $context): bool => $user->is_admin == true || $context === 'create')
+                        ->disabled(fn (?User $user, string $context): bool => $context === 'create' || $user->is_admin == true)
                         ->helperText('If checked, this user will not be able to log in or use any services provided.')
                         ->default(false),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

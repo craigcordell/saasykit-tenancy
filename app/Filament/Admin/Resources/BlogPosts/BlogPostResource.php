@@ -7,11 +7,11 @@ use App\Filament\Admin\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Admin\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Models\BlogPost;
 use App\Models\User;
-use CodeIsAwesome\FilamentTinyEditor\TinyEditor;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
@@ -52,12 +52,25 @@ class BlogPostResource extends Resource
                         ->helperText(__('A short description of the post (will be used in meta tags).'))
                         ->label('Description')
                         ->rows(2),
-                    TinyEditor::make('body')
+                    RichEditor::make('body')
                         ->columns(10)
                         ->required()
                         ->label(__('Content'))
-                        ->toolbarSticky(true)
-                        ->setRelativeUrls(false)
+                        ->floatingToolbars([
+                            'paragraph' => [
+                                'bold', 'italic', 'underline', 'strike', 'subscript', 'superscript',
+                            ],
+                            'heading' => [
+                                'h1', 'h2', 'h3',
+                            ],
+                            'table' => [
+                                'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
+                                'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
+                                'tableMergeCells', 'tableSplitCell',
+                                'tableToggleHeaderRow',
+                                'tableDelete',
+                            ],
+                        ])
                         ->fileAttachmentsDirectory('blog-images')
                         ->columnSpanFull(),
                 ])->columnSpan(2),

@@ -86,7 +86,7 @@ class OneTimeProductResource extends Resource
                         ->schema([
                             TextInput::make('feature')->required()->label(__('Feature')),
                         ]),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

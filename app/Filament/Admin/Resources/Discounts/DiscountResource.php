@@ -134,7 +134,7 @@ class DiscountResource extends Resource
                         ->helperText(__('Amount of subscription billing periods that this discount recurs for. Only works with payment providers that support this feature. (like Paddle)'))
                         ->default(null),
 
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 

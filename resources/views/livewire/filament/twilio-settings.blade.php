@@ -2,14 +2,14 @@
     <form wire:submit="save">
         {{ $this->form }}
 
-        <diV class="pt-4 flex gap-4">
+        <diV class="pt-4 flex gap-4 mt-4">
 
             <x-filament::button type="submit">
                 <x-filament::loading-indicator class="h-5 w-5 inline" wire:loading />
                 {{ __('Save Changes') }}
             </x-filament::button>
 
-            <x-filament::button tag="a" href="{{ \App\Filament\Admin\Resources\VerificationProviderResource\Pages\ListVerificationProviders::getUrl()  }}" color="gray">
+            <x-filament::button tag="a" href="{{ \App\Filament\Admin\Resources\VerificationProviders\Pages\ListVerificationProviders::getUrl()  }}" color="gray">
                 {{ __('Cancel') }}
             </x-filament::button>
         </diV>

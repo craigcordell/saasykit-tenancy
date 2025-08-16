@@ -5,10 +5,10 @@ namespace App\Providers\Filament;
 use App\Constants\AnnouncementPlacement;
 use App\Filament\Dashboard\Pages\TwoFactorAuth\TwoFactorAuth;
 use App\Http\Middleware\UpdateUserLastSeenAt;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -23,7 +23,8 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Jeffgreco13\FilamentBreezy\BreezyCore;
+
+// use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -36,14 +37,14 @@ class DashboardPanelProvider extends PanelProvider
                 'primary' => Color::Teal,
             ])
             ->userMenuItems([
-                MenuItem::make()
+                Action::make('admin-panel')
                     ->label(__('Admin Panel'))
                     ->visible(
                         fn () => auth()->user()->isAdmin()
                     )
                     ->url(fn () => route('filament.admin.pages.dashboard'))
                     ->icon('heroicon-s-cog-8-tooth'),
-                MenuItem::make()
+                Action::make('two-factor-auth')
                     ->label(__('2-Factor Authentication'))
                     ->visible(
                         fn () => config('app.two_factor_auth_enabled')
