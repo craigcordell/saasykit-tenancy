@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\PlanResource;
+use App\Filament\Admin\Resources\Plans\PlanResource;
 use Tests\Feature\FeatureTest;
 
 class PlanResourceTest extends FeatureTest

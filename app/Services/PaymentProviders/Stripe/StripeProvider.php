@@ -10,7 +10,7 @@ use App\Constants\PlanPriceTierConstants;
 use App\Constants\PlanPriceType;
 use App\Constants\PlanType;
 use App\Constants\SubscriptionType;
-use App\Filament\Dashboard\Resources\SubscriptionResource;
+use App\Filament\Dashboard\Resources\Subscriptions\SubscriptionResource;
 use App\Models\Discount;
 use App\Models\OneTimeProduct;
 use App\Models\Order;

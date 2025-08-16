@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\DiscountResource;
+use App\Filament\Admin\Resources\Discounts\DiscountResource;
 use Tests\Feature\FeatureTest;
 
 class DiscountResourceTest extends FeatureTest

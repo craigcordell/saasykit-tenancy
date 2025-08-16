@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Dashboard\Resources;
 
-use App\Filament\Dashboard\Resources\TransactionResource;
+use App\Filament\Dashboard\Resources\Transactions\TransactionResource;
 use Tests\Feature\FeatureTest;
 
 class TransactionResourceTest extends FeatureTest

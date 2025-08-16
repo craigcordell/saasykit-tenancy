@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Filament\Admin\Resources\Subscriptions\Pages;
+
+use App\Constants\SubscriptionStatus;
+use App\Filament\Admin\Resources\Subscriptions\SubscriptionResource;
+use App\Filament\ListDefaults;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
+
+class ListSubscriptions extends ListRecords
+{
+    use ListDefaults;
+
+    protected static string $resource = SubscriptionResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            __('all') => Tab::make(),
+            __('active') => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::ACTIVE)),
+            __('inactive') => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::INACTIVE)),
+            __('pending') => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::PENDING)),
+            __('canceled') => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::CANCELED)),
+            __('past Due') => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', SubscriptionStatus::PAST_DUE)),
+        ];
+    }
+}

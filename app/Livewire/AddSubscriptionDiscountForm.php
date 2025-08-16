@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Filament\Dashboard\Resources\SubscriptionResource;
+use App\Filament\Dashboard\Resources\Subscriptions\SubscriptionResource;
 use App\Services\DiscountService;
 use App\Services\SubscriptionDiscountService;
 use App\Services\SubscriptionService;

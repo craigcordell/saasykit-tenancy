@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Filament\Dashboard\Resources\SubscriptionResource;
+use App\Filament\Dashboard\Resources\Subscriptions\SubscriptionResource;
 use App\Services\PaymentProviders\PaymentService;
 use App\Services\SubscriptionService;
 use Filament\Forms\Components\Select;

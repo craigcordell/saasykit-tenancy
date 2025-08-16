@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\EmailProviderResource;
+use App\Filament\Admin\Resources\EmailProviders\EmailProviderResource;
 use Tests\Feature\FeatureTest;
 
 class EmailProviderResourceTest extends FeatureTest

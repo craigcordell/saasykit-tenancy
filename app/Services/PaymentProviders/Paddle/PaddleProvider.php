@@ -7,7 +7,7 @@ use App\Constants\DiscountConstants;
 use App\Constants\PaddleConstants;
 use App\Constants\PaymentProviderConstants;
 use App\Constants\PlanType;
-use App\Filament\Dashboard\Resources\SubscriptionResource\Pages\PaymentProviders\Paddle\PaddleUpdatePaymentDetails;
+use App\Filament\Dashboard\Resources\Subscriptions\Pages\PaymentProviders\Paddle\PaddleUpdatePaymentDetails;
 use App\Models\Currency;
 use App\Models\Discount;
 use App\Models\OneTimeProduct;

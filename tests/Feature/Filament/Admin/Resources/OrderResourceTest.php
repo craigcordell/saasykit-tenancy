@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\OrderResource;
+use App\Filament\Admin\Resources\Orders\OrderResource;
 use Tests\Feature\FeatureTest;
 
 class OrderResourceTest extends FeatureTest
