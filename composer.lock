@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "51affc278359937b5e6e508361952d2f",
+    "content-hash": "d832ac94c983f186bb0ed8377f8d785d",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -927,53 +927,6 @@
                 "source": "https://github.com/chrome-php/wrench/tree/v1.7.1"
             },
             "time": "2025-05-01T11:18:17+00:00"
-        },
-        {
-            "name": "codeisawesomehq/filament-tinyeditor",
-            "version": "1.4.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/codeisawesomehq/filament-tinyeditor.git",
-                "reference": "974520cf0ab14251e74e92ab6d3076a83009d5eb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/codeisawesomehq/filament-tinyeditor/zipball/974520cf0ab14251e74e92ab6d3076a83009d5eb",
-                "reference": "974520cf0ab14251e74e92ab6d3076a83009d5eb",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.1",
-                "spatie/laravel-package-tools": "^1.16"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CodeIsAwesome\\FilamentTinyEditor\\TinyeditorServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CodeIsAwesome\\FilamentTinyEditor\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Filament TinyMce Editor v6",
-            "keywords": [
-                "filament",
-                "laravel",
-                "tinyeditor",
-                "tinymce"
-            ],
-            "support": {
-                "source": "https://github.com/codeisawesomehq/filament-tinyeditor/tree/1.4.7"
-            },
-            "time": "2023-11-05T21:33:51+00:00"
         },
         {
             "name": "composer/semver",
