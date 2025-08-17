@@ -32,6 +32,7 @@
         "saasykit/laravel-money": "^1.0",
         "saasykit/laravel-open-graphy": "^1.2",
         "saasykit/laravel-recaptcha": "^1.0",
+        "saasykit/filament-breezy": "^2.1",
         "spatie/laravel-cookie-consent": "^3.3",
         "spatie/laravel-flash": "^1.9",
         "spatie/laravel-permission": "^6.0",
