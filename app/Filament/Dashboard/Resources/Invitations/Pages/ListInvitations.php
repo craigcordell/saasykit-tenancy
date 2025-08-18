@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Dashboard\Resources\InvitationResource\Pages;
+namespace App\Filament\Dashboard\Resources\Invitations\Pages;
 
-use App\Filament\Dashboard\Resources\InvitationResource;
+use App\Filament\Dashboard\Resources\Invitations\InvitationResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 

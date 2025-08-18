@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Dashboard\Resources;
+namespace App\Filament\Dashboard\Resources\Invitations;
 
 use App\Constants\InvitationStatus;
 use App\Constants\TenancyPermissionConstants;
-use App\Filament\Dashboard\Resources\InvitationResource\Pages\CreateInvitation;
-use App\Filament\Dashboard\Resources\InvitationResource\Pages\EditInvitation;
-use App\Filament\Dashboard\Resources\InvitationResource\Pages\ListInvitations;
+use App\Filament\Dashboard\Resources\Invitations\Pages\CreateInvitation;
+use App\Filament\Dashboard\Resources\Invitations\Pages\EditInvitation;
+use App\Filament\Dashboard\Resources\Invitations\Pages\ListInvitations;
 use App\Mapper\InvitationStatusMapper;
 use App\Models\Invitation;
 use App\Services\TenantPermissionService;
