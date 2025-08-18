@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\TenantResource\RelationManagers;
+namespace App\Filament\Admin\Resources\Tenants\RelationManagers;
 
 use App\Constants\OrderStatus;
 use App\Filament\Admin\Resources\Orders\Pages\ViewOrder;

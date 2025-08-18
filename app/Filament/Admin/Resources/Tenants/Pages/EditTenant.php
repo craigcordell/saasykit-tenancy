@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\TenantResource\Pages;
+namespace App\Filament\Admin\Resources\Tenants\Pages;
 
-use App\Filament\Admin\Resources\TenantResource;
+use App\Filament\Admin\Resources\Tenants\TenantResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 

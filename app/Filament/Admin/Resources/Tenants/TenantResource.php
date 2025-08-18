@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\Tenants;
 
-use App\Filament\Admin\Resources\TenantResource\Pages\CreateTenant;
-use App\Filament\Admin\Resources\TenantResource\Pages\EditTenant;
-use App\Filament\Admin\Resources\TenantResource\Pages\ListTenants;
-use App\Filament\Admin\Resources\TenantResource\RelationManagers\OrdersRelationManager;
-use App\Filament\Admin\Resources\TenantResource\RelationManagers\SubscriptionsRelationManager;
-use App\Filament\Admin\Resources\TenantResource\RelationManagers\UsersRelationManager;
+use App\Filament\Admin\Resources\Tenants\Pages\CreateTenant;
+use App\Filament\Admin\Resources\Tenants\Pages\EditTenant;
+use App\Filament\Admin\Resources\Tenants\Pages\ListTenants;
+use App\Filament\Admin\Resources\Tenants\RelationManagers\OrdersRelationManager;
+use App\Filament\Admin\Resources\Tenants\RelationManagers\SubscriptionsRelationManager;
+use App\Filament\Admin\Resources\Tenants\RelationManagers\UsersRelationManager;
 use App\Models\Tenant;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
