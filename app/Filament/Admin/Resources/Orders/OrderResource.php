@@ -5,7 +5,7 @@ namespace App\Filament\Admin\Resources\Orders;
 use App\Constants\DiscountConstants;
 use App\Filament\Admin\Resources\Orders\Pages\ListOrders;
 use App\Filament\Admin\Resources\Orders\Pages\ViewOrder;
-use App\Filament\Admin\Resources\TenantResource\Pages\EditTenant;
+use App\Filament\Admin\Resources\Tenants\Pages\EditTenant;
 use App\Mapper\OrderStatusMapper;
 use App\Models\Order;
 use Filament\Actions\ViewAction;

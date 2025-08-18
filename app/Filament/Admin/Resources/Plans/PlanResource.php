@@ -93,7 +93,7 @@ class PlanResource extends Resource
                         ->disabledOn('edit')
                         ->live()
                         ->required(),
-                    Forms\Components\TextInput::make('max_users_per_tenant')
+                    TextInput::make('max_users_per_tenant')
                         ->label(__('Max Users Per Tenant'))
                         ->helperText(__('The maximum number of users that can be added to a tenant (team). Use that to limited the number of users that can use this plan for each tenant. Use "0" for unlimited.'))
                         ->integer()

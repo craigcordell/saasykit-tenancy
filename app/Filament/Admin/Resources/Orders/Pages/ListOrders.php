@@ -26,7 +26,7 @@ class ListOrders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('create')
+            Action::make('create-order')
                 ->label(__('Create Order'))
                 ->schema([
                     Select::make('user_id')

@@ -11,7 +11,7 @@ use App\Constants\SubscriptionType;
 use App\Filament\Admin\Resources\Subscriptions\Pages\ListSubscriptions;
 use App\Filament\Admin\Resources\Subscriptions\Pages\ViewSubscription;
 use App\Filament\Admin\Resources\Subscriptions\RelationManagers\UsagesRelationManager;
-use App\Filament\Admin\Resources\TenantResource\Pages\EditTenant;
+use App\Filament\Admin\Resources\Tenants\Pages\EditTenant;
 use App\Mapper\SubscriptionStatusMapper;
 use App\Models\Subscription;
 use App\Services\CurrencyService;
