@@ -3,7 +3,7 @@
 namespace Tests\Feature\Filament\Dashboard\Resources;
 
 use App\Constants\TenancyPermissionConstants;
-use App\Filament\Dashboard\Resources\OrderResource;
+use App\Filament\Dashboard\Resources\Orders\OrderResource;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\Feature\FeatureTest;
 

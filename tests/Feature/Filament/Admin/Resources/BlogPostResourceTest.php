@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\BlogPostResource;
+use App\Filament\Admin\Resources\BlogPosts\BlogPostResource;
 use Tests\Feature\FeatureTest;
 
 class BlogPostResourceTest extends FeatureTest

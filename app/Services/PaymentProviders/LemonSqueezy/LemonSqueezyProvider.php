@@ -21,6 +21,7 @@ use App\Services\PaymentProviders\PaymentProviderInterface;
 use App\Services\PlanService;
 use App\Services\SubscriptionService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -46,7 +47,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
         if ($variantId === null) {
             Log::error('Failed to find variant ID for plan: (did you forget to add it to the plan?) '.$plan->id);
-            throw new \Exception('Failed to find variant ID for plan');
+            throw new Exception('Failed to find variant ID for plan');
         }
 
         $price = $this->calculationService->getPlanPrice($plan);
@@ -88,7 +89,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
             // discounts should not crash the checkout even if they fail to create
             try {
                 $object['checkout_data']['discount_code'] = $this->findOrCreateLemonSqueezyDiscount($discount, $paymentProvider);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error('Failed to create lemon-squeezy discount: '.$e->getMessage());
             }
         }
@@ -97,14 +98,14 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
         if (! $response->successful()) {
             Log::error('Failed to create lemon-squeezy checkout: '.$response->body());
-            throw new \Exception('Failed to create lemon-squeezy checkout');
+            throw new Exception('Failed to create lemon-squeezy checkout');
         }
 
         $redirectLink = $response->json()['data']['attributes']['url'] ?? null;
 
         if ($redirectLink === null) {
             Log::error('Failed to create lemon-squeezy checkout: '.$response->body());
-            throw new \Exception('Failed to create lemon-squeezy checkout');
+            throw new Exception('Failed to create lemon-squeezy checkout');
         }
 
         return $redirectLink;
@@ -135,7 +136,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
             if ($variantId === null) {
                 Log::error('Failed to find variant ID for product: (did you forget to add it to the product?) '.$product->id);
-                throw new \Exception('Failed to find variant ID for product');
+                throw new Exception('Failed to find variant ID for product');
             }
 
             $variantQuantities[] = [
@@ -171,28 +172,28 @@ class LemonSqueezyProvider implements PaymentProviderInterface
             // discounts should not crash the checkout even if they fail to create
             try {
                 $object['checkout_data']['discount_code'] = $this->findOrCreateLemonSqueezyDiscount($discount, $paymentProvider);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error('Failed to create lemon-squeezy discount: '.$e->getMessage());
             }
         }
 
         if ($variantId === null) {
             Log::error('Failed to find variant ID for product: (did you forget to add it to the product?) '.$product->id);
-            throw new \Exception('Failed to find variant ID for product');
+            throw new Exception('Failed to find variant ID for product');
         }
 
         $response = $this->client->createCheckout($object, $variantId);
 
         if (! $response->successful()) {
             Log::error('Failed to create lemon-squeezy checkout: '.$response->body());
-            throw new \Exception('Failed to create lemon-squeezy checkout');
+            throw new Exception('Failed to create lemon-squeezy checkout');
         }
 
         $redirectLink = $response->json()['data']['attributes']['url'] ?? null;
 
         if ($redirectLink === null) {
             Log::error('Failed to create lemon-squeezy checkout: '.$response->body());
-            throw new \Exception('Failed to create lemon-squeezy checkout');
+            throw new Exception('Failed to create lemon-squeezy checkout');
         }
 
         return $redirectLink;
@@ -211,7 +212,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
             if ($variantId === null) {
                 Log::error('Failed to find variant ID for plan while changing subscription plan: (did you forget to add it to the plan?) '.$newPlan->id);
-                throw new \Exception('Failed to find variant ID for plan while changing subscription plan');
+                throw new Exception('Failed to find variant ID for plan while changing subscription plan');
             }
 
             $planPrice = $this->calculationService->getPlanPrice($newPlan);
@@ -219,7 +220,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
             $response = $this->client->updateSubscription($subscription->payment_provider_subscription_id, $variantId, $withProration);
 
             if (! $response->successful()) {
-                throw new \Exception('Failed to update lemon-squeezy subscription');
+                throw new Exception('Failed to update lemon-squeezy subscription');
             }
 
             $subscription = $this->subscriptionService->updateSubscription($subscription, [
@@ -234,7 +235,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
                 // unfortunately, lemon-squeezy resets the quantity to 1 when changing the plan, so we need to update it again
                 $this->updateSubscriptionQuantity($subscription, $subscription->quantity, $withProration);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             throw $e;
@@ -278,10 +279,10 @@ class LemonSqueezyProvider implements PaymentProviderInterface
             $response = $this->client->cancelSubscription($subscription->payment_provider_subscription_id);
 
             if (! $response->successful()) {
-                throw new \Exception('Failed to cancel lemon-squeezy subscription');
+                throw new Exception('Failed to cancel lemon-squeezy subscription');
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             return false;
@@ -298,10 +299,10 @@ class LemonSqueezyProvider implements PaymentProviderInterface
             $response = $this->client->discardSubscriptionCancellation($subscription->payment_provider_subscription_id);
 
             if (! $response->successful()) {
-                throw new \Exception('Failed to discard lemon-squeezy subscription cancellation');
+                throw new Exception('Failed to discard lemon-squeezy subscription cancellation');
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             return false;
@@ -318,14 +319,14 @@ class LemonSqueezyProvider implements PaymentProviderInterface
             $response = $this->client->getSubscription($subscription->payment_provider_subscription_id);
 
             if (! $response->successful()) {
-                throw new \Exception('Failed to get lemon-squeezy subscription');
+                throw new Exception('Failed to get lemon-squeezy subscription');
             }
 
             $url = $response->json()['data']['attributes']['urls']['update_payment_method'] ?? '/';
 
             return $url;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             return '/';
@@ -334,7 +335,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
     public function addDiscountToSubscription(Subscription $subscription, Discount $discount): bool
     {
-        throw new \Exception('It is not possible to add a discount to a lemon-squeezy subscription');
+        throw new Exception('It is not possible to add a discount to a lemon-squeezy subscription');
     }
 
     public function getSlug(): string
@@ -399,7 +400,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
         if (! $response->successful()) {
             Log::error('Failed to create lemon-squeezy discount: '.$response->body());
-            throw new \Exception('Failed to create lemon-squeezy discount');
+            throw new Exception('Failed to create lemon-squeezy discount');
         }
 
         $this->discountService->addPaymentProviderDiscountId($discount, $paymentProvider, $code);
@@ -417,7 +418,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
         $paymentProvider = PaymentProvider::where('slug', $this->getSlug())->firstOrFail();
 
         if ($paymentProvider->is_active === false) {
-            throw new \Exception('Payment provider is not active: '.$this->getSlug());
+            throw new Exception('Payment provider is not active: '.$this->getSlug());
         }
 
         return $paymentProvider;
@@ -441,17 +442,17 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
             if ($subscriptionItemId === null) {
                 Log::error('Failed to find subscription item ID for subscription: '.$subscription->id);
-                throw new \Exception('Failed to find subscription item ID for subscription');
+                throw new Exception('Failed to find subscription item ID for subscription');
             }
 
             $response = $this->client->reportUsage($subscriptionItemId, $unitCount);
 
             if (! $response->successful()) {
                 Log::error('Failed to report usage to lemon-squeezy for subscription: '.$subscription->id, $response->json());
-                throw new \Exception('Failed to report usage to lemon-squeezy for subscription: '.$subscription->id);
+                throw new Exception('Failed to report usage to lemon-squeezy for subscription: '.$subscription->id);
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             return false;

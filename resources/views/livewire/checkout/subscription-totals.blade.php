@@ -8,7 +8,7 @@
             </div>
 
             <div class="my-6" x-show="discountFormVisible">
-                <hr class="my-4"/>
+                <hr class="my-4  text-neutral-200"/>
 
                 @if (session('success'))
                     <div class="text-xs flex flex-row gap-2 my-2">
@@ -31,17 +31,17 @@
                             {{ $addedCode }}
                         </div>
 
-                        <a wire:click.prevent="remove" class="!text-primary-500 !border-primary-500 !text-xs !py-1 cursor-pointer">
+                        <a wire:click.prevent="remove" class="!text-primary-500 !border-primary-500 text-xs! py-1! cursor-pointer">
                             {{ __('Remove Discount') }}
                         </a>
                     </div>
                 @else
                     <div class="flex flex-row items-center gap-3 mt-6">
-                        <x-input.field wire:model="code" placeholder="{{ __('Discount code') }}" type="text" class="input-sm !mx-0 !px-0"
+                        <x-input.field wire:model="code" placeholder="{{ __('Discount code') }}" type="text" class="input-sm mx-0! px-0!"
                                value="{{$addedCode ?? ''}}" disabled="{{$isDiscountCodeAdded}}"/>
 
                         <x-button-link.primary-outline wire:click.prevent="add"
-                                                       class="!text-primary-500 !border-primary-500 !text-xs !py-1 whitespace-nowrap">
+                                                       class="!text-primary-500 !border-primary-500 text-xs! py-1! whitespace-nowrap">
                             {{ __('Add Discount') }}
                         </x-button-link.primary-outline>
                     </div>
@@ -52,7 +52,7 @@
     @endif
 
 
-    <hr class="mb-6 mt-4">
+    <hr class="mb-6 mt-4 text-neutral-200">
 
     @if ($subtotal > 0)
         <div class="flex flex-row justify-between">
@@ -115,7 +115,7 @@
             </div>
         </div>
 
-        <hr class="my-6">
+        <hr class="my-6 text-neutral-200">
 
         <div class="flex flex-row justify-between">
             <div class="text-primary-900">
@@ -128,7 +128,7 @@
 
     @endif
 
-    <hr class="my-6">
+    <hr class="my-6 text-neutral-200">
     <div class="flex flex-row justify-between">
         <div class="text-primary-500 text-xl font-bold">
             {{ __('Due now') }}

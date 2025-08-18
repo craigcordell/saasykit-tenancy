@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\OneTimeProductResource;
+use App\Filament\Admin\Resources\OneTimeProducts\OneTimeProductResource;
 use Tests\Feature\FeatureTest;
 
 class OneTimeProductResourceTest extends FeatureTest

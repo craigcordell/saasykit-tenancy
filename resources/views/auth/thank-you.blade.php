@@ -9,7 +9,7 @@
                         @svg('success', 'h-8 w-8')
                     </div>
 
-                    <x-heading.h2 class="!text-2xl md:!text-3xl !font-semibold mb-4">
+                    <x-heading.h2 class="text-2xl! md:text-3xl! font-semibold! mb-4">
                         {{ __('Thank you!') }}
                     </x-heading.h2>
                 </div>
@@ -17,7 +17,7 @@
                 <p>
                     {{ __('Your account is successfully registered. Head to the home page to get started.') }}
 
-                    <x-button-link.primary class="inline-block !w-full mt-6" href="{{ route('home') }}">
+                    <x-button-link.primary class="inline-block w-full! mt-6" href="{{ route('home') }}">
                         {{ __('Continue') }}
                     </x-button-link.primary>
                 </p>
@@ -29,7 +29,7 @@
 
     <x-slot name="right">
         <div class="py-4 px-4 md:px-12 md:pt-36 h-full">
-            <x-heading.h1 class="!text-3xl md:!text-4xl !font-semibold">
+            <x-heading.h1 class="text-3xl! md:text-4xl! font-semibold!">
                 {{ __('Registration Complete.') }}
             </x-heading.h1>
             <p class="mt-4">

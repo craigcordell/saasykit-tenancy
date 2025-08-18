@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Throwable;
 
 class CreateAdminUser extends Command
 {
@@ -46,7 +47,7 @@ class CreateAdminUser extends Command
                 'password' => bcrypt($password),
                 'is_admin' => true,
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->error('Error creating admin user: '.$e->getMessage());
 
             return;

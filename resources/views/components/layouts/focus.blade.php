@@ -22,7 +22,7 @@
 
                      {{$left}}
                  </div>
-                <div class="md:basis-2/5 md:min-h-screen md:bg-gradient-to-r md:from-primary-400 md:to-primary-700 flex flex-col md:text-white text-primary-900 text-center md:text-left left-shadow">
+                <div class="md:basis-2/5 md:min-h-screen md:bg-linear-to-r md:from-primary-400 md:to-primary-700 flex flex-col md:text-white text-primary-900 text-center md:text-left left-shadow">
                     <div class="flex justify-between md:justify-end">
                         <div class="md:hidden">
                             <a href="{{route('home')}}">

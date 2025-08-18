@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use Jeffgreco13\FilamentBreezy\Livewire\MyProfileComponent;
 use Parfaitementweb\FilamentCountryField\Forms\Components\Country;
 
@@ -33,10 +33,10 @@ class AddressForm extends MyProfileComponent
         }
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('address_line_1')
                     ->label(__('Address Line 1'))
                     ->helperText(__('Street address, company name, c/o')),

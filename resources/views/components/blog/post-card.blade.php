@@ -5,9 +5,9 @@
             <img src="{{$post->getFirstMediaUrl('blog-images')}}" alt="{{$post->title}}" class="h-52 object-cover w-full">
         </a>
     @else
-        <div class="h-52 bg-gradient-to-r from-primary-300 to-primary-700"></div>
+        <div class="h-52 bg-linear-to-r from-primary-300 to-primary-700"></div>
     @endif
-    <div class="flex flex-col flex-wrap gap-1 mb-6 flex-grow align-items-stretch p-4 mt-1">
+    <div class="flex flex-col flex-wrap gap-1 mb-6 grow align-items-stretch p-4 mt-1">
         <a href="{{route('blog.view', $post->slug)}}" class="text-primary-900">
             <x-heading.h6 class="">{{ $post->title }}</x-heading.h6>
         </a>

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\RoleResource;
+use App\Filament\Admin\Resources\Roles\RoleResource;
 use Tests\Feature\FeatureTest;
 
 class RoleResourceTest extends FeatureTest

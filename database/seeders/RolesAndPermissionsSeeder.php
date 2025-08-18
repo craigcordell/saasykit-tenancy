@@ -86,6 +86,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::findOrCreate('view tenants');
 
         Permission::findOrCreate('view transactions');
+        Permission::findOrCreate('update transactions');
 
         Permission::findOrCreate('update settings');
 

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\SubscriptionResource;
+use App\Filament\Admin\Resources\Subscriptions\SubscriptionResource;
 use Tests\Feature\FeatureTest;
 
 class SubscriptionResourceTest extends FeatureTest

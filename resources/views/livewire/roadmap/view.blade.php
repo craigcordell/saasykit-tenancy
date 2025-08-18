@@ -7,7 +7,7 @@
             <x-roadmap.upvote-box :item="$item"></x-roadmap.upvote-box>
 
             <div class="flex flex-col gap-1">
-                <h3 class="!text-lg !font-semibold">
+                <h3 class="text-lg! font-semibold!">
                     {{ $item->title }}
                 </h3>
                 <div class="flex gap-2">

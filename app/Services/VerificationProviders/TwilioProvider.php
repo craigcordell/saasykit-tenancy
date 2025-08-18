@@ -3,6 +3,7 @@
 namespace App\Services\VerificationProviders;
 
 use App\Constants\VerificationProviderConstants;
+use Exception;
 use Twilio\Rest\Client;
 
 class TwilioProvider implements VerificationProviderInterface
@@ -19,7 +20,7 @@ class TwilioProvider implements VerificationProviderInterface
                     'body' => $sms,
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logger()->error($e->getMessage());
 
             return false;

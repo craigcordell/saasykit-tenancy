@@ -6,16 +6,18 @@ use App\Models\EmailProvider;
 use App\Models\VerificationProvider;
 use App\Services\ConfigService;
 use App\Services\CurrencyService;
-use Filament\Forms\Components\Section;
+use Closure;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -80,12 +82,12 @@ class GeneralSettings extends Component implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make()->tabs([
-                    Tabs\Tab::make(__('Application'))
+                    Tab::make(__('Application'))
                         ->icon('heroicon-o-globe-alt')
                         ->schema([
                             TextInput::make('site_name')
@@ -101,7 +103,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->label(__('Date Format'))
                                 ->rules([
                                     function () {
-                                        return function (string $attribute, $value, \Closure $fail) {
+                                        return function (string $attribute, $value, Closure $fail) {
                                             // make sure that the date format is valid
                                             $timestamp = strtotime('2021-01-01');
                                             $date = date($value, $timestamp);
@@ -117,7 +119,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->label(__('Date Time Format'))
                                 ->rules([
                                     function () {
-                                        return function (string $attribute, $value, \Closure $fail) {
+                                        return function (string $attribute, $value, Closure $fail) {
                                             // make sure that the date format is valid
                                             $timestamp = strtotime('2021-01-01 00:00:00');
                                             $date = date($value, $timestamp);
@@ -130,7 +132,7 @@ class GeneralSettings extends Component implements HasForms
                                 ])
                                 ->required(),
                         ]),
-                    Tabs\Tab::make(__('Payment'))
+                    Tab::make(__('Payment'))
                         ->icon('heroicon-o-credit-card')
                         ->schema([
                             Select::make('default_currency')
@@ -150,7 +152,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->label(__('Payment Proration Enabled'))
                                 ->helperText(__('If enabled, when a customer upgrades or downgrades their subscription, the amount they have already paid will be prorated and credited towards their new plan.')),
                         ]),
-                    Tabs\Tab::make(__('Email'))
+                    Tab::make(__('Email'))
                         ->icon('heroicon-o-envelope')
                         ->schema([
                             Select::make('default_email_provider')
@@ -179,7 +181,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->required()
                                 ->email(),
                         ]),
-                    Tabs\Tab::make(__('Verification'))
+                    Tab::make(__('Verification'))
                         ->icon('heroicon-o-chat-bubble-oval-left-ellipsis')
                         ->schema([
                             Select::make('default_verification_provider')
@@ -197,7 +199,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->required()
                                 ->searchable(),
                         ]),
-                    Tabs\Tab::make(__('Analytics & Cookies'))
+                    Tab::make(__('Analytics & Cookies'))
                         ->icon('heroicon-o-squares-2x2')
                         ->schema([
                             Toggle::make('cookie_consent_enabled')
@@ -210,7 +212,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->helperText(__('Paste in any other analytics or tracking scripts here. Those scripts will only be inserted if either "Cookie Consent Bar" is disabled or in case user has consented to cookies.'))
                                 ->label(__('Other Tracking Scripts')),
                         ]),
-                    Tabs\Tab::make(__('Subscription Trials'))
+                    Tab::make(__('Subscription Trials'))
                         ->icon('heroicon-s-eye-dropper')
                         ->schema([
                             Section::make(__('Trials without Payment'))->schema([
@@ -256,7 +258,7 @@ class GeneralSettings extends Component implements HasForms
                                     ->integer(),
                             ]),
                         ]),
-                    Tabs\Tab::make(__('Customer Dashboard'))
+                    Tab::make(__('Customer Dashboard'))
                         ->icon('heroicon-s-user')
                         ->schema([
                             Toggle::make('show_subscriptions')
@@ -272,7 +274,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->helperText(__('If enabled, customers will be able to see their transactions on the dashboard.'))
                                 ->required(),
                         ]),
-                    Tabs\Tab::make(__('Roadmap'))
+                    Tab::make(__('Roadmap'))
                         ->icon('heroicon-o-bug-ant')
                         ->schema([
                             Toggle::make('roadmap_enabled')
@@ -280,7 +282,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->helperText(__('If enabled, the roadmap will be visible to the public.'))
                                 ->required(),
                         ]),
-                    Tabs\Tab::make(__('Recaptcha'))
+                    Tab::make(__('Recaptcha'))
                         ->icon('heroicon-o-shield-check')
                         ->schema([
                             Toggle::make('recaptcha_enabled')
@@ -292,7 +294,7 @@ class GeneralSettings extends Component implements HasForms
                             TextInput::make('recaptcha_api_secret_key')
                                 ->label(__('Recaptcha Secret Key')),
                         ]),
-                    Tabs\Tab::make(__('Two Factor Authentication'))
+                    Tab::make(__('Two Factor Authentication'))
                         ->icon('heroicon-c-shield-check')
                         ->schema([
                             Toggle::make('two_factor_auth_enabled')
@@ -300,7 +302,7 @@ class GeneralSettings extends Component implements HasForms
                                 ->helperText(__('If enabled, users will be able to enable two factor authentication on their account. If disabled, the 2FA field will not be shown on the login form even for users who have it enabled.'))
                                 ->required(),
                         ]),
-                    Tabs\Tab::make(__('Social Links'))
+                    Tab::make(__('Social Links'))
                         ->icon('heroicon-o-heart')
                         ->schema([
                             TextInput::make('social_links_facebook')

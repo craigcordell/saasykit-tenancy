@@ -13,14 +13,14 @@
     <x-section.columns class="max-w-none md:max-w-6xl flex-wrap-reverse">
 
         <x-section.column>
-            <x-heading.h2 class="text-primary-900 !text-xl">
+            <x-heading.h2 class="text-primary-900 text-xl!">
                 {{ __('New Plan details') }}
             </x-heading.h2>
 
-            <div class="rounded-2xl border border-natural-300 mt-4 overflow-hidden p-6">
+            <div class="rounded-2xl border border-neutral-300 mt-4 overflow-hidden p-6">
 
                 <div class="flex flex-row gap-3">
-                    <div class="rounded-2xl text-5xl bg-primary-50 p-2 text-center w-24 h-24 text-primary-500 justify-self-center self-center">
+                    <div class="rounded-2xl text-5xl bg-primary-50 p-2 text-center w-24 h-24 text-primary-500 flex items-center justify-center">
                         {{ substr($newPlan->name, 0, 1) }}
                     </div>
                     <div class="flex flex-col gap-1">
@@ -66,7 +66,7 @@
 
                 <div>
 
-                    <hr class="mb-6 mt-2">
+                    <hr class="mb-6 mt-2 text-neutral-200">
                     <div class="flex flex-row justify-between">
                         <div class="text-primary-900">
                             {{ __('New Subscription price') }}
@@ -80,7 +80,7 @@
                     </div>
 
                     @if (!$isProrated)
-                        <hr class="my-6">
+                        <hr class="my-6 text-neutral-200">
                         <div class="flex flex-row justify-between">
                             <div class="text-primary-500 text-xl font-bold">
                                 {{ __('Due now') }}
@@ -113,7 +113,7 @@
                     {{ __('By continuing, you agree to our') }} <a href="#" class="text-primary-900 underline">{{ __('Terms of Service') }}</a> {{ __('and') }} <a href="#" class="text-primary-900 underline">{{ __('Privacy Policy') }}</a>.
                 </p>
 
-                <x-button-link.primary class="inline-block !w-full my-4" elementType="button" type="submit">
+                <x-button-link.primary class="inline-block w-full! my-4" elementType="button" type="submit">
                     {{ __('Confirm & Subscribe') }}
                 </x-button-link.primary>
             </form>

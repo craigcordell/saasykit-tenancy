@@ -9,7 +9,7 @@
                 {{ __('Save Changes') }}
             </x-filament::button>
 
-            <x-filament::button tag="a" href="{{ \App\Filament\Admin\Resources\PaymentProviderResource\Pages\ListPaymentProviders::getUrl()  }}" color="gray">
+            <x-filament::button tag="a" href="{{ \App\Filament\Admin\Resources\PaymentProviders\Pages\ListPaymentProviders::getUrl()  }}" color="gray">
                 {{ __('Cancel') }}
             </x-filament::button>
         </diV>
