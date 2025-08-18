@@ -8,12 +8,15 @@ use App\Models\User;
 use App\Services\CurrencyService;
 use App\Services\OneTimeProductService;
 use App\Services\OrderService;
+use App\Services\TenantCreationService;
+use App\Services\TenantService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListOrders extends ListRecords
@@ -39,7 +42,22 @@ class ListOrders extends ListRecords
                         })
                         ->getOptionLabelUsing(fn ($value) => User::find($value)->name.' <'.User::find($value)->email.'>')
                         ->helperText(__('Adding an order manually to a user will add a zero amount order to the user\'s account, and user will be able to have access to any parts of your application that require a user to have ordered that product.'))
+                        ->live()
+                        ->label(__('User'))
                         ->required(),
+                    Select::make('tenant_uuid')
+                        ->label(__('Tenant'))
+                        ->helperText(__('Select the tenant for which you want to create a order. If the user has multiple tenants, you can select one of them. If you do not select a tenant, a new tenant will be created for the user.'))
+                        ->options(function (Get $get, TenantCreationService $tenantCreationService) {
+                            $userId = $get('user_id');
+                            if (! $userId) {
+                                return [];
+                            }
+
+                            return $tenantCreationService->findUserTenantsForNewOrder(User::find($userId))
+                                ->pluck('name', 'uuid')
+                                ->toArray();
+                        }),
                     Select::make('one_time_product_id')
                         ->label(__('Product'))
                         ->options(function (OneTimeProductService $productService) {
@@ -60,6 +78,8 @@ class ListOrders extends ListRecords
                     OrderService $orderService,
                     OneTimeProductService $oneTimeProductService,
                     CurrencyService $currencyService,
+                    TenantCreationService $tenantCreationService,
+                    TenantService $tenantService,
                 ) {
                     $user = User::find($data['user_id']);
                     $product = $oneTimeProductService->getActiveOneTimeProductById($data['one_time_product_id']);
@@ -69,8 +89,25 @@ class ListOrders extends ListRecords
                         'price_per_unit' => 0,
                     ];
 
+                    $selectedTenantUuid = $data['tenant_uuid'] ?? null;
+
+                    if ($selectedTenantUuid !== null) {
+                        $tenant = $tenantService->getTenantByUuid($selectedTenantUuid);
+                        if (! $tenant) {
+                            Notification::make()
+                                ->title(__('Selected tenant not found.'))
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+                    } else {
+                        $tenant = $tenantCreationService->createTenant($user);
+                    }
+
                     $orderService->create(
                         user: $user,
+                        tenant: $tenant,
                         currency: $currencyService->getCurrency(),
                         orderItems: [$orderItem],
                         isLocal: true,

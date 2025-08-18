@@ -9,6 +9,8 @@ use App\Filament\ListDefaults;
 use App\Models\User;
 use App\Services\PlanService;
 use App\Services\SubscriptionService;
+use App\Services\TenantCreationService;
+use App\Services\TenantService;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -16,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListSubscriptions extends ListRecords
@@ -44,7 +47,21 @@ class ListSubscriptions extends ListRecords
                         })
                         ->getOptionLabelUsing(fn ($value) => User::find($value)->name.' <'.User::find($value)->email.'>')
                         ->helperText(__('Adding a subscription to a user will create a "locally managed" subscription, which means the user will be able to use subscription features without being billed, and they can later convert to a "payment provider managed" subscription from their dashboard.'))
+                        ->live()
                         ->required(),
+                    Select::make('tenant_uuid')
+                        ->label(__('Tenant'))
+                        ->helperText(__('Select the tenant for which you want to create a subscription. If the user has multiple tenants, you can select one of them. If you do not select a tenant, a new tenant will be created for the user.'))
+                        ->options(function (Get $get, TenantCreationService $tenantCreationService) {
+                            $userId = $get('user_id');
+                            if (! $userId) {
+                                return [];
+                            }
+
+                            return $tenantCreationService->findUserTenantsForNewSubscription(User::find($userId))
+                                ->pluck('name', 'uuid')
+                                ->toArray();
+                        }),
                     Select::make('plan_id')
                         ->label(__('Plan'))
                         ->options(function (PlanService $planService) {
@@ -60,14 +77,37 @@ class ListSubscriptions extends ListRecords
                         ->helperText(__('The date when the subscription will end.'))
                         ->required(),
                 ])
-                ->action(function (array $data, SubscriptionService $subscriptionService, PlanService $planService) {
+                ->action(function (
+                    array $data,
+                    SubscriptionService $subscriptionService,
+                    PlanService $planService,
+                    TenantCreationService $tenantCreationService,
+                    TenantService $tenantService,
+                ) {
                     $user = User::find($data['user_id']);
                     $plan = $planService->getActivePlanById($data['plan_id']);
+                    $selectedTenantUuid = $data['tenant_uuid'] ?? null;
+
+                    if ($selectedTenantUuid !== null) {
+                        $tenant = $tenantService->getTenantByUuid($selectedTenantUuid);
+                        if (! $tenant) {
+                            Notification::make()
+                                ->title(__('Selected tenant not found.'))
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+                    } else {
+                        $tenant = $tenantCreationService->createTenant($user);
+                    }
 
                     try {
                         $subscriptionService->create(
                             $plan->slug,
                             $user->id,
+                            quantity: 1,
+                            tenant: $tenant,
                             localSubscription: true,
                             endsAt: Carbon::parse($data['ends_at'])
                         );
