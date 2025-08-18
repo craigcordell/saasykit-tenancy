@@ -6,7 +6,6 @@ use App\Filament\Admin\Resources\Users\UserResource;
 use App\Filament\CrudDefaults;
 use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
@@ -19,7 +18,6 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
             Action::make('disable-two-factor-authentication')
                 ->label(__('Disable Two-Factor Authentication'))
                 ->color('gray')

@@ -15,7 +15,6 @@
 ])
 
 @php
-    $id = $id ?? 'text_' . rand();
     $required = $required ? 'required' : '';
     $autofocus = $autofocus ? 'autofocus' : '';
     $value = $value ? 'value="' . $value . '"' : '';
@@ -23,11 +22,9 @@
     $disabled = $disabled ? 'disabled' : '';
 @endphp
 
-<label {{ $attributes->merge(['class' => 'form-control w-full ' . $maxWidth]) }} for="{{$id}}">
+<fieldset {{ $attributes->merge(['class' => 'fieldset ' . $maxWidth]) }}>
     @if($label)
-        <div class="label">
-            <span class="label-text">{{ $label }}</span>
-        </div>
+        <legend class="fieldset-legend font-medium">{{ $label }}</legend>
     @endif
-        <input type="{{$type}}"  class="input input-bordered input-md w-full {{$maxWidth}}" placeholder="{{$placeholder}}" name="{{$name}}" {{$required}} {{$autofocus}} {!! $value !!} {!! $autocomplete !!} {{$disabled}} id="{{$id}}">
-</label>
+    <input type="text" class="input w-full" placeholder="{{$placeholder}}" name="{{$name}}" {{$required}} {{$autofocus}} {!! $value !!} {!! $autocomplete !!} {{$disabled}} />
+</fieldset>

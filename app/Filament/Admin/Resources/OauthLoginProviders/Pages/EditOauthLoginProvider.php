@@ -7,7 +7,6 @@ use App\Filament\CrudDefaults;
 use App\Models\OauthLoginProvider;
 use App\Services\ConfigService;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditOauthLoginProvider extends EditRecord
@@ -19,7 +18,6 @@ class EditOauthLoginProvider extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
             Action::make('edit-credentials')
                 ->label(__('Edit Credentials'))
                 ->color('primary')

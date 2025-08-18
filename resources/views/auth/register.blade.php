@@ -8,7 +8,7 @@
                     <p class="text-xs mt-2 text-end">{{__('Have an account?')}} <a class="text-primary-500 font-bold" href="{{ route('login') }}">{{__('Login')}}</a></p>
 
                     <x-input.field label="{{ __('Name') }}" type="text" name="name"
-                                   value="{{ old('name') }}" required autofocus="true" class="my-2"
+                                   value="{{ old('name') }}" required autofocus="true"
                                    autocomplete="name" max-width="w-full"/>
 
                     @error('name')
@@ -18,7 +18,7 @@
                     @enderror
 
                     <x-input.field label="{{ __('Email Address') }}" type="email" name="email"
-                                   value="{{ old('email') }}" required class="my-2"
+                                   value="{{ old('email') }}" required
                                    autocomplete="email" max-width="w-full"/>
                     @error('email')
                     <span class="text-xs text-red-500" role="alert">
@@ -26,7 +26,7 @@
                         </span>
                     @enderror
 
-                    <x-input.field label="{{ __('Password') }}" type="password" name="password" required class="my-2"  max-width="w-full"/>
+                    <x-input.field label="{{ __('Password') }}" type="password" name="password" required max-width="w-full"/>
 
                     @error('password')
                     <span class="text-xs text-red-500" role="alert">
@@ -34,7 +34,7 @@
                         </span>
                     @enderror
 
-                    <x-input.field label="{{ __('Confirm Password') }}" type="password" name="password_confirmation" required class="my-2"  max-width="w-full"/>
+                    <x-input.field label="{{ __('Confirm Password') }}" type="password" name="password_confirmation" required  max-width="w-full"/>
 
                     @error('password')
                     <span class="text-xs text-red-500" role="alert">
@@ -58,7 +58,7 @@
                         @endpush
                     @endif
 
-                    <x-button-link.primary class="inline-block w-full! my-2" elementType="button" type="submit">
+                    <x-button-link.primary class="inline-block w-full! mt-4 mb-2" elementType="button" type="submit">
                         {{ __('Register') }}
                     </x-button-link.primary>
 
