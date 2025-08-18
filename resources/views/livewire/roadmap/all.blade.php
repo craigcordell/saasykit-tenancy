@@ -5,7 +5,7 @@
             <x-button-link.primary-outline href="{{route('roadmap.suggest')}}">{{ __('+ Suggest a feature') }}</x-button-link.primary-outline>
         </div>
 
-        <div role="tablist" class="tabs tabs-bordered tabs-lg max-w-fit text-center mx-auto">
+        <div role="tablist" class="tabs tabs-box max-w-fit text-center mx-auto">
             <a href="{{route('roadmap')}}" role="tab" class="tab {{ request()->get('done', false) ? '' : 'tab-active' }}" aria-selected="{{ request()->get('done', false) ? 'false' : 'true' }}">{{ __('Active') }}</a>
             <a href="{{route('roadmap', ['done' => true])}}" role="tab" class="tab {{ request()->get('done', false) ? 'tab-active' : '' }}" aria-selected="{{ request()->get('done', false) ? 'true' : 'false' }}">{{ __('Done') }}</a>
         </div>
