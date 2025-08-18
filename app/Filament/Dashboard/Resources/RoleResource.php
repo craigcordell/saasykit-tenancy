@@ -9,11 +9,17 @@ use App\Filament\Dashboard\Resources\RoleResource\Pages\ListRoles;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Services\TenantPermissionService;
+use Closure;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -27,23 +33,23 @@ class RoleResource extends Resource
         return __('Team');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()->schema([
-                    Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                Section::make()->schema([
+                    TextInput::make('name')
                         ->required()
                         ->label(__('Name'))
                         ->helperText(__('The name of the role.'))
                         ->maxLength(255),
-                    Forms\Components\Select::make('permissions')
+                    Select::make('permissions')
                         ->relationship('permissions', 'name', modifyQueryUsing: fn (Builder $query) => $query->where('name', 'like', TenancyPermissionConstants::TENANCY_PERMISSION_PREFIX.'%'))
                         ->getOptionLabelFromRecordUsing(function (Model $record) {
                             return Str($record->name)->replace(TenancyPermissionConstants::TENANCY_PERMISSION_PREFIX, '')->title();
                         })
                         ->rules([
-                            fn (Forms\Get $get): \Closure => function (string $attribute, $value, \Closure $fail) {
+                            fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) {
                                 $failedPermissions = [];
                                 Permission::whereIn('id', $value)->get()->each(function ($permission) use (&$failedPermissions) {
                                     if (! str_starts_with($permission->name, TenancyPermissionConstants::TENANCY_PERMISSION_PREFIX)) {
@@ -73,24 +79,24 @@ class RoleResource extends Resource
         return $table
             ->description(__('Manage and create custom roles for your team.'))
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('Name'))
                     ->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))->sortable(),
             ])
             ->filters([
 
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 

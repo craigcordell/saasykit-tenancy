@@ -2,14 +2,21 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\TenantResource\Pages;
-use App\Filament\Admin\Resources\TenantResource\RelationManagers;
+use App\Filament\Admin\Resources\TenantResource\Pages\CreateTenant;
+use App\Filament\Admin\Resources\TenantResource\Pages\EditTenant;
+use App\Filament\Admin\Resources\TenantResource\Pages\ListTenants;
+use App\Filament\Admin\Resources\TenantResource\RelationManagers\OrdersRelationManager;
+use App\Filament\Admin\Resources\TenantResource\RelationManagers\SubscriptionsRelationManager;
+use App\Filament\Admin\Resources\TenantResource\RelationManagers\UsersRelationManager;
 use App\Models\Tenant;
 use App\Models\User;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,15 +29,15 @@ class TenantResource extends Resource
         return __('Tenancy');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->label(__('Name'))
                     ->maxLength(255),
-                Forms\Components\Select::make('created_by')
+                Select::make('created_by')
                     ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(20)->pluck('name', 'id')->toArray())
                     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)
                     ->label(__('Created By'))
@@ -43,31 +50,31 @@ class TenantResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('Name'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('subscriptions_count')
+                TextColumn::make('subscriptions_count')
                     ->counts('subscriptions')
                     ->label(__('Subscriptions'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('orders_count')
+                TextColumn::make('orders_count')
                     ->counts('orders')
                     ->label(__('Orders'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('users_count')
+                TextColumn::make('users_count')
                     ->counts('users')
                     ->label(__('Users'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('uuid')
+                TextColumn::make('uuid')
                     ->label(__('UUID'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Created At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime()
                     ->sortable()
@@ -77,11 +84,11 @@ class TenantResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+            ->toolbarActions([
+                BulkActionGroup::make([
                 ]),
             ]);
     }
@@ -89,18 +96,18 @@ class TenantResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\UsersRelationManager::class,
-            RelationManagers\SubscriptionsRelationManager::class,
-            RelationManagers\OrdersRelationManager::class,
+            UsersRelationManager::class,
+            SubscriptionsRelationManager::class,
+            OrdersRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTenants::route('/'),
-            'create' => Pages\CreateTenant::route('/create'),
-            'edit' => Pages\EditTenant::route('/{record}/edit'),
+            'index' => ListTenants::route('/'),
+            'create' => CreateTenant::route('/create'),
+            'edit' => EditTenant::route('/{record}/edit'),
         ];
     }
 

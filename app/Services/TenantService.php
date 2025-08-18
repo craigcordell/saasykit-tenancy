@@ -11,6 +11,7 @@ use App\Models\Invitation;
 use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -76,7 +77,7 @@ class TenantService
 
                 UserJoinedTenant::dispatch($user, $invitation->tenant);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             return false;
@@ -130,7 +131,7 @@ class TenantService
 
                 UserJoinedTenant::dispatch($user, $tenant);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             return false;
@@ -160,7 +161,7 @@ class TenantService
                     return $this->tenantSubscriptionService->updateSubscriptionQuantity($subscription, $tenantUserCount);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             return false;
@@ -253,7 +254,7 @@ class TenantService
 
                 UserRemovedFromTenant::dispatch($user, $tenant);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
 
             return false;

@@ -7,6 +7,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class TenantPermissionService
 {
@@ -66,7 +67,7 @@ class TenantPermissionService
         $roleObject = $this->findTenantRole($tenant, $role);
 
         if ($roleObject === null) {
-            throw new \InvalidArgumentException("Role '{$role}' does not exist for tenant '{$tenant->name}'.");
+            throw new InvalidArgumentException("Role '{$role}' does not exist for tenant '{$tenant->name}'.");
         }
 
         $this->removeAllTenantUserRoles($tenant, $user);

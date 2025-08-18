@@ -4,21 +4,24 @@ namespace App\Filament\Admin\Resources\TenantResource\RelationManagers;
 
 use App\Constants\PlanType;
 use App\Constants\SubscriptionStatus;
-use App\Filament\Admin\Resources\SubscriptionResource\Pages\ViewSubscription;
+use App\Filament\Admin\Resources\Subscriptions\Pages\ViewSubscription;
 use App\Mapper\SubscriptionStatusMapper;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class SubscriptionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'subscriptions';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
             ]);
     }
 
@@ -27,9 +30,9 @@ class SubscriptionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('plan.name')
             ->columns([
-                Tables\Columns\TextColumn::make('plan.name')
+                TextColumn::make('plan.name')
                     ->label(__('Plan')),
-                Tables\Columns\TextColumn::make('price')
+                TextColumn::make('price')
                     ->label(__('Price'))
                     ->formatStateUsing(function (string $state, $record) {
                         if ($record->plan->type === PlanType::FLAT_RATE->value) {
@@ -40,7 +43,7 @@ class SubscriptionsRelationManager extends RelationManager
 
                         return money($state, $record->currency->code);
                     }),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->badge()
                     ->colors([
@@ -51,10 +54,10 @@ class SubscriptionsRelationManager extends RelationManager
                             return $mapper->mapForDisplay($state);
                         })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')->label(__('Created At'))
+                TextColumn::make('created_at')->label(__('Created At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')->label(__('Updated At'))
+                TextColumn::make('updated_at')->label(__('Updated At'))
                     ->dateTime(config('app.datetime_format'))
                     ->searchable()->sortable(),
             ])
@@ -64,15 +67,15 @@ class SubscriptionsRelationManager extends RelationManager
             ->headerActions([
 
             ])
-            ->actions([
-                Tables\Actions\Action::make('view')
+            ->recordActions([
+                Action::make('view')
                     ->url(fn ($record) => ViewSubscription::getUrl(['record' => $record]))
                     ->label(__('View'))
                     ->icon('heroicon-o-eye'),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

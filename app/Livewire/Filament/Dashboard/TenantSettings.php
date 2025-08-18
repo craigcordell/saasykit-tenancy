@@ -7,8 +7,8 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use Livewire\Component;
 
 class TenantSettings extends Component implements HasForms
@@ -37,10 +37,10 @@ class TenantSettings extends Component implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('tenant_name')
                     ->label(__('Workspace Name'))
                     ->helperText(__('Edit the name of your workspace'))

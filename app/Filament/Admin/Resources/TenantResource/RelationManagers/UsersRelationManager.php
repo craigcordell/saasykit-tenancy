@@ -3,15 +3,22 @@
 namespace App\Filament\Admin\Resources\TenantResource\RelationManagers;
 
 use App\Constants\TenancyPermissionConstants;
-use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
+use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Models\User;
 use App\Services\TenantPermissionService;
 use App\Services\TenantService;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Actions\AttachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DetachAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Support\Services\RelationshipJoiner;
-use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -20,10 +27,10 @@ class UsersRelationManager extends RelationManager
 {
     protected static string $relationship = 'users';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
             ]);
     }
 
@@ -32,9 +39,9 @@ class UsersRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('Name')),
-                Tables\Columns\SelectColumn::make('role')
+                SelectColumn::make('role')
                     ->label(__('Role'))
                     ->getStateUsing(function (User $user, TenantPermissionService $tenantPermissionService) {
                         return $tenantPermissionService->getTenantUserRoles($this->ownerRecord, $user)[0] ?? null;
@@ -54,7 +61,7 @@ class UsersRelationManager extends RelationManager
                             ->success()
                             ->send();
                     }),
-                Tables\Columns\IconColumn::make('creator')
+                IconColumn::make('creator')
                     ->getStateUsing(function (User $user) {
                         return $user->id === $this->ownerRecord->created_by;
                     })
@@ -65,8 +72,8 @@ class UsersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
-                    ->action(function (array $arguments, array $data, Form $form, Table $table, TenantService $tenantService): void {
+                AttachAction::make()
+                    ->action(function (array $arguments, array $data, Schema $schema, Table $table, TenantService $tenantService): void {
                         // overwritten from the parent action definition from AttachAction
 
                         /** @var BelongsToMany $relationship */
@@ -97,8 +104,8 @@ class UsersRelationManager extends RelationManager
                     ->label(__('Add User'))
                     ->modalHeading(__('Add User')),
             ])
-            ->actions([
-                Tables\Actions\DetachAction::make()
+            ->recordActions([
+                DetachAction::make()
                     ->action(function (User $record, TenantService $tenantService): void {
                         $result = $tenantService->removeUser($this->ownerRecord, $record);
 
@@ -118,14 +125,14 @@ class UsersRelationManager extends RelationManager
                         return $this->ownerRecord->users->count() <= 1;
                     })
                     ->label(__('Remove')),
-                Tables\Actions\Action::make('edit')
+                Action::make('edit')
                     ->url(fn ($record) => EditUser::getUrl(['record' => $record]))
                     ->label(__('Edit'))
                     ->icon('heroicon-o-eye'),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

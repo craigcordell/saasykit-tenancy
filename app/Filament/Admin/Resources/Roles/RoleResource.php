@@ -2,19 +2,20 @@
 
 namespace App\Filament\Admin\Resources\Roles;
 
+use App\Constants\TenancyPermissionConstants;
 use App\Filament\Admin\Resources\Roles\Pages\CreateRole;
 use App\Filament\Admin\Resources\Roles\Pages\EditRole;
 use App\Filament\Admin\Resources\Roles\Pages\ListRoles;
+use App\Models\Permission;
+use App\Models\Role;
+use Closure;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use App\Constants\TenancyPermissionConstants;
-use App\Models\Permission;
-use App\Models\Role;
-use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -54,13 +55,13 @@ class RoleResource extends Resource
                         ->label(__('Permissions'))
                         ->disabled(fn (?Model $record) => $record && $record->name === 'admin' && ! $record->is_tenant_role)
                         ->relationship('permissions', 'name',
-                            modifyQueryUsing: fn (Builder $query, Forms\Get $get) => $query->when($get('is_tenant_role'), function ($query) {
+                            modifyQueryUsing: fn (Builder $query, Get $get) => $query->when($get('is_tenant_role'), function ($query) {
                                 $query->where('name', 'like', TenancyPermissionConstants::TENANCY_PERMISSION_PREFIX.'%');
                             }, function ($query) {
                                 $query->where('name', 'not like', TenancyPermissionConstants::TENANCY_PERMISSION_PREFIX.'%');
                             }))
                         ->rules([
-                            fn (Forms\Get $get): \Closure => function (string $attribute, $value, \Closure $fail) use ($get) {
+                            fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
 
                                 if ($get('is_tenant_role')) {
                                     $failedPermissions = [];

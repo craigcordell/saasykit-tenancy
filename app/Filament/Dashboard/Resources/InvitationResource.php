@@ -4,16 +4,23 @@ namespace App\Filament\Dashboard\Resources;
 
 use App\Constants\InvitationStatus;
 use App\Constants\TenancyPermissionConstants;
-use App\Filament\Dashboard\Resources\InvitationResource\Pages;
+use App\Filament\Dashboard\Resources\InvitationResource\Pages\CreateInvitation;
+use App\Filament\Dashboard\Resources\InvitationResource\Pages\EditInvitation;
+use App\Filament\Dashboard\Resources\InvitationResource\Pages\ListInvitations;
 use App\Mapper\InvitationStatusMapper;
 use App\Models\Invitation;
 use App\Services\TenantPermissionService;
 use App\Services\TenantService;
+use Closure;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Facades\Filament;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -28,17 +35,17 @@ class InvitationResource extends Resource
         return __('Team');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('email')
+        return $schema
+            ->components([
+                TextInput::make('email')
                     ->label(__('Email'))
                     ->email()
                     ->required()
                     ->helperText(__('Enter the email address of the person you want to invite.'))
                     ->rules([
-                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
+                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
                             // if there is a user with this email address in the tenant and status is pending and expires_at is greater than now, fail
                             if (Filament::getTenant()->invitations()
                                 ->where('email', $value)
@@ -62,7 +69,7 @@ class InvitationResource extends Resource
                         },
                     ])
                     ->maxLength(255),
-                Forms\Components\Select::make('role')
+                Select::make('role')
                     ->options(function (TenantPermissionService $tenantPermissionService) {
                         return $tenantPermissionService->getAllAvailableTenantRolesForDisplay(Filament::getTenant());
                     })
@@ -78,31 +85,31 @@ class InvitationResource extends Resource
         return $table
             ->description(__('Send invitations to your team members.'))
             ->columns([
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user_id')
+                TextColumn::make('user_id')
                     ->label(__('Inviter'))
                     ->formatStateUsing(function ($state, $record) {
                         return $record->user->name;
                     })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->badge()
                     ->formatStateUsing(function ($state, InvitationStatusMapper $invitationStatusMapper) {
                         return $invitationStatusMapper->mapForDisplay($state);
                     }),
-                Tables\Columns\TextColumn::make('role')
+                TextColumn::make('role')
                     ->label(__('Role'))
                     ->formatStateUsing(function ($state) {
                         return Str::of($state)->title();
                     })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('expires_at')
+                TextColumn::make('expires_at')
                     ->label(__('Expires At'))
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Created At'))
                     ->dateTime()
                     ->sortable()
@@ -111,12 +118,12 @@ class InvitationResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -148,9 +155,9 @@ class InvitationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInvitations::route('/'),
-            'create' => Pages\CreateInvitation::route('/create'),
-            'edit' => Pages\EditInvitation::route('/{record}/edit'),
+            'index' => ListInvitations::route('/'),
+            'create' => CreateInvitation::route('/create'),
+            'edit' => EditInvitation::route('/{record}/edit'),
         ];
     }
 

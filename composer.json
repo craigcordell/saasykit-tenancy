@@ -49,6 +49,7 @@
         "deployer/deployer": "7.3",
         "doctrine/dbal": "^3.6",
         "fakerphp/faker": "^1.9.1",
+        "filament/upgrade": "^4.0",
         "kkomelin/laravel-translatable-string-exporter": "^1.22",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
