@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Dashboard\Resources\RoleResource\Pages;
+namespace App\Filament\Dashboard\Resources\Roles\Pages;
 
 use App\Filament\CrudDefaults;
-use App\Filament\Dashboard\Resources\RoleResource;
+use App\Filament\Dashboard\Resources\Roles\RoleResource;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Dashboard\Resources;
+namespace App\Filament\Dashboard\Resources\Roles;
 
 use App\Constants\TenancyPermissionConstants;
-use App\Filament\Dashboard\Resources\RoleResource\Pages\CreateRole;
-use App\Filament\Dashboard\Resources\RoleResource\Pages\EditRole;
-use App\Filament\Dashboard\Resources\RoleResource\Pages\ListRoles;
+use App\Filament\Dashboard\Resources\Roles\Pages\CreateRole;
+use App\Filament\Dashboard\Resources\Roles\Pages\EditRole;
+use App\Filament\Dashboard\Resources\Roles\Pages\ListRoles;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Services\TenantPermissionService;
