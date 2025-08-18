@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\Transactions\Pages;
 
 use App\Filament\Admin\Resources\Transactions\TransactionResource;
 use App\Filament\CrudDefaults;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditTransaction extends EditRecord
@@ -16,7 +15,7 @@ class EditTransaction extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+
         ];
     }
 }

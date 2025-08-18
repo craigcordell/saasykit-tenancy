@@ -19,13 +19,11 @@
                     </span>
             </div>
 
-            <label class="form-control w-full" for="email">
-                <div class="label">
-                    <span class="label-text">{{ __('Email Address') }}</span>
-                </div>
-                <input type="email" class="input input-bordered input-md w-full"  name="email" required id="email" wire:model.blur="email" value="{{ old('email') }}">
 
-            </label>
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend font-medium">{{ __('Email Address') }}</legend>
+                <input type="email" class="input w-full" name="email" required id="email" wire:model.blur="email" value="{{ old('email') }}" />
+            </fieldset>
 
             @error('email')
             <span class="text-xs text-red-500" role="alert">
@@ -35,13 +33,10 @@
 
 
             @if(!empty($email))
-                <label class="form-control w-full" for="password">
-                    <div class="label">
-                        <span class="label-text">{{ __('Password') }}</span>
-                    </div>
-                    <input type="password" class="input input-bordered input-md w-full" name="password" required id="password" wire:model="password" >
-                </label>
-
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend font-medium">{{ __('Password') }}</legend>
+                    <input type="password" class="input w-full" name="password" required id="password" wire:model="password" />
+                </fieldset>
 
                 @error('password')
                 <span class="text-xs text-red-500 ms-1" role="alert">
@@ -51,9 +46,9 @@
             @endif
 
             @if ($userExists)
-                <div class="mt-2 ms-1 text-xs text-neutral-400">{{ __('You are already registered, enter your password.') }}</div>
+                <div class="my-2 ms-1 text-xs text-neutral-400">{{ __('You are already registered, enter your password.') }}</div>
             @elseif(!empty($email))
-                <div class="mt-2 ms-1 text-xs text-neutral-400">{{ __('Enter a password for your new account.') }}</div>
+                <div class="my-2 ms-1 text-xs text-neutral-400">{{ __('Enter a password for your new account.') }}</div>
             @endif
 
             @if($userExists)
@@ -68,17 +63,16 @@
 
 
             @if(!$userExists || empty($email))
-                <label class="form-control w-full" for="name">
-                    <div class="label">
-                        <span class="label-text">{{ __('Your Name') }}</span>
-                    </div>
-                    <input type="text" class="input input-bordered input-md w-full" name="name" required id="name" wire:model="name" value="{{ old('name') }}">
-                </label>
+
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend font-medium">{{ __('Your Name') }}</legend>
+                    <input type="text" class="input w-full" name="name" required id="name" wire:model="name" value="{{ old('name') }}" />
+                </fieldset>
 
                 @error('name')
-                <span class="text-xs text-red-500" role="alert">
-                            {{ $message }}
-                        </span>
+                    <span class="text-xs text-red-500" role="alert">
+                        {{ $message }}
+                    </span>
                 @enderror
             @endif
 

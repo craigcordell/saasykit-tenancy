@@ -16,6 +16,8 @@
                                    value="{{ old('email') }}" required autofocus="true" class="my-2"
                                    autocomplete="email" max-width="w-full"/>
 
+                    <div class="my-2 ms-1 text-xs text-neutral-400">{{ __('Enter your email address.') }}</div>
+
                     @error('email')
                         <span class="text-xs text-red-500" role="alert">
                             {{ $message }}

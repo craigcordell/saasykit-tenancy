@@ -8,7 +8,6 @@ use App\Models\EmailProvider;
 use App\Services\ConfigService;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -23,7 +22,6 @@ class EditEmailProvider extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
             Action::make('edit-credentials')
                 ->label(__('Edit Credentials'))
                 ->visible(fn (ConfigService $configService) => $configService->isAdminSettingsEnabled())

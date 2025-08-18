@@ -6,7 +6,6 @@ use App\Filament\Admin\Resources\PaymentProviders\PaymentProviderResource;
 use App\Models\PaymentProvider;
 use App\Services\ConfigService;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditPaymentProvider extends EditRecord
@@ -16,7 +15,6 @@ class EditPaymentProvider extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
             Action::make('edit-credentials')
                 ->label(__('Edit Credentials'))
                 ->color('primary')
