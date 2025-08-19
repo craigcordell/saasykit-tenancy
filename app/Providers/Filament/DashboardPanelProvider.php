@@ -71,7 +71,7 @@ class DashboardPanelProvider extends PanelProvider
                         fn () => config('app.two_factor_auth_enabled')
                     )
                     ->url(fn () => TwoFactorAuth::getUrl())
-                    ->icon('heroicon-s-cog-8-tooth'),
+                    ->icon('heroicon-s-lock-closed'),
             ])
             ->discoverResources(in: app_path('Filament/Dashboard/Resources'), for: 'App\\Filament\\Dashboard\\Resources')
             ->discoverPages(in: app_path('Filament/Dashboard/Pages'), for: 'App\\Filament\\Dashboard\\Pages')
