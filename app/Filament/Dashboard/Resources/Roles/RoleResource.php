@@ -28,6 +28,8 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
+    protected static bool $isScopedToTenant = false;
+
     public static function getNavigationGroup(): ?string
     {
         return __('Team');
@@ -70,7 +72,7 @@ class RoleResource extends Resource
                         ->label(__('Permissions'))
                         ->helperText(__('Choose the permissions for this role.'))
                         ->placeholder(__('Select permissions...')),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 
@@ -141,5 +143,10 @@ class RoleResource extends Resource
             auth()->user(),
             TenancyPermissionConstants::PERMISSION_MANAGE_TEAM,
         );
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', Filament::getTenant()->id);
     }
 }

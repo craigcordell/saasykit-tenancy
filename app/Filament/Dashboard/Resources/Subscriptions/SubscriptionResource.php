@@ -167,24 +167,9 @@ class SubscriptionResource extends Resource
         return false;
     }
 
-    public static function canUpdate(Model $record): bool
-    {
-        return false;
-    }
-
-    public static function canUpdateAny(): bool
-    {
-        return false;
-    }
-
     public static function canEdit(Model $record): bool
     {
         return false;
-    }
-
-    public static function canViewAny(): bool
-    {
-        return true;  // we want to ignore the default permission check (from the policy) and allow all users to view their own subscriptions
     }
 
     public static function infolist(Schema $schema): Schema
