@@ -56,7 +56,7 @@ class PricesRelationManager extends RelationManager
                         })
                         ->preload(),
 
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 
