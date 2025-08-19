@@ -203,7 +203,7 @@ class PricesRelationManager extends RelationManager
                             $get('type') === PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value;
                     })->heading(__('Price Preview'))
                         ->columns(2),
-                ]),
+                ])->columnSpanFull(),
             ]);
     }
 
