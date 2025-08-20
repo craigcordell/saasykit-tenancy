@@ -7,9 +7,9 @@ use Filament\Pages\Page;
 
 class InvoiceSettings extends Page
 {
-    protected static string $view = 'filament.admin.pages.invoice-settings';
+    protected string $view = 'filament.admin.pages.invoice-settings';
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     public static function canAccess(): bool
     {

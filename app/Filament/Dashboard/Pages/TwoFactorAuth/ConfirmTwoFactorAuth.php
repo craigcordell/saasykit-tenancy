@@ -9,9 +9,9 @@ use Illuminate\Validation\ValidationException;
 
 class ConfirmTwoFactorAuth extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.dashboard.pages.two-factor-auth.confirm-two-factor-auth';
+    protected string $view = 'filament.dashboard.pages.two-factor-auth.confirm-two-factor-auth';
 
     protected static bool $shouldRegisterNavigation = false;
 

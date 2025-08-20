@@ -6,9 +6,9 @@ use Filament\Pages\Page;
 
 class RecoveryCodes extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.dashboard.pages.two-factor-auth.recovery-codes';
+    protected string $view = 'filament.dashboard.pages.two-factor-auth.recovery-codes';
 
     protected static bool $shouldRegisterNavigation = false;
 

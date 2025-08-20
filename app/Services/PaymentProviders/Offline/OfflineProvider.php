@@ -13,6 +13,7 @@ use App\Models\Subscription;
 use App\Services\OrderService;
 use App\Services\PaymentProviders\PaymentProviderInterface;
 use App\Services\SubscriptionService;
+use Exception;
 
 class OfflineProvider implements PaymentProviderInterface
 {
@@ -41,7 +42,7 @@ class OfflineProvider implements PaymentProviderInterface
         Plan $newPlan,
         bool $withProration = false
     ): bool {
-        throw new \Exception('It is not possible to change plan for an offline payment provider');
+        throw new Exception('It is not possible to change plan for an offline payment provider');
     }
 
     public function cancelSubscription(Subscription $subscription): bool
@@ -56,7 +57,7 @@ class OfflineProvider implements PaymentProviderInterface
 
     public function getChangePaymentMethodLink(Subscription $subscription): string
     {
-        throw new \Exception('Offline payment provider does not support changing payment method');
+        throw new Exception('Offline payment provider does not support changing payment method');
     }
 
     public function initProductCheckout(Order $order, ?Discount $discount = null): array
@@ -76,7 +77,7 @@ class OfflineProvider implements PaymentProviderInterface
 
     public function createProductCheckoutRedirectLink(Order $order, ?Discount $discount = null): string
     {
-        throw new \Exception('Not a redirect payment provider');
+        throw new Exception('Not a redirect payment provider');
     }
 
     public function getSlug(): string
@@ -86,7 +87,7 @@ class OfflineProvider implements PaymentProviderInterface
 
     public function createSubscriptionCheckoutRedirectLink(Plan $plan, Subscription $subscription, ?Discount $discount = null): string
     {
-        throw new \Exception('Not a redirect payment provider');
+        throw new Exception('Not a redirect payment provider');
     }
 
     public function isRedirectProvider(): bool
@@ -109,7 +110,7 @@ class OfflineProvider implements PaymentProviderInterface
         $paymentProvider = PaymentProvider::where('slug', $this->getSlug())->firstOrFail();
 
         if ($paymentProvider->is_active === false) {
-            throw new \Exception('Payment provider is not active: '.$this->getSlug());
+            throw new Exception('Payment provider is not active: '.$this->getSlug());
         }
 
         return $paymentProvider;
@@ -129,7 +130,7 @@ class OfflineProvider implements PaymentProviderInterface
 
     public function reportUsage(Subscription $subscription, int $unitCount): bool
     {
-        throw new \Exception('Offline payent does not support usage based billing');
+        throw new Exception('Offline payent does not support usage based billing');
     }
 
     public function supportsSkippingTrial(): bool

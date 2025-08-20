@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\RoadmapItemResource;
+use App\Filament\Admin\Resources\RoadmapItems\RoadmapItemResource;
 use Tests\Feature\FeatureTest;
 
 class RoadmapResourceTest extends FeatureTest

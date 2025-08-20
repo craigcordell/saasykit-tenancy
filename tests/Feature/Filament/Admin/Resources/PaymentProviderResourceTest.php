@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\PaymentProviderResource;
+use App\Filament\Admin\Resources\PaymentProviders\PaymentProviderResource;
 use Tests\Feature\FeatureTest;
 
 class PaymentProviderResourceTest extends FeatureTest

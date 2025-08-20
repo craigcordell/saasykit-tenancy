@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Constants\ConfigConstants;
 use App\Models\Config;
+use Exception;
 
 class ConfigService
 {
@@ -32,7 +33,7 @@ class ConfigService
     public function set(string $key, $value): void
     {
         if (! in_array($key, ConfigConstants::OVERRIDABLE_CONFIGS)) {
-            throw new \Exception("Config key $key is not overridable");
+            throw new Exception("Config key $key is not overridable");
         }
 
         Config::set($key, $value);
@@ -72,7 +73,7 @@ class ConfigService
     {
         try {
             return Config::get($key) ?? config($key) ?? $default;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $default;
         }
     }

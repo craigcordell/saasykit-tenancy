@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Dashboard\Resources;
 
-use App\Filament\Dashboard\Resources\SubscriptionResource;
+use App\Filament\Dashboard\Resources\Subscriptions\SubscriptionResource;
 use App\Models\Subscription;
 use App\Models\User;
 use Tests\Feature\FeatureTest;

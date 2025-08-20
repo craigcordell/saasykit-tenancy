@@ -9,9 +9,9 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class TwoFactorAuth extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.dashboard.pages.two-factor-auth.index';
+    protected string $view = 'filament.dashboard.pages.two-factor-auth.index';
 
     protected static ?string $slug = 'two-factor-auth';
 

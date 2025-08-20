@@ -80,6 +80,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::findOrCreate('view announcements');
 
         Permission::findOrCreate('view transactions');
+        Permission::findOrCreate('update transactions');
 
         Permission::findOrCreate('update settings');
 

@@ -1,15 +1,15 @@
 <div class="md:sticky md:top-2">
-    <x-heading.h2 class="text-primary-900 !text-xl">
+    <x-heading.h2 class="text-primary-900 text-xl!">
         {{ __('Product Details') }}
     </x-heading.h2>
 
-    <div class="rounded-2xl border border-natural-300 mt-4 overflow-hidden p-6">
+    <div class="rounded-2xl border border-neutral-200 mt-4 overflow-hidden p-6">
         @php
             $cartItem = $cartDto->items[0];
         @endphp
 
         <div class="flex flex-row gap-3">
-            <div class="rounded-2xl text-5xl bg-primary-50 p-2 text-center w-24 h-24 text-primary-500 justify-self-center self-center min-w-[5rem]">
+            <div class="rounded-2xl text-5xl bg-primary-50 p-2 text-center w-24 h-24 text-primary-500 flex items-center justify-center min-w-20">
                 {{ substr($product->name, 0, 1) }}
             </div>
             <div class="flex flex-col gap-1">

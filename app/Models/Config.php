@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Constants\ConfigConstants;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -71,7 +72,7 @@ class Config extends Model
 
         try {
             return decrypt($value);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $value;
         }
     }
@@ -84,7 +85,7 @@ class Config extends Model
 
         try {
             return encrypt($value);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $value;
         }
     }

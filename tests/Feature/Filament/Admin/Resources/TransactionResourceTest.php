@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\TransactionResource;
+use App\Filament\Admin\Resources\Transactions\TransactionResource;
 use Tests\Feature\FeatureTest;
 
 class TransactionResourceTest extends FeatureTest
