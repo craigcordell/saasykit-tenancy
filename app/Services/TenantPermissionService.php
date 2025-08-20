@@ -7,6 +7,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class TenantPermissionService
 {
@@ -34,7 +35,29 @@ class TenantPermissionService
             return self::$permissionCache[$tenant->id][$user->id][$permission];
         }
 
-        $allPermissions = $user->tenants()->where('tenant_id', $tenant->id)?->first()?->pivot?->getAllPermissions();
+        // Get the TenantUser pivot record
+        $tenantUser = $user->tenants()->where('tenant_id', $tenant->id)?->first()?->pivot;
+
+        if (! $tenantUser) {
+            self::$permissionCache[$tenant->id][$user->id] = false;
+
+            return false;
+        }
+
+        // Get tenant-specific permissions
+        $tenantPermissions = $tenantUser->getAllPermissions() ?? collect();
+
+        // Get global permissions (roles without tenant assigned to this TenantUser)
+        $globalPermissions = $tenantUser
+            ->roles()
+            ->withoutGlobalScope(filament()->getTenancyScopeName())
+            ->whereNull('tenant_id')
+            ->get()->flatMap(function ($role) {
+                return $role->permissions;
+            });
+
+        // Merge both permission collections
+        $allPermissions = $tenantPermissions->merge($globalPermissions)->unique('id');
 
         if ($allPermissions->count() === 0) {
             self::$permissionCache[$tenant->id][$user->id] = false;
@@ -58,7 +81,22 @@ class TenantPermissionService
 
     public function getTenantUserRoles(Tenant $tenant, User $user): array
     {
-        return $user->tenants()->where('tenant_id', $tenant->id)?->first()?->pivot?->getRoleNames()->toArray() ?? [];
+        $tenantUser = $user->tenants()->where('tenant_id', $tenant->id)?->first()?->pivot;
+
+        if (! $tenantUser) {
+            return [];
+        }
+
+        $roles = $tenantUser->roles()
+            ->withoutGlobalScope(filament()->getTenancyScopeName())  // to avoid the filament tenancy scope to get global roles as well
+            ->where(function ($query) use ($tenant) {
+                $query->whereNull('tenant_id')
+                    ->orWhere('tenant_id', $tenant->id);
+            })
+            ->pluck('name')
+            ->toArray();
+
+        return $roles;
     }
 
     public function assignTenantUserRole(Tenant $tenant, User $user, string $role): void
@@ -66,7 +104,7 @@ class TenantPermissionService
         $roleObject = $this->findTenantRole($tenant, $role);
 
         if ($roleObject === null) {
-            throw new \InvalidArgumentException("Role '{$role}' does not exist for tenant '{$tenant->name}'.");
+            throw new InvalidArgumentException("Role '{$role}' does not exist for tenant '{$tenant->name}'.");
         }
 
         $this->removeAllTenantUserRoles($tenant, $user);
@@ -81,6 +119,7 @@ class TenantPermissionService
     public function findTenantRole(Tenant $tenant, string $name): ?Role
     {
         return Role::query()
+            ->withoutGlobalScope(filament()->getTenancyScopeName())  // to avoid the filament tenancy scope to get global roles as well
             ->where('name', $name)
             ->where('is_tenant_role', true)
             ->where(function ($query) use ($tenant) {
@@ -93,6 +132,7 @@ class TenantPermissionService
     public function getAllAvailableTenantRolesForDisplay(Tenant $tenant): array
     {
         $roles = Role::query()
+            ->withoutGlobalScope(filament()->getTenancyScopeName())  // to avoid the filament tenancy scope to get global roles as well
             ->where('is_tenant_role', true)
             ->where(function ($query) use ($tenant) {
                 $query->whereNull('tenant_id')

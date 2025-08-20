@@ -11,7 +11,7 @@
                     </div>
                 @endif
 
-                <x-heading.h2 class="!text-2xl md:!text-3xl !font-semibold mb-4">
+                <x-heading.h2 class="text-2xl! md:text-3xl! font-semibold! mb-4">
                     {{ __('Check your email.') }}
                 </x-heading.h2>
 
@@ -25,7 +25,7 @@
 
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <x-button-link.primary class="inline-block !w-full my-2" elementType="button" type="submit">
+                    <x-button-link.primary class="inline-block w-full! my-2" elementType="button" type="submit">
                         {{ __('Send another verification email') }}
                     </x-button-link.primary>
                 </form>
@@ -37,7 +37,7 @@
 
     <x-slot name="right">
         <div class="py-4 px-4 md:px-12 md:pt-36 h-full">
-            <x-heading.h1 class="!text-3xl md:!text-4xl !font-semibold">
+            <x-heading.h1 class="text-3xl! md:text-4xl! font-semibold!">
                 {{ __('Verify Your Email Address.') }}
             </x-heading.h1>
             <p class="mt-4">

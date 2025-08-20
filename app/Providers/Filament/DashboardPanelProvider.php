@@ -7,20 +7,21 @@ use App\Constants\TenancyPermissionConstants;
 use App\Filament\Dashboard\Pages\TenantSettings;
 use App\Filament\Dashboard\Pages\TwoFactorAuth\TwoFactorAuth;
 use App\Http\Middleware\UpdateUserLastSeenAt;
+use App\Livewire\AddressForm;
 use App\Models\Tenant;
 use App\Services\TenantPermissionService;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
-use Filament\Pages;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
-use Filament\Widgets;
+use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -42,14 +43,14 @@ class DashboardPanelProvider extends PanelProvider
                 'primary' => Color::Teal,
             ])
             ->userMenuItems([
-                MenuItem::make()
+                Action::make('admin-panel')
                     ->label(__('Admin Panel'))
                     ->visible(
                         fn () => auth()->user()->isAdmin()
                     )
                     ->url(fn () => route('filament.admin.pages.dashboard'))
                     ->icon('heroicon-s-cog-8-tooth'),
-                MenuItem::make()
+                Action::make('workspace-settings')
                     ->label(__('Workspace Settings'))
                     ->visible(
                         function () {
@@ -64,23 +65,23 @@ class DashboardPanelProvider extends PanelProvider
                     )
                     ->icon('heroicon-s-cog-8-tooth')
                     ->url(fn () => TenantSettings::getUrl()),
-                MenuItem::make()
+                Action::make('two-factor-auth')
                     ->label(__('2-Factor Authentication'))
                     ->visible(
                         fn () => config('app.two_factor_auth_enabled')
                     )
                     ->url(fn () => TwoFactorAuth::getUrl())
-                    ->icon('heroicon-s-cog-8-tooth'),
+                    ->icon('heroicon-s-lock-closed'),
             ])
             ->discoverResources(in: app_path('Filament/Dashboard/Resources'), for: 'App\\Filament\\Dashboard\\Resources')
             ->discoverPages(in: app_path('Filament/Dashboard/Pages'), for: 'App\\Filament\\Dashboard\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->discoverWidgets(in: app_path('Filament/Dashboard/Widgets'), for: 'App\\Filament\\Dashboard\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+                AccountWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -117,7 +118,7 @@ class DashboardPanelProvider extends PanelProvider
                         slug: 'my-profile' // Sets the slug for the profile page (default = 'my-profile')
                     )
                     ->myProfileComponents([
-                        \App\Livewire\AddressForm::class,
+                        AddressForm::class,
                     ]),
             ])
             ->tenantMenu()

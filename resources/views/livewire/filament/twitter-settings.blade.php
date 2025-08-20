@@ -8,7 +8,7 @@
                 {{ __('Save Changes') }}
             </x-filament::button>
 
-            <x-filament::button tag="a" href="{{ \App\Filament\Admin\Resources\OauthLoginProviderResource\Pages\ListOauthLoginProviders::getUrl()  }}" color="gray">
+            <x-filament::button tag="a" href="{{ \App\Filament\Admin\Resources\OauthLoginProviders\Pages\ListOauthLoginProviders::getUrl()  }}" color="gray">
                 {{ __('Cancel') }}
             </x-filament::button>
         </diV>

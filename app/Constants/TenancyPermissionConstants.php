@@ -35,4 +35,12 @@ class TenancyPermissionConstants
     public const PERMISSION_MANAGE_TEAM = 'tenancy: manage team';
 
     public const PERMISSION_UPDATE_TENANT_SETTINGS = 'tenancy: update tenant settings';
+
+    public const PERMISSION_VIEW_ROLES = 'tenancy: view roles';
+
+    public const PERMISSION_CREATE_ROLES = 'tenancy: create roles';
+
+    public const PERMISSION_UPDATE_ROLES = 'tenancy: update roles';
+
+    public const PERMISSION_DELETE_ROLES = 'tenancy: delete roles';
 }

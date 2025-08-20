@@ -3,12 +3,12 @@
         {{ $this->form }}
 
         <diV class="pt-4 flex gap-4">
-            <x-filament::button type="submit">
+            <x-filament::button type="submit" class="mt-4">
                 <x-filament::loading-indicator class="h-5 w-5 inline" wire:loading />
                 {{ __('Save Changes') }}
             </x-filament::button>
 
-            <x-filament::button tag="a" href="{{ \App\Filament\Admin\Resources\EmailProviderResource\Pages\ListEmailProviders::getUrl()  }}" color="gray">
+            <x-filament::button tag="a" href="{{ \App\Filament\Admin\Resources\EmailProviders\Pages\ListEmailProviders::getUrl()  }}" color="gray">
                 {{ __('Cancel') }}
             </x-filament::button>
         </diV>

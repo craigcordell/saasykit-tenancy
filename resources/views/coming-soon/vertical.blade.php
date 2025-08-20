@@ -1,7 +1,7 @@
-<x-layouts.focus-center class="md:!max-w-6xl mx-auto overflow-x-hidden relative" :backButton="false">
+<x-layouts.focus-center class="md:max-w-6xl! mx-auto overflow-x-hidden relative" :backButton="false">
 
-    <x-effect.gradient class="!-start-1/3 -top-50 !w-2/4"/>
-    <x-effect.gradient class="!-end-1/3 -top-72 !w-2/4"/>
+    <x-effect.gradient class="-start-1/3! -top-50 w-2/4!"/>
+    <x-effect.gradient class="-end-1/3! -top-72 w-2/4!"/>
 
     <div class="mx-auto md:max-w-6xl text-center mt-8">
         <div class="mx-4">
@@ -16,7 +16,7 @@
                 <p class="text-primary-900 m-3">{{ __('SaaSykit is built using the beautiful Laravel framework (using TALL) and offers an intuitive Filament admin panel that houses all the pre-built components like product, plans, discounts, payment providers, email providers, transactions, blog, user & role management, and much more.') }}</p>
             </div>
 
-            <div class="card md:max-w-2xl bg-base-100 shadow-xl bg-gradient-to-b from-primary-50 to-from-primary-100 my-8 mx-auto">
+            <div class="card md:max-w-2xl bg-base-100 shadow-xl bg-linear-to-b from-primary-50 to-from-primary-100 my-8 mx-auto">
                 <div class="card-body">
                     <x-heading.h4 class="mt-4">
                         {{ __('Sounds Interesting?') }}
@@ -28,7 +28,7 @@
                             <input type="text" class="grow" placeholder="{{ __('Your email')}}" />
                         </label>
 
-                        <x-button-link.primary href="" class="!py-3">
+                        <x-button-link.primary href="" class="py-3!">
                             {{ __('Subscribe') }}
                         </x-button-link.primary>
                     </div>

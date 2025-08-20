@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\UserResource;
+use App\Filament\Admin\Resources\Users\UserResource;
 use Tests\Feature\FeatureTest;
 
 class UserResourceTest extends FeatureTest

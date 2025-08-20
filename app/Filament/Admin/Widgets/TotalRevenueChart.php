@@ -16,13 +16,13 @@ class TotalRevenueChart extends ChartWidget
 
     protected static ?int $sort = 1;
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getData(): array
     {
-        $startDate = $this->filters['start_date'];
-        $endDate = $this->filters['end_date'];
-        $period = $this->filters['period'];
+        $startDate = $this->pageFilters['start_date'];
+        $endDate = $this->pageFilters['end_date'];
+        $period = $this->pageFilters['period'];
 
         // parse the dates to Carbon instances
         $startDate = $startDate ? Carbon::parse($startDate) : null;

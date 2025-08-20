@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\ProductResource;
+use App\Filament\Admin\Resources\Products\ProductResource;
 use Tests\Feature\FeatureTest;
 
 class ProductResourceTest extends FeatureTest

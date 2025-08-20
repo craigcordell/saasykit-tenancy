@@ -12,6 +12,7 @@ use App\Validator\LoginValidator;
 use App\Validator\RegisterValidator;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Throwable;
 
 class CheckoutForm extends Component
 {
@@ -93,7 +94,7 @@ class CheckoutForm extends Component
                 'email' => $this->email,
                 'password' => $this->password,
             ], true);
-        } catch (\Throwable $e) {  // usually thrown when 2FA is enabled so user need to be redirected to login page to enter 2FA code
+        } catch (Throwable $e) {  // usually thrown when 2FA is enabled so user need to be redirected to login page to enter 2FA code
             throw new LoginException;
         }
 

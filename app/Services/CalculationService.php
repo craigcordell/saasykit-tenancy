@@ -15,6 +15,7 @@ use App\Models\Plan;
 use App\Models\PlanPrice;
 use App\Models\Subscription;
 use App\Models\User;
+use Exception;
 
 class CalculationService
 {
@@ -49,11 +50,11 @@ class CalculationService
         $plan = $this->planService->getActivePlanBySlug($planSlug);
 
         if ($plan === null) {
-            throw new \Exception('Plan not found');
+            throw new Exception('Plan not found');
         }
 
         if ($discountCode !== null && ! $this->discountService->isCodeRedeemableForPlan($discountCode, $user, $plan, $actionType)) {
-            throw new \Exception('Discount code is not redeemable');
+            throw new Exception('Discount code is not redeemable');
         }
 
         $planPrice = $this->getPlanPrice($plan);
@@ -87,7 +88,7 @@ class CalculationService
         $newPlan = $this->planService->getActivePlanBySlug($planSlug);
 
         if ($newPlan === null) {
-            throw new \Exception('Plan not found');
+            throw new Exception('Plan not found');
         }
 
         $planPrice = $this->getPlanPrice($newPlan);

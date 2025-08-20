@@ -1,7 +1,7 @@
 @if (count($groupedPlans) == 0)
-    <x-section.columns class="max-w-none md:max-w-6xl mt-6 justify-center md:!flex-wrap">
+    <x-section.columns class="max-w-none md:max-w-6xl mt-6 justify-center md:flex-wrap!">
     @foreach($plans as $plan)
-        <x-section.column class="md:!basis-1/3 !px-4">
+        <x-section.column class="md:basis-1/3! px-4!">
             <x-plans.one :plan="$plan" />
         </x-section.column>
     @endforeach
@@ -29,9 +29,9 @@
 
         @foreach($groupedPlans as $interval => $plans)
             <x-tab-slider.tab-content id="pricing-{{$interval}}">
-                <x-section.columns class="max-w-none md:max-w-6xl mt-6 justify-center md:!flex-wrap">
+                <x-section.columns class="max-w-none md:max-w-6xl mt-6 justify-center md:flex-wrap!">
                     @foreach($plans as $plan)
-                        <x-section.column class="md:!basis-1/3 !px-4">
+                        <x-section.column class="md:basis-1/3! px-4!">
                             <x-plans.one :plan="$plan" />
                         </x-section.column>
                     @endforeach
@@ -56,7 +56,7 @@
                     @endif
                 </ul>
 
-                <x-button-link.primary href="{{route('plan.start')}}" class="mt-6 !px-6 !py-3">
+                <x-button-link.primary href="{{route('plan.start')}}" class="mt-6 px-6! py-3!">
                     {{ __('Start Now') }}
                 </x-button-link.primary>
             </div>

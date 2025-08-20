@@ -86,6 +86,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::findOrCreate('view tenants');
 
         Permission::findOrCreate('view transactions');
+        Permission::findOrCreate('update transactions');
 
         Permission::findOrCreate('update settings');
 
@@ -116,6 +117,10 @@ class RolesAndPermissionsSeeder extends Seeder
             TenancyPermissionConstants::PERMISSION_INVITE_MEMBERS,
             TenancyPermissionConstants::PERMISSION_MANAGE_TEAM,
             TenancyPermissionConstants::PERMISSION_UPDATE_TENANT_SETTINGS,
+            TenancyPermissionConstants::PERMISSION_VIEW_ROLES,
+            TenancyPermissionConstants::PERMISSION_CREATE_ROLES,
+            TenancyPermissionConstants::PERMISSION_UPDATE_ROLES,
+            TenancyPermissionConstants::PERMISSION_DELETE_ROLES,
         ];
 
         $tenancyPermissions = [];

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\OauthLoginProviderResource;
+use App\Filament\Admin\Resources\OauthLoginProviders\OauthLoginProviderResource;
 use Tests\Feature\FeatureTest;
 
 class OauthLoginProviderResourceTest extends FeatureTest

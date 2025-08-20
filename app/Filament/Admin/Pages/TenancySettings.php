@@ -7,9 +7,9 @@ use Filament\Pages\Page;
 
 class TenancySettings extends Page
 {
-    protected static string $view = 'filament.admin.pages.tenancy-settings';
+    protected string $view = 'filament.admin.pages.tenancy-settings';
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     public static function canAccess(): bool
     {

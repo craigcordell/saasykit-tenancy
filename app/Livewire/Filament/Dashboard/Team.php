@@ -5,11 +5,16 @@ namespace App\Livewire\Filament\Dashboard;
 use App\Models\User;
 use App\Services\TenantPermissionService;
 use App\Services\TenantService;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Tables;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -17,8 +22,9 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class Team extends Component implements HasForms, HasTable
+class Team extends Component implements HasActions, HasForms, HasTable
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -34,11 +40,11 @@ class Team extends Component implements HasForms, HasTable
                     });
             })
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\SelectColumn::make('role')
+                SelectColumn::make('role')
                     ->getStateUsing(function (User $user, TenantPermissionService $tenantPermissionService) {
                         return $tenantPermissionService->getTenantUserRoles(Filament::getTenant(), $user)[0] ?? null;
                     })
@@ -61,11 +67,11 @@ class Team extends Component implements HasForms, HasTable
                             ->send();
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -73,8 +79,8 @@ class Team extends Component implements HasForms, HasTable
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\Action::make('remove')
+            ->recordActions([
+                Action::make('remove')
                     ->label(__('Remove User'))
                     ->color('danger')
                     ->requiresConfirmation(true)
@@ -97,8 +103,8 @@ class Team extends Component implements HasForms, HasTable
                         }
                     }),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+            ->toolbarActions([
+                BulkActionGroup::make([
                     //
                 ]),
             ]);

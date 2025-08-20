@@ -4,6 +4,7 @@ namespace App\Services\PaymentProviders;
 
 use App\Models\PaymentProvider;
 use App\Models\Plan;
+use Exception;
 
 class PaymentService
 {
@@ -67,7 +68,7 @@ class PaymentService
             return $paymentProviderInterfaceMap[$slug];
         }
 
-        throw new \Exception('Payment provider not found: '.$slug);
+        throw new Exception('Payment provider not found: '.$slug);
     }
 
     private function getPaymentProviderInterfaceMap(): array

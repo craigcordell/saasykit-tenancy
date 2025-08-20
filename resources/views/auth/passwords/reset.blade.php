@@ -34,7 +34,7 @@
                         </span>
                     @enderror
 
-                    <x-button-link.primary class="inline-block !w-full my-2" elementType="button" type="submit">
+                    <x-button-link.primary class="inline-block w-full! my-2" elementType="button" type="submit">
                         {{ __('Reset Password') }}
                     </x-button-link.primary>
 
@@ -46,7 +46,7 @@
 
     <x-slot name="right">
         <div class="py-4 md:px-12 md:pt-36 h-full">
-            <x-heading.h1 class="!text-3xl md:!text-4xl !font-semibold">
+            <x-heading.h1 class="text-3xl! md:text-4xl! font-semibold!">
                 {{ __('Reset Your Password.') }}
             </x-heading.h1>
             <p class="mt-4">

@@ -2,7 +2,7 @@
     <form wire:submit="save">
         {{ $this->form }}
 
-        <diV class="pt-4 flex gap-4">
+        <diV class="pt-4 flex gap-4 mt-4">
             <x-filament::button type="submit">
                 <x-filament::loading-indicator class="h-5 w-5 inline" wire:loading />
                 {{ __('Save Changes') }}

@@ -16,6 +16,8 @@
                                    value="{{ old('email') }}" required autofocus="true" class="my-2"
                                    autocomplete="email" max-width="w-full"/>
 
+                    <div class="my-2 ms-1 text-xs text-neutral-400">{{ __('Enter your email address.') }}</div>
+
                     @error('email')
                         <span class="text-xs text-red-500" role="alert">
                             {{ $message }}
@@ -34,7 +36,7 @@
                         @enderror
                     @endif
 
-                    <x-button-link.primary class="inline-block !w-full my-2" elementType="button" type="submit">
+                    <x-button-link.primary class="inline-block w-full! my-2" elementType="button" type="submit">
                         {{ __('Send Password Reset Link') }}
                     </x-button-link.primary>
 
@@ -47,7 +49,7 @@
 
     <x-slot name="right">
         <div class="py-4 px-4 md:px-12 md:pt-36 h-full">
-            <x-heading.h1 class="!text-3xl md:!text-4xl !font-semibold">
+            <x-heading.h1 class="text-3xl! md:text-4xl! font-semibold!">
                 {{ __('Reset Your Password.') }}
             </x-heading.h1>
             <p class="mt-4">

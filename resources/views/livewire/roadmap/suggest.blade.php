@@ -1,5 +1,5 @@
 <div>
-    <x-heading.h3 class="!text-lg">
+    <x-heading.h3 class="text-lg!">
         {{ __('Suggest a feature / improvement') }}
     </x-heading.h3>
 

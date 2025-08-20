@@ -10,7 +10,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class TenantSettings extends Page
 {
-    protected static string $view = 'filament.dashboard.pages.tenant-settings';
+    protected string $view = 'filament.dashboard.pages.tenant-settings';
 
     public function getHeading(): string|Htmlable
     {

@@ -9,7 +9,7 @@ use Filament\Pages\Page;
 
 class Team extends Page
 {
-    protected static string $view = 'filament.dashboard.pages.team';
+    protected string $view = 'filament.dashboard.pages.team';
 
     public static function getNavigationGroup(): ?string
     {

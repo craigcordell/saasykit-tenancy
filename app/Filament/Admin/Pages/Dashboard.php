@@ -3,18 +3,18 @@
 namespace App\Filament\Admin\Pages;
 
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
     use HasFiltersForm;
 
-    public function filtersForm(Form $form): Form
+    public function filtersForm(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Section::make([
                 DatePicker::make('start_date')
                     ->default(now()->subYear()->toDateString())
@@ -39,7 +39,8 @@ class Dashboard extends \Filament\Pages\Dashboard
                     'year' => __('Year'),
                 ])->default('month'),
 
-            ])->columns(3),
+            ])->columnSpanFull()
+                ->columns(3),
         ]);
     }
 }

@@ -12,7 +12,7 @@ class MetricsOverview extends BaseWidget
 {
     protected static ?int $sort = 0;
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getStats(): array
     {

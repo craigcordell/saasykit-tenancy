@@ -5,7 +5,7 @@ namespace Tests\Feature\Filament\Dashboard\Resources\InvitationResource\Pages;
 use App\Constants\InvitationStatus;
 use App\Constants\TenancyPermissionConstants;
 use App\Events\Tenant\UserInvitedToTenant;
-use App\Filament\Dashboard\Resources\InvitationResource\Pages\CreateInvitation;
+use App\Filament\Dashboard\Resources\Invitations\Pages\CreateInvitation;
 use App\Models\Invitation;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Event;
