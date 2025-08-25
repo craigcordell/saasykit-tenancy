@@ -9,7 +9,10 @@ class GeneralSettings extends Page
 {
     protected string $view = 'filament.admin.pages.general-settings';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Settings');
+    }
 
     public static function canAccess(): bool
     {
