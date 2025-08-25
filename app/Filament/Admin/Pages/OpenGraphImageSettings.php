@@ -9,7 +9,10 @@ class OpenGraphImageSettings extends Page
 {
     protected string $view = 'filament.admin.pages.open-graph-image-settings';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Settings');
+    }
 
     public static function canAccess(): bool
     {
