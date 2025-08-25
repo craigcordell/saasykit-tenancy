@@ -2,8 +2,8 @@
 
 namespace App\Filament\Dashboard\Resources\Subscriptions\Pages;
 
-use App\Filament\Dashboard\Resources\Subscriptions\SubscriptionResource;
 use App\Filament\Dashboard\Resources\Subscriptions\ActionHandlers\DiscardSubscriptionCancellationActionHandler;
+use App\Filament\Dashboard\Resources\Subscriptions\SubscriptionResource;
 use App\Models\Subscription;
 use App\Services\PaymentProviders\PaymentService;
 use App\Services\SubscriptionService;
