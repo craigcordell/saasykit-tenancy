@@ -14,7 +14,7 @@
 <div class="relative flex flex-col justify-between p-8 transition-shadow duration-300 border rounded-2xl shadow-sm sm:items-center hover:shadow border-deep-purple-accent-400">
     @if($plan->product->is_popular)
         <div class="absolute inset-x-0 top-0 flex justify-center -mt-3">
-            <div class="inline-block px-3 py-1 text-xs font-medium tracking-wider text-white uppercase rounded bg-primary">
+            <div class="inline-block px-3 py-1 text-xs font-medium tracking-wider text-white uppercase rounded bg-primary-500">
                 {{__('Most Popular')}}
             </div>
         </div>
@@ -65,7 +65,7 @@
         </div>
     </div>
     <div class="w-full">
-        <a class="btn btn-block bg-primary-500 dark:bg-primary text-white px-6 mt-6 border-0 hover:bg-primary-500/90"
+        <a class="btn btn-block bg-primary-500 dark:bg-primary-500 text-white px-6 mt-6 border-0 hover:bg-primary-500/90"
            {{$subscription !== null && $subscription->plan_id === $plan->id ? 'disabled' : ''}}
            href="{{ route($buyRoute, ['planSlug' => $plan->slug, 'subscriptionUuid' => $subscription?->uuid]) }}">
             {{__('Buy')}} {{ $plan->product->name }}

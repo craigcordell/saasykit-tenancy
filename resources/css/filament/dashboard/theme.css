@@ -10,5 +10,4 @@
 @source '../../../../resources/views/livewire';
 @source '../../../../resources/views/components';
 @source '../../../../app/Livewire';
-@source '../../../../vendor/filament';
-@source '../../../../vendor/saasykit/filament-breezy/resources';
+@source '../../../../vendor/**/*.blade.php';
