@@ -2,4 +2,5 @@
 
 @source '../../../../app/Filament';
 @source '../../../../resources/views/filament';
-@source '../../../../vendor/saasykit/filament-breezy/resources';
+@source '../../../../vendor/**/*.blade.php';
+
