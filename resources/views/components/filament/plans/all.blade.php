@@ -12,7 +12,7 @@
 
         <div class="plan-switcher tabs tabs-box justify-center w-full bg-neutral-200  mb-4 dark:bg-gray-800 max-w-fit m-auto">
             @foreach($groupedPlans as $interval => $plans)
-                <a class="tab  dark:text-white {{$preselectedInterval == $interval ? 'tab-active': ''}}" data-target="plans-{{$interval}}" aria-selected="{{$preselectedInterval == $interval ? 'true' : 'false'}}">{{str($interval)->title()}}</a>
+                <a class="tab dark:text-black {{$preselectedInterval == $interval ? 'tab-active': ''}}" data-target="plans-{{$interval}}" aria-selected="{{$preselectedInterval == $interval ? 'true' : 'false'}}">{{str($interval)->title()}}</a>
             @endforeach
         </div>
 
