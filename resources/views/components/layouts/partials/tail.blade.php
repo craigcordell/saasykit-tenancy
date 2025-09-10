@@ -9,5 +9,3 @@
 @if (!$skipCookieContentBar)
     @include('cookie-consent::index')
 @endif
-
-@livewireScripts

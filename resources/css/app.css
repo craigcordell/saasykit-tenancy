@@ -1,15 +1,33 @@
-@import 'tailwindcss';
-@import './colors.css';
-@import './styles.css';
+@import "tailwindcss";
+@import "../../vendor/livewire/flux/dist/flux.css";
+
+/* Variants / tokens */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: Inter, sans-serif;
+}
+
+/* Optional: your own layers AFTER Flux so you can override */
+@import "./colors.css";
+@import "./styles.css";
+
+/* Plugins (Tailwind v4 syntax) */
+@plugin "@tailwindcss/forms" {
+    strategy: "class";
+}
+
+/* prevents base resets clobbering Flux */
+@plugin "@tailwindcss/typography";
+
 @plugin "daisyui" {
     themes: light --default;
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* Sources */
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
-@source '../../vendor/filament/**/*.blade.php';
+/* Sources (keep lean but complete) */
+@source "../../storage/framework/views/*.php";
+@source "../**/*.blade.php";
+@source "../**/*.js";
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../vendor/filament/**/*.blade.php";
+@source "../../vendor/livewire/flux/**/*.blade.php";

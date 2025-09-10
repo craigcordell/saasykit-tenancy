@@ -22,17 +22,19 @@
         "laravel/socialite": "^5.6",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
+        "livewire/flux": "^2.3",
+        "livewire/flux-pro": "^2.3",
         "livewire/livewire": "^3.5",
         "mews/purifier": "^3.4",
         "mpociot/versionable": "^4.4",
         "propaganistas/laravel-phone": "^5.3",
         "resend/resend-php": "^0.12.0",
+        "saasykit/filament-breezy": "^2.1",
         "saasykit/filament-country-field": "^1.0",
         "saasykit/laravel-invoices": "^1.0",
         "saasykit/laravel-money": "^1.0",
         "saasykit/laravel-open-graphy": "^1.2",
         "saasykit/laravel-recaptcha": "^1.0",
-        "saasykit/filament-breezy": "^2.1",
         "spatie/laravel-cookie-consent": "^3.3",
         "spatie/laravel-flash": "^1.9",
         "spatie/laravel-permission": "^6.0",
@@ -104,5 +106,11 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "flux-pro": {
+            "type": "composer",
+            "url": "https://composer.fluxui.dev"
+        }
+    }
 }
